@@ -35,6 +35,7 @@ const count = ref(0)
                         <br>
                     </div>
                 </div>
+                
                 <div class="Department">
                     <p> <b> Indique la subdelegación a la que se quiere dirigir </b> </p>
 
@@ -47,6 +48,15 @@ const count = ref(0)
                         <option value="TIC"> Subdelegación de Estrategia y Desarrollo Tecnológico </option>
                         <option value="Eventos"> Subdelegación de Actividades Culturales </option>
                     </select>
+                </div>
+
+                <div class="Description">
+                    <p> <b> Describa su solicitud </b> </p>
+                    <textarea class="Explanation" name="Description" id="Description" rows="10" placeholder="Escriba aquí su solicitud..."></textarea>
+                </div>
+
+                <div class="SubmitDiv">
+                    <button type="submit"> <b> Enviar solicitud </b> </button>
                 </div>
             </form>
         </div>
@@ -195,5 +205,24 @@ const count = ref(0)
 
         /* Borders */
         border-bottom: 2px solid var(--form-border);
+    }
+
+    .Description{
+        /* Width and height */
+        width: 90%;
+
+        /* Overall structure */
+        display:flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+
+        /* Margins and padding */
+        margin-bottom: 10px;
+        padding-bottom: 15px;
+    }
+
+    .Explanation {
+        width: 80%;
     }
 </style>
