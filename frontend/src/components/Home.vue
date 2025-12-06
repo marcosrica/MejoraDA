@@ -10,8 +10,31 @@ const count = ref(0)
             <h1> MejoraDA </h1>
         </div>
         <div class="ContentDiv">
-            <div class="SpaceAligner"></div>
-            <input type="button" @click="count++" :value="`Count is ${count}`" />
+            <div class="FormHeader">
+                <h2> Crear una solicitud </h2>
+            </div>
+            <form class="FormDiv">
+                <p> Indique el tipo de solicitud </p>
+                <div class="MultiSelect_Type">
+                    <div class="Multioption">
+                        <input type="radio" id="Idea" name="DocumentType" value="Idea"></input>
+                        <label for="Idea">Idea</label>
+                        <br>
+                    </div>
+                    
+                    <div class="Multioption">
+                        <input type="radio" id="Queja" name="DocumentType" value="Queja"></input>
+                        <label for="Queja">Queja</label>
+                        <br>
+                    </div>
+
+                    <div class="Multioption">    
+                        <input type="radio" id="Sugerencia" name="DocumentType" value="Sugerencia"></input>
+                        <label for="Sugerencia">Sugerencia</label>
+                        <br>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 </template>
@@ -24,6 +47,7 @@ const count = ref(0)
 
         display: flex;
         flex-direction: column;
+        align-items: center;
     }
 
     .TopBarDiv {
@@ -47,17 +71,88 @@ const count = ref(0)
         border-bottom-left-radius: 10px;
     }
 
-    .SpaceAligner {
-        height: 12dvh;
-    }
-
     .ContentDiv {
-        flex: 1;
+        /* Width and height */
+        box-sizing: border-box;
         overflow-y: auto;
+        width:100%;
 
+        /* Overall structure */
         display:flex;
+        flex: 1;
         flex-direction: column;
         align-items: center;
         justify-content: top;
+
+        /* Margins and paddings */
+        margin-top: 12dvh;
+        margin-bottom: 2dvh;
+        padding-top: 15px;
+        padding-bottom: 15px;
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+    .FormHeader {
+        /* Width and height */
+        min-width: 80%;
+        min-height: auto;
+
+        /* Overall structure */
+        display:flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        
+        /* Colors */
+        background-color: var(--panel-background);
+        box-shadow:
+            0 1px 2px rgba(0, 0, 0, 0.921),
+            0 2px 6px rgba(0, 0, 0, 0.284);
+        border-radius: 10px;
+
+        /* Margins and padding */
+        margin-bottom: 10px;
+    }
+
+    .FormDiv {
+        /* Overall structure */
+        display:flex;
+        flex: 1;
+        flex-direction: column;
+        align-items: center;
+        justify-content: top;
+        
+        /* Width and height */
+        min-width: 80%;
+        min-height: auto;
+
+        /* Colors */
+        background-color: var(--panel-background);
+        box-shadow:
+            0 1px 2px rgba(0, 0, 0, 0.921),
+            0 2px 6px rgba(0, 0, 0, 0.284);
+        border-radius: 10px;
+
+        /* Margins and padding */
+        margin-bottom: 10px;
+        padding-top: 20px;
+    }
+
+    .MultiSelect_Type {
+        /* Overall structure */
+        display:flex;
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: space-around;
+
+        /* Width and height */
+        width: 90%;
+
+        /* Margins and padding */
+        padding-bottom: 15px;
+
+        /* Borders */
+        border-bottom: 2px solid var(--form-border);
     }
 </style>

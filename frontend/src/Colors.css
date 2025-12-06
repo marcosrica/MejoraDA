@@ -1,4 +1,7 @@
 :root {
     --main-color: #0669db;
-    --background: #5a97dc7c;
+    --background: #d2d2d2;
+    --panel-background: #f1f1f1;
+
+    --form-border: #5e5e5e93;
 }
