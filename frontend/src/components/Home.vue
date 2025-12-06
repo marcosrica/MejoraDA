@@ -11,10 +11,11 @@ const count = ref(0)
         </div>
         <div class="ContentDiv">
             <div class="FormHeader">
-                <h2> Crear una solicitud </h2>
+                <h2 class="FormHeaderText"> <b> Crear una solicitud </b></h2>
+                <p class="FormSigner"> A nombre de </p>
             </div>
             <form class="FormDiv">
-                <p> Indique el tipo de solicitud </p>
+                <p> <b> Indique el tipo de solicitud </b> </p>
                 <div class="MultiSelect_Type">
                     <div class="Multioption">
                         <input type="radio" id="Idea" name="DocumentType" value="Idea"></input>
@@ -33,6 +34,19 @@ const count = ref(0)
                         <label for="Sugerencia">Sugerencia</label>
                         <br>
                     </div>
+                </div>
+                <div class="Department">
+                    <p> <b> Indique la subdelegación a la que se quiere dirigir </b> </p>
+
+                    <select name="Departments" id="Departments">
+                        <option value="General"> General </option>
+                        <option value="Calidad"> Subdelegación de Mediación y Calidad Académica </option>
+                        <option value="Comunicacion"> Subdelegación de Comunicación </option>
+                        <option value="AtencionEstudiante"> Subdelegación de Ayuda y Servicios para el Estudiante </option>
+                        <option value="Igualdad"> Subdelegación de Bienestar e Igualdad Social </option>
+                        <option value="TIC"> Subdelegación de Estrategia y Desarrollo Tecnológico </option>
+                        <option value="Eventos"> Subdelegación de Actividades Culturales </option>
+                    </select>
                 </div>
             </form>
         </div>
@@ -100,7 +114,7 @@ const count = ref(0)
 
         /* Overall structure */
         display:flex;
-        flex-direction: row;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
         
@@ -113,6 +127,14 @@ const count = ref(0)
 
         /* Margins and padding */
         margin-bottom: 10px;
+    }
+
+    .FormHeaderText {
+        margin-bottom:0px
+    }
+
+    .FormSigner {
+        margin-top: 0px;
     }
 
     .FormDiv {
@@ -150,6 +172,25 @@ const count = ref(0)
         width: 90%;
 
         /* Margins and padding */
+        margin-bottom: 10px;
+        padding-bottom: 15px;
+
+        /* Borders */
+        border-bottom: 2px solid var(--form-border);
+    }
+
+    .Department{
+        /* Width and height */
+        width: 90%;
+
+        /* Overall structure */
+        display:flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+
+        /* Margins and padding */
+        margin-bottom: 10px;
         padding-bottom: 15px;
 
         /* Borders */
