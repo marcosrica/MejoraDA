@@ -1,8 +1,24 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-const count = ref(0)
+const documentType = ref('')
+const department = ref('General')
+const description = ref('')
+
+const handleSubmit = () => {
+  const formData = {
+    documentType: documentType.value,
+    department: department.value,
+    description: description.value,
+  }
+
+  console.log('Submitted data:', formData)
+
+  // Example: send to API
+  // await fetch('/api/submit', { method: 'POST', body: JSON.stringify(formData) })
+}
 </script>
+
 
 <template>
     <div class="Parent">
@@ -16,25 +32,31 @@ const count = ref(0)
         </div>
         <div class="ContentDiv">
             <div class="FormHeader">
+                <div class="FormIcon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"></path>
+                    </svg>
+                </div>
+                
                 <h2 class="FormHeaderText"> <b> Crear una solicitud </b></h2>
             </div>
-            <form class="FormDiv">
+            <form class="FormDiv"  @submit.prevent="handleSubmit">
                 <p> <b> Indique el tipo de solicitud </b> </p>
                 <div class="MultiSelect_Type">
                     <div class="Multioption">
-                        <input type="radio" id="Idea" name="DocumentType" value="Idea"></input>
+                        <input type="radio" id="Idea" name="DocumentType" value="Idea" v-model="documentType"></input>
                         <label for="Idea">Idea</label>
                         <br>
                     </div>
                     
                     <div class="Multioption">
-                        <input type="radio" id="Queja" name="DocumentType" value="Queja"></input>
+                        <input type="radio" id="Queja" name="DocumentType" value="Queja" v-model="documentType"></input>
                         <label for="Queja">Queja</label>
                         <br>
                     </div>
 
                     <div class="Multioption">    
-                        <input type="radio" id="Sugerencia" name="DocumentType" value="Sugerencia"></input>
+                        <input type="radio" id="Sugerencia" name="DocumentType" value="Sugerencia" v-model="documentType"></input>
                         <label for="Sugerencia">Sugerencia</label>
                         <br>
                     </div>
@@ -43,7 +65,7 @@ const count = ref(0)
                 <div class="Department">
                     <p> <b> Indique la subdelegación a la que se quiere dirigir </b> </p>
 
-                    <select name="Departments" id="Departments">
+                    <select name="Departments" id="Departments" v-model="department">
                         <option value="General"> General </option>
                         <option value="AtencionEstudiante"> Subdelegación de Ayuda y Servicios para el Estudiante </option>
                         <option value="Comunicacion"> Subdelegación de Comunicación </option>
@@ -56,7 +78,7 @@ const count = ref(0)
 
                 <div class="Description">
                     <p> <b> Describa su solicitud </b> </p>
-                    <textarea class="Explanation" name="Description" id="Description" rows="10" placeholder="Escriba aquí su solicitud..."></textarea>
+                    <textarea class="Explanation" name="Description" id="Description" rows="10" placeholder="Escriba aquí su solicitud..." v-model="description"></textarea>
                 </div>
 
                 <div class="SubmitDiv">
@@ -144,7 +166,7 @@ const count = ref(0)
 
         /* Overall structure */
         display:flex;
-        flex-direction: column;
+        flex-direction: row;
         align-items: center;
         justify-content: center;
         
@@ -157,6 +179,15 @@ const count = ref(0)
 
         /* Margins and padding */
         margin-bottom: 10px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+    .FormIcon {
+        color: var(--icon-color);
+        height:40px;
+        width: 40px;
+        margin-right: 10px;
     }
 
     .FormHeaderText {
