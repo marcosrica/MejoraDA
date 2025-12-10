@@ -7,12 +7,16 @@ const count = ref(0)
 <template>
     <div class="Parent">
         <div class="TopBarDiv">
-            <h1> MejoraDA </h1>
+            <div class="PageID">
+                <img src="./../assets/Logo.png" alt="MejoraDA Logo" class="ServiceLogo"/>
+                <h1> MejoraDA </h1>
+            </div>
+
+            <img src="./../assets/Logo.png" alt="MejoraDA Logo" class="ServiceLogo"/>
         </div>
         <div class="ContentDiv">
             <div class="FormHeader">
                 <h2 class="FormHeaderText"> <b> Crear una solicitud </b></h2>
-                <p class="FormSigner"> A nombre de </p>
             </div>
             <form class="FormDiv">
                 <p> <b> Indique el tipo de solicitud </b> </p>
@@ -41,12 +45,12 @@ const count = ref(0)
 
                     <select name="Departments" id="Departments">
                         <option value="General"> General </option>
-                        <option value="Calidad"> Subdelegación de Mediación y Calidad Académica </option>
-                        <option value="Comunicacion"> Subdelegación de Comunicación </option>
                         <option value="AtencionEstudiante"> Subdelegación de Ayuda y Servicios para el Estudiante </option>
-                        <option value="Igualdad"> Subdelegación de Bienestar e Igualdad Social </option>
+                        <option value="Comunicacion"> Subdelegación de Comunicación </option>
+                        <option value="Calidad"> Subdelegación de Mediación y Calidad Académica </option>
                         <option value="TIC"> Subdelegación de Estrategia y Desarrollo Tecnológico </option>
-                        <option value="Eventos"> Subdelegación de Actividades Culturales </option>
+                        <option value="Eventos"> Subdelegación de Eventos </option>
+                        <option value="Igualdad"> Subdelegación de Bienestar e Igualdad Social </option>
                     </select>
                 </div>
 
@@ -87,12 +91,28 @@ const count = ref(0)
         top: 0;
 
         display:flex;
-        flex-direction: column;
+        flex-direction: row;
         align-items: center;
-        justify-content: center;
+        justify-content: space-between;
 
         border-bottom-right-radius: 10px;
         border-bottom-left-radius: 10px;
+    }
+
+    .PageID {
+        display:flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+
+        height: 100%;
+
+        margin-left: 20px;
+    }
+
+    .ServiceLogo {
+        height: 60%;
+        margin-right: 15px;
     }
 
     .ContentDiv {
@@ -140,11 +160,8 @@ const count = ref(0)
     }
 
     .FormHeaderText {
-        margin-bottom:0px
-    }
-
-    .FormSigner {
-        margin-top: 0px;
+        margin-bottom:5px;
+        margin-top: 5px;
     }
 
     .FormDiv {
