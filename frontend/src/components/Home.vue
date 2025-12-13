@@ -17,8 +17,8 @@
 
       if(!(!formData.documentType || !formData.department || !formData.description)) { //Prevent empty fields
         console.log('Submitted data:', formData)
-        const response = await petitionMaker.makePetition("/api/hello", "POST", formData);
-        console.log('Response:', response);   
+        const response = await petitionMaker.makePetition("/api/newForm", "POST", formData);
+        console.log('Response:', response);
       }
     }
 </script>
@@ -54,14 +54,14 @@
                     </div>
                     
                     <div class="Multioption">
-                        <input type="radio" id="Queja" name="DocumentType" value="Queja" v-model="documentType"></input>
-                        <label for="Queja">Queja</label>
+                        <input type="radio" id="Complaint" name="DocumentType" value="Complaint" v-model="documentType"></input>
+                        <label for="Complaint">Queja</label>
                         <br>
                     </div>
 
                     <div class="Multioption">    
-                        <input type="radio" id="Sugerencia" name="DocumentType" value="Sugerencia" v-model="documentType"></input>
-                        <label for="Sugerencia">Sugerencia</label>
+                        <input type="radio" id="Suggestion" name="DocumentType" value="Suggestion" v-model="documentType"></input>
+                        <label for="Suggestion">Sugerencia</label>
                         <br>
                     </div>
                 </div>
