@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     /* File Layout */
-    "rootDir": "./src",
+    "rootDir": "./",
     "outDir": "./dist",
 
     /* Environment */
@@ -19,6 +19,12 @@
 
     /* Type Checking */
     "strict": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+
+    /* URLs */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["/*"]
+    }
   }
 }

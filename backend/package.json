@@ -4,14 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon src/server.ts",
+    "dev": "nodemon src/server.ts"
   },
   "keywords": [],
   "author": "Marcos Rica Sánchez",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^5.2.0"
+    "express": "^5.2.0",
+    "mysql2": "^3.15.3"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",

@@ -52,3 +52,27 @@ cd backend
 npm install
 npm run dev
 ```
+
+#### Please note that the backend is expecting to connect to a MySQL server with tables initialized by these commands:
+```SQL
+CREATE TABLE ideas (
+    `request_id` INTEGER PRIMARY KEY AUTO_INCREMENT,
+    `department` TEXT NOT NULL,
+    `description` TEXT NOT NULL,
+    `solved` BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+CREATE TABLE suggestions (
+    `request_id` INTEGER PRIMARY KEY AUTO_INCREMENT,
+    `department` TEXT NOT NULL,
+    `description` TEXT NOT NULL,
+    `solved` BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+CREATE TABLE complaints (
+    `request_id` INTEGER PRIMARY KEY AUTO_INCREMENT,
+    `department` TEXT NOT NULL,
+    `description` TEXT NOT NULL,
+    `solved` BOOLEAN NOT NULL DEFAULT FALSE
+);
+```
