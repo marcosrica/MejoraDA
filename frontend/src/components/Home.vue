@@ -1,22 +1,26 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+    import { ref } from 'vue'
+    import PetitionMaker from '../Utilities/PetitionMaker'
 
-const documentType = ref('')
-const department = ref('General')
-const description = ref('')
+    const petitionMaker:PetitionMaker = new PetitionMaker();
 
-const handleSubmit = () => {
-  const formData = {
-    documentType: documentType.value,
-    department: department.value,
-    description: description.value,
-  }
+    const documentType = ref('')
+    const department = ref('General')
+    const description = ref('')
 
-  console.log('Submitted data:', formData)
+    const handleSubmit = async () => {
+      const formData = {
+        documentType: documentType.value,
+        department: department.value,
+        description: description.value,
+      }
 
-  // Example: send to API
-  // await fetch('/api/submit', { method: 'POST', body: JSON.stringify(formData) })
-}
+      if(!(!formData.documentType || !formData.department || !formData.description)) { //Prevent empty fields
+        console.log('Submitted data:', formData)
+        const response = await petitionMaker.makePetition("/api/hello", "POST", formData);
+        console.log('Response:', response);   
+      }
+    }
 </script>
 
 
