@@ -43,6 +43,15 @@ class Database {
 
         return (result.affectedRows === 1) && (result.insertId > 0);
     }
+
+    RetrieveIdeas = async (department: string) => {
+        const [result]:[ResultSetHeader, any] = await pool.query(`
+                select * from ideas 
+                where department = ?
+            `, [department]);
+
+        console.log(result);
+    }
 }
 
 export default Database;
