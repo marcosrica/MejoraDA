@@ -9,7 +9,7 @@ const count = ref(0)
 <template>
   <div class="Parent">
         <div class="TopBarDiv">
-            <div class="PageID">
+            <div class="PageID" onclick="location.href = '/'">
                 <img src="./../assets/Logo.png" alt="MejoraDA Logo" class="ServiceLogo"/>
                 <h1> MejoraDA </h1>
             </div>
