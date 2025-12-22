@@ -58,21 +58,27 @@ npm run dev
 CREATE TABLE ideas (
     `request_id` INTEGER PRIMARY KEY AUTO_INCREMENT,
     `department` TEXT NOT NULL,
+    `subject` TEXT NOT NULL,
     `description` TEXT NOT NULL,
     `solved` BOOLEAN NOT NULL DEFAULT FALSE
+    `date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE suggestions (
     `request_id` INTEGER PRIMARY KEY AUTO_INCREMENT,
     `department` TEXT NOT NULL,
+    `subject` TEXT NOT NULL,
     `description` TEXT NOT NULL,
     `solved` BOOLEAN NOT NULL DEFAULT FALSE
+    `date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE complaints (
     `request_id` INTEGER PRIMARY KEY AUTO_INCREMENT,
     `department` TEXT NOT NULL,
+    `subject` TEXT NOT NULL,
     `description` TEXT NOT NULL,
     `solved` BOOLEAN NOT NULL DEFAULT FALSE
+    `date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```

@@ -1,12 +1,20 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import PetitionMaker from '../Utilities/PetitionMaker'
+import BaseButton from './BaseButton.vue';
+import BaseSelect from './BaseSelect.vue';
+import BaseCheckbox from './BaseCheckbox.vue';
 
+//Class that holds the method to make petitions to the backend
 const petitionMaker:PetitionMaker = new PetitionMaker();
 
+//Fields that are completed in the filters form, and accedes in the handleSubmit function
 const department = ref('Todo')
 const type = ref('Todo')
 const showResolved = ref(false)
+
+//Variable containing the forms retrieved from the backend
+const petitions = ref<any[]>([])
 
 const handleSubmit = async () => {
   const filters = {
@@ -15,10 +23,11 @@ const handleSubmit = async () => {
     showResolved: showResolved.value,
   }
 
-  const response = await petitionMaker.makePetition('POST', '/api/petitions/filter', filters);
+  const response = await petitionMaker.makePetition('/api/petitions/filter', 'POST', filters);
+  petitions.value = response.data;
 
   console.log('Applied filters:', filters);
-  console.log('Response:', response);
+  console.log('Response:', petitions);
 }
 </script>
 
@@ -32,48 +41,87 @@ const handleSubmit = async () => {
 
       <img src="./../assets/Logo.png" alt="MejoraDA Logo" class="ServiceLogo"/>
     </div>
+
     <div class="Home_content_wrapper">
       <div class="Home_content">
         <div class="Home_Welcome">
           <h2 class="Home_Big_Text">¡Bienvenido de nuevo, USER!</h2>
           <p> Hay x solicitudes pendientes </p>
         </div>
+        
         <div class="Home_Filters">
           <p class="Home_Big_Text"> Filtrar solicitudes </p>
           <form class="Filters_Form"  @submit.prevent="handleSubmit">
             <div class="Home_Department">
               <label for="status">Subdelegación:</label>
-              <select id="status" name="status" class="Home_StatusSelection" v-model="department">
-                  <option value="Todo"> Todas </option>
-                  <option value="General"> General </option>
-                  <option value="AtencionEstudiante"> Subdelegación de Ayuda y Servicios para el Estudiante </option>
-                  <option value="Comunicacion"> Subdelegación de Comunicación </option>
-                  <option value="Calidad"> Subdelegación de Mediación y Calidad Académica </option>
-                  <option value="TIC"> Subdelegación de Estrategia y Desarrollo Tecnológico </option>
-                  <option value="Eventos"> Subdelegación de Eventos </option>
-                  <option value="Igualdad"> Subdelegación de Bienestar e Igualdad Social </option>
-              </select>
+              <BaseSelect
+                v-model="department"
+                custom-class="Home_StatusSelection"
+                label=""
+                placeholder="Selecciona una opción"
+                :options="[
+                  { value: 'All', label: 'Todas' },
+                  { value: 'General', label: 'General' },
+                  { value: 'AtencionEstudiante', label: 'Subdelegación de Ayuda y Servicios para el Estudiante' },
+                  { value: 'Comunicacion', label: 'Subdelegación de Comunicación' },
+                  { value: 'Calidad', label: 'Subdelegación de Mediación y Calidad Académica' },
+                  { value: 'TIC', label: 'Subdelegación de Estrategia y Desarrollo Tecnológico' },
+                  { value: 'Eventos', label: 'Subdelegación de Eventos' },
+                  { value: 'Igualdad', label: 'Subdelegación de Bienestar e Igualdad Social' }
+                ]"
+              />
             </div>
             <div class="Home_Type">
               <label for="status" >Tipo:</label>
-              <select id="status" name="status" class="Home_StatusSelection" v-model="type">
-                  <option value="Todo"> Todos </option>
-                  <option value="Complaint"> Quejas </option>
-                  <option value="Idea"> Ideas </option>
-                  <option value="Suggestion"> Sugerencia </option>
-              </select>
+              <BaseSelect
+                v-model="type"
+                label=""
+                placeholder="Selecciona una opción"
+                :options="[
+                  { value: 'All', label: 'Todos' },
+                  { value: 'Complaint', label: 'Quejas' },
+                  { value: 'Idea', label: 'Ideas' },
+                  { value: 'Suggestion', label: 'Sugerencia' },
+                ]"
+              />
             </div>
             <div class="Home_OnlyPending">
               <label for="status">Mostrar también las incidencias resueltas</label>
-              <input type="checkbox" id="onlyPending" name="onlyPending" v-model="showResolved"/>
+              <BaseCheckbox
+                v-model="showResolved"
+                name="onlyPending"
+                customClass="Home_OnlyPendingCheckbox"
+              />
             </div>
             <div class="Home_Submit">
-              <button type="submit"> Aplicar filtros </button>
+              <BaseButton type="submit" variant="primary"> Aplicar filtros </BaseButton>
             </div>
           </form>
         </div>
+
         <div class="Home_Forms">
-          <p class="Home_Big_Text"> Se han encontrado x solicitudes </p>
+          <p class="Home_Big_Text"> Se han encontrado {{ petitions.length }} solicitudes </p>
+          <div class="Home_PetitionsList">
+
+          </div>
+          <div
+            v-for="petition in petitions"
+            :key="petition.request_id"
+            class="PetitionCard"
+          >
+            <div class="Home_MainData">
+              <p><strong>Dirigido a:</strong> {{ petition.department }} </p>
+              <p><strong>Asunto: </strong> {{ petition.subject }} </p>
+              <p>
+                <strong>Estado:</strong>
+                {{ petition.solved ? 'Resuelta' : 'Pendiente' }}
+              </p>
+            </div>
+            <div class="Home_BasicDescription">
+              <p><strong>Descripción:</strong></p>
+              <p>{{ petition.description }}</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -87,7 +135,7 @@ const handleSubmit = async () => {
   width: 100dvw;
 
   display: flex;
-  flex-direction: column-reverse;
+  flex-direction: column;
 
   background-color: var(--background);
 }
@@ -132,21 +180,23 @@ const handleSubmit = async () => {
 .Home_content_wrapper {
   box-sizing: border-box;
   width: 100%;
-  height: 90%;
+  height: auto;
+  margin-top: 10dvh;
 
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
+
+  overflow-y: auto;
 }
 
 .Home_content {
   /* Width and height */
   box-sizing: border-box;
-  overflow-y: auto;
 
   width:100%;
-  max-height: 100%;
+  height: auto;
 
   /* Margins */
   padding-top: 20px;
@@ -155,24 +205,32 @@ const handleSubmit = async () => {
   padding-right: 5px;
 }
 
-@media (max-width: 400px) {
+@media (orientation: portrait) {
   .Home_content {
     width: 95%;
   }
 }
-@media (max-width: 600px) {
-  .Home_content {
-    width: 90%;
+  
+@media (orientation: landscape) {
+  @media (max-width: 400px) {
+    .Home_content {
+      width: 95%;
+    }
   }
-}
-@media (max-width: 900px) {
-  .Home_content {
-    width: 80%;
+  @media (max-width: 600px) {
+    .Home_content {
+      width: 90%;
+    }
   }
-}
-@media (min-width: 900px) {
-  .Home_content {
-    width: 70%;
+  @media (max-width: 900px) {
+    .Home_content {
+      width: 80%;
+    }
+  }
+  @media (min-width: 900px) {
+    .Home_content {
+      width: 70%;
+    }
   }
 }
 
@@ -226,6 +284,7 @@ const handleSubmit = async () => {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  min-width: 70%;
 }
 
 .Home_Department {
@@ -240,6 +299,7 @@ const handleSubmit = async () => {
 
 .Home_StatusSelection {
   width: 50%;
+  margin-left: 5px;
 }
 
 .Home_Type {
@@ -277,5 +337,55 @@ const handleSubmit = async () => {
   justify-content: center;
 
   margin-bottom: 20px;
+}
+
+.Home_PetitionsList {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (orientation: portrait) {
+  .PetitionCard {
+    flex-direction: column;
+  }
+}
+@media (orientation: landscape) {
+  .PetitionCard {
+    flex-direction: row;
+  }
+}
+
+.PetitionCard {
+  box-sizing: border-box;
+  background-color: var(--background);
+  border-radius: 10px;
+  box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.921),
+      0 2px 6px rgba(0, 0, 0, 0.284);
+
+  width: 90%;
+  padding: 15px;
+  margin: 10px 0;
+
+  text-align: left;
+
+  display: flex;
+  justify-content: space-between;
+}
+
+.Home_MainData {
+  flex: 1;
+}
+
+.Home_BasicDescription {
+  flex: 1;
+  overflow: hidden;
+}
+
+.Home_OnlyPendingCheckbox {
+  margin-bottom: 10px;
 }
 </style>

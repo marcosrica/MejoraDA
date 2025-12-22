@@ -1,6 +1,8 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
-import Database from "../Components/Database";
+import Database from "./Components/Database";
+
+import GetFilters from "./Components/PetitionResolvers/GetForms";
 
 const app = express();
 const db:Database = new Database();
@@ -15,15 +17,15 @@ app.post("/api/newForm", async (req: Request, res: Response) => {
     
     switch(req.body.documentType) {
       case "Idea":
-        operationResult = await db.InsertNewIdea(req.body.department, req.body.description);
+        operationResult = await db.InsertNewIdea(req.body.department, req.body.subject, req.body.description);
         break;
 
       case "Suggestion":
-        operationResult = await db.InsertNewSuggestion(req.body.department, req.body.description);
+        operationResult = await db.InsertNewSuggestion(req.body.department, req.body.subject, req.body.description);
         break;
 
       case "Complaint":
-        operationResult = await db.InsertNewComplaint(req.body.department, req.body.description);
+        operationResult = await db.InsertNewComplaint(req.body.department, req.body.subject, req.body.description);
         break;
     }
 
@@ -37,6 +39,11 @@ app.post("/api/newForm", async (req: Request, res: Response) => {
   else { //Fields were empty
     res.status(404).json("Route not found");
   }
+});
+
+app.post("/api/petitions/filter", async (req: Request, res: Response) => {
+  const filters = await GetFilters(req.body.type, req.body.department, req.body.showResolved, db);
+  res.status(200).json(filters);
 });
 
 app.listen(3000, () => {
