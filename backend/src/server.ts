@@ -5,10 +5,15 @@ import Database from "./Components/Database";
 import GetFilters from "./Components/PetitionResolvers/GetForms";
 
 const app = express();
-const db:Database = new Database();
+let db: Database;
+db = new Database();
 
 app.use(cors());
 app.use(express.json());
+
+app.get("/Hello", (req:Request, res:Response) => {
+  res.status(200).send("Hello World");
+});
 
 app.post("/api/newForm", async (req: Request, res: Response) => {
   //First verify that fields are not empty
@@ -42,6 +47,7 @@ app.post("/api/newForm", async (req: Request, res: Response) => {
 });
 
 app.post("/api/petitions/filter", async (req: Request, res: Response) => {
+  console.log("reached point. Fileds: " + req.body.department + " type: " + req.body.type);
   const filters = await GetFilters(req.body.type, req.body.department, req.body.showResolved, db);
   res.status(200).json(filters);
 });

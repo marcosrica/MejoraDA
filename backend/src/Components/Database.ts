@@ -1,7 +1,7 @@
 import mysql from 'mysql2';
 import { ResultSetHeader } from 'mysql2/promise';
 import DatabaseKeys from './../../keys';
-import FormData from '../Interfaces/FormRetrieval';
+import Petition from '../Interfaces/FormRetrieval';
 
 const dbKeys = new DatabaseKeys();
 const pool = mysql.createPool({
@@ -47,7 +47,7 @@ class Database {
     //#endregion
 
     //#region Retrievals
-    RetrieveIdeas = async (department:string, solvedToo:boolean): Promise<FormData[]> => {
+    RetrieveIdeas = async (department:string, solvedToo:boolean): Promise<Petition[]> => {
         const [result] = await pool.query(`
             SELECT *
             FROM ideas
@@ -55,15 +55,15 @@ class Database {
             AND (solved = 0 OR solved = ?)
         `, [department, department, solvedToo]);
     
-        let formatted:FormData[] = [];
+        let formatted:Petition[] = [];
         (result as any[]).forEach((item) => {
             formatted.push({
                 request_id: item.request_id,
                 department: this.formatDepartment(item.department),
                 subject: item.subject,
                 description: item.description,
-
-                solved: item.solved === 1,
+                type: "Idea",
+                solved: item.solved,
                 date: item.date,
             });
         });
@@ -71,7 +71,7 @@ class Database {
         return formatted;
     }
 
-    RetrieveComplaints = async (department:string, solvedToo:boolean): Promise<FormData[]> => {
+    RetrieveComplaints = async (department:string, solvedToo:boolean): Promise<Petition[]> => {
         const [result] = await pool.query(`
             SELECT *
             FROM complaints
@@ -79,15 +79,15 @@ class Database {
             AND (solved = 0 OR solved = ?)
         `, [department, department, solvedToo]);
     
-        let formatted:FormData[] = [];
+        let formatted:Petition[] = [];
         (result as any[]).forEach((item) => {
             formatted.push({
                 request_id: item.request_id,
                 department: this.formatDepartment(item.department),
                 subject: item.subject,
                 description: item.description,
-
-                solved: item.solved === 1,
+                type: "Queja",
+                solved: item.solved,
                 date: item.date,
             });
         });
@@ -95,7 +95,7 @@ class Database {
         return formatted;
     }
 
-    RetrieveSuggestions= async (department:string, solvedToo:boolean): Promise<FormData[]> => {
+    RetrieveSuggestions= async (department:string, solvedToo:boolean): Promise<Petition[]> => {
         const [result] = await pool.query(`
             SELECT *
             FROM suggestions
@@ -103,15 +103,15 @@ class Database {
             AND (solved = 0 OR solved = ?)
         `, [department, department, solvedToo]);
     
-        let formatted:FormData[] = [];
+        let formatted:Petition[] = [];
         (result as any[]).forEach((item) => {
             formatted.push({
                 request_id: item.request_id,
                 department: this.formatDepartment(item.department),
                 subject: item.subject,
                 description: item.description,
-
-                solved: item.solved === 1,
+                type: "Sugerencia",
+                solved: item.solved,
                 date: item.date,
             });
         });

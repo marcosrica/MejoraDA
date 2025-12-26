@@ -1,34 +1,61 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref } from 'vue';
+import { onMounted } from 'vue';
+
 import PetitionMaker from '../Utilities/PetitionMaker'
 import BaseButton from './BaseButton.vue';
 import BaseSelect from './BaseSelect.vue';
 import BaseCheckbox from './BaseCheckbox.vue';
+import BaseCard from './BaseCard.vue';
 
 //Class that holds the method to make petitions to the backend
 const petitionMaker:PetitionMaker = new PetitionMaker();
 
 //Fields that are completed in the filters form, and accedes in the handleSubmit function
-const department = ref('Todo')
-const type = ref('Todo')
-const showResolved = ref(false)
+const department = ref('All');
+const type = ref('All');
+const showResolved = ref(false);
 
 //Variable containing the forms retrieved from the backend
-const petitions = ref<any[]>([])
+const petitions = ref<any[]>([]);
+const unsolvedPetitions = ref<number>(0);
 
+//Request the forms that comply with the new filters
 const handleSubmit = async () => {
   const filters = {
     department: department.value,
     type: type.value,
     showResolved: showResolved.value,
-  }
+  };
 
-  const response = await petitionMaker.makePetition('/api/petitions/filter', 'POST', filters);
-  petitions.value = response.data;
+  console.log(filters);
 
-  console.log('Applied filters:', filters);
-  console.log('Response:', petitions);
+  await fetchForms(filters.department, filters.type, filters.showResolved);
 }
+
+const markAsResolved = async (petitionId:number) => {
+  const x=0;
+}
+
+const fetchForms = async (department:string, type:string, showResolved:boolean) => {
+  const data = {
+    department: department,
+    type: type,
+    showResolved: showResolved,
+  };
+
+  const response = await petitionMaker.makePetition('/api/petitions/filter', 'POST', data);
+  if(!response.error) {
+    petitions.value = []
+    petitions.value = response.data.map(p => ({ ...p, expanded: false }));
+  }
+}
+
+
+//Fetch all the forms that aren't resolved
+onMounted(() => {
+  fetchForms(department.value, type.value, showResolved.value);
+});
 </script>
 
 <template>
@@ -45,8 +72,8 @@ const handleSubmit = async () => {
     <div class="Home_content_wrapper">
       <div class="Home_content">
         <div class="Home_Welcome">
-          <h2 class="Home_Big_Text">¡Bienvenido de nuevo, USER!</h2>
-          <p> Hay x solicitudes pendientes </p>
+          <h2 class="Home_Welcome_Text">¡Bienvenido de nuevo, USER!</h2>
+          <p class="Home_UnsolvedPetitionsCount"> Hay {{ unsolvedPetitions }} solicitudes pendientes </p>
         </div>
         
         <div class="Home_Filters">
@@ -102,25 +129,46 @@ const handleSubmit = async () => {
         <div class="Home_Forms">
           <p class="Home_Big_Text"> Se han encontrado {{ petitions.length }} solicitudes </p>
           <div class="Home_PetitionsList">
+            <BaseCard
+              v-for="petition in petitions"
+              :key="petition.public_id || petition.request_id"
+              class="PetitionCard"
+            >
+              <!-- Header: Subject -->
+              <div 
+                class="PetitionHeader"
+                @click="petition.expanded = !petition.expanded"
+              >
+                <h3 class="PetitionSubject">{{ petition.subject }}</h3>
+                <span class="ToggleIndicator">
+                  {{ petition.expanded ? '▲' : '▼' }}
+                </span>
+              </div>
+            
+              <!-- Subtitle: type, department, status -->
+              <div class="PetitionSubtitle">
+                <p class="Cards_SubtitleText"><strong>Tipo:</strong> {{ petition.type }}</p>
+                <p><strong>Dirigido a:</strong> {{ petition.department }}</p>
+                <p>
+                  <strong>Estado:</strong> {{ petition.solved ? 'Resuelta' : 'Pendiente' }}
+                </p>
+              </div>
+            
+              <!-- Expandable description -->
+              <transition name="collapse">
+                <div 
+                  class="PetitionDescription"
+                  v-if="petition.expanded"
+                >
+                  <p class="DescriptionHeader"> <strong> Descripción:  </strong> </p>
+                  <p>{{ petition.description }}</p>
+                </div>
+              </transition>
 
-          </div>
-          <div
-            v-for="petition in petitions"
-            :key="petition.request_id"
-            class="PetitionCard"
-          >
-            <div class="Home_MainData">
-              <p><strong>Dirigido a:</strong> {{ petition.department }} </p>
-              <p><strong>Asunto: </strong> {{ petition.subject }} </p>
-              <p>
-                <strong>Estado:</strong>
-                {{ petition.solved ? 'Resuelta' : 'Pendiente' }}
-              </p>
-            </div>
-            <div class="Home_BasicDescription">
-              <p><strong>Descripción:</strong></p>
-              <p>{{ petition.description }}</p>
-            </div>
+              <div class="ResolvePetition" v-if="!petition.solved">
+                <BaseButton variant="primary" > Marcar como resuelta </BaseButton>
+              </div>
+            </BaseCard>
           </div>
         </div>
       </div>
@@ -257,6 +305,17 @@ const handleSubmit = async () => {
   margin-bottom: 20px;
 }
 
+.Home_Welcome_Text {
+  font-family: 'Montserrat', sans-serif;
+  font-size: large;
+  font-weight: bold;
+  margin-bottom: 0px;
+}
+
+.Home_UnsolvedPetitionsCount {
+  margin-top: 5px;
+}
+
 /* Filters div */
 .Home_Filters {
   box-sizing: border-box;
@@ -359,33 +418,69 @@ const handleSubmit = async () => {
 }
 
 .PetitionCard {
-  box-sizing: border-box;
-  background-color: var(--background);
-  border-radius: 10px;
-  box-shadow:
-      0 1px 2px rgba(0, 0, 0, 0.921),
-      0 2px 6px rgba(0, 0, 0, 0.284);
-
-  width: 90%;
+  display: flex;
+  flex-direction: column;
   padding: 15px;
-  margin: 10px 0;
+  margin-bottom: 15px;
+  width: 90%;
+  box-sizing: border-box;
+}
 
-  text-align: left;
-
+.PetitionHeader {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
 }
 
-.Home_MainData {
-  flex: 1;
+.PetitionSubject {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-bottom: 0px;
 }
 
-.Home_BasicDescription {
-  flex: 1;
+.ToggleIndicator {
+  font-size: 1em;
+}
+
+.PetitionSubtitle {
+  font-size: 0.9em;
+  color: var(--text-secondary);
+  margin-top: 5px;
+  margin-bottom: 0px;
+}
+
+.PetitionDescription {
+  margin-top: 0px;
+  font-size: 0.95em;
+  color: var(--text-primary);
+}
+
+.DescriptionHeader {
+  margin-top: 0px;
+}
+
+.Cards_SubtitleText {
+  margin-top: 0px;
+  margin-bottom: 2px;
+}
+
+/* Description transition */
+.collapse-enter-from,
+.collapse-leave-to {
+  max-height: 0;
+  opacity: 0;
   overflow: hidden;
 }
 
-.Home_OnlyPendingCheckbox {
-  margin-bottom: 10px;
+.collapse-enter-to,
+.collapse-leave-from {
+  max-height: 500px; /* max expected height of description */
+  opacity: 1;
+}
+
+.collapse-enter-active,
+.collapse-leave-active {
+  transition: all 0.3s ease;
 }
 </style>
