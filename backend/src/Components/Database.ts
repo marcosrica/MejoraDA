@@ -120,6 +120,41 @@ class Database {
     }
     //#endregion
 
+    //#region Resolved marking
+    MarkIdeaAsResolved = async (id:number): Promise<boolean> => {
+        const [result]:[ResultSetHeader, any] = await pool.query(`
+                UPDATE ideas
+                SET solved = true
+                WHERE request_id = ?
+            `, [id]);
+
+        console.log(result);
+        return (result.affectedRows === 1);
+    }
+
+    MarkComplaintAsResolved = async (id:number): Promise<boolean> => {
+        const [result]:[ResultSetHeader, any] = await pool.query(`
+                UPDATE complaints
+                SET solved = true
+                WHERE request_id = ?
+            `, [id]);
+
+        console.log(result);
+        return (result.affectedRows === 1);
+    }
+
+    MarkSuggestionAsResolved = async (id:number): Promise<boolean> => {
+        const [result]:[ResultSetHeader, any] = await pool.query(`
+                UPDATE suggestions
+                SET solved = true
+                WHERE request_id = ?
+            `, [id]);
+
+        console.log(result);
+        return (result.affectedRows === 1);
+    }
+    //#endregion
+
     //#region auxFunctions
     formatDepartment = (department:string):string => {
         switch(department) {

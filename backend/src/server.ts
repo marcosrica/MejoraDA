@@ -52,6 +52,32 @@ app.post("/api/petitions/filter", async (req: Request, res: Response) => {
   res.status(200).json(filters);
 });
 
+app.post("/api/petitions/markAsResolved", async (req:Request, res:Response) => {
+  console.log("Reached marking as valid endpoint. Data: " + req.body.id + ";   Data type: " + typeof req.body.id)
+  let result:boolean = false;
+    
+  switch(req.body.type) {
+    case "Idea": 
+      result = await db.MarkIdeaAsResolved(req.body.id);
+      break;
+
+    case "Complaint":
+      result = await db.MarkComplaintAsResolved(req.body.id);
+      break;
+
+    case "Suggestion":
+      result = await db.MarkSuggestionAsResolved(req.body.id);
+      break;
+  }
+
+  if(result) {
+    res.status(200).send("OK");
+  }
+  else {
+    res.status(500).send("Internal server error");
+  }
+});
+
 app.listen(3000, () => {
   console.log("Backend running at http://localhost:3000");
 });

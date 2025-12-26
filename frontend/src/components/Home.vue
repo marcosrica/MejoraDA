@@ -33,8 +33,20 @@ const handleSubmit = async () => {
   await fetchForms(filters.department, filters.type, filters.showResolved);
 }
 
-const markAsResolved = async (petitionId:number) => {
-  const x=0;
+const markAsResolved = async (type:string, petitionId:number) => {
+  const data = {
+    type: type,
+    id: petitionId,
+  };
+
+  const response = await petitionMaker.makePetition("/api/petitions/markAsResolved", "POST", data);
+  
+  if(response.status == 200) {
+    console.log("Form marked as reviewed");
+  }
+  else {
+    console.log("Error in the marking process");
+  }
 }
 
 const fetchForms = async (department:string, type:string, showResolved:boolean) => {
@@ -166,7 +178,7 @@ onMounted(() => {
               </transition>
 
               <div class="ResolvePetition" v-if="!petition.solved">
-                <BaseButton variant="primary" > Marcar como resuelta </BaseButton>
+                <BaseButton variant="primary" v-on:click="markAsResolved(petition.type, petition.request_id)"> Marcar como resuelta </BaseButton>
               </div>
             </BaseCard>
           </div>
