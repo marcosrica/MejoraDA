@@ -60,7 +60,7 @@ CREATE TABLE ideas (
     `department` TEXT NOT NULL,
     `subject` TEXT NOT NULL,
     `description` TEXT NOT NULL,
-    `solved` BOOLEAN NOT NULL DEFAULT FALSE
+    `solved` BOOLEAN NOT NULL DEFAULT FALSE,
     `date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -69,7 +69,7 @@ CREATE TABLE suggestions (
     `department` TEXT NOT NULL,
     `subject` TEXT NOT NULL,
     `description` TEXT NOT NULL,
-    `solved` BOOLEAN NOT NULL DEFAULT FALSE
+    `solved` BOOLEAN NOT NULL DEFAULT FALSE,
     `date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -78,7 +78,7 @@ CREATE TABLE complaints (
     `department` TEXT NOT NULL,
     `subject` TEXT NOT NULL,
     `description` TEXT NOT NULL,
-    `solved` BOOLEAN NOT NULL DEFAULT FALSE
+    `solved` BOOLEAN NOT NULL DEFAULT FALSE,
     `date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```

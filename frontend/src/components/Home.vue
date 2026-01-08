@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { onMounted } from 'vue';
+import BaseAlert from './BaseAlert.vue';
 
 import PetitionMaker from '../Utilities/PetitionMaker'
 import BaseButton from './BaseButton.vue';
@@ -11,14 +12,31 @@ import BaseCard from './BaseCard.vue';
 //Class that holds the method to make petitions to the backend
 const petitionMaker:PetitionMaker = new PetitionMaker();
 
+//Variables for the alert
+const displayAlert = ref(false);
+const alertMessage = ref('');
+const alertType = ref<'success' | 'error' | 'info'>('success');
+
 //Fields that are completed in the filters form, and accedes in the handleSubmit function
 const department = ref('All');
 const type = ref('All');
 const showResolved = ref(false);
 
+//Group of last applied filters for whenever reloading is needed
+let lastDept:string;
+let lastType:string;
+let lastRes:boolean;
+
 //Variable containing the forms retrieved from the backend
 const petitions = ref<any[]>([]);
 const unsolvedPetitions = ref<number>(0);
+
+//Handle the alert showing
+const showAlert = (type:'success' | 'error' | 'info', message:string) => {
+  alertType.value = type;
+  alertMessage.value = message;
+  displayAlert.value = true;
+}
 
 //Request the forms that comply with the new filters
 const handleSubmit = async () => {
@@ -33,6 +51,7 @@ const handleSubmit = async () => {
   await fetchForms(filters.department, filters.type, filters.showResolved);
 }
 
+//Mark a certain form as resolved after analisis
 const markAsResolved = async (type:string, petitionId:number) => {
   const data = {
     type: type,
@@ -40,15 +59,18 @@ const markAsResolved = async (type:string, petitionId:number) => {
   };
 
   const response = await petitionMaker.makePetition("/api/petitions/markAsResolved", "POST", data);
-  
+  console.log(response);
+
   if(response.status == 200) {
-    console.log("Form marked as reviewed");
+    showAlert("success", "La solicitud ha sido marcada como resuelta");
+    fetchForms(lastDept, lastType, lastRes);
   }
   else {
-    console.log("Error in the marking process");
+    showAlert("error", "Ha habido un error al marcar la solicitud como resuelta");
   }
 }
 
+//Retrieve the forms answers from the server with the applied filters
 const fetchForms = async (department:string, type:string, showResolved:boolean) => {
   const data = {
     department: department,
@@ -60,12 +82,29 @@ const fetchForms = async (department:string, type:string, showResolved:boolean) 
   if(!response.error) {
     petitions.value = []
     petitions.value = response.data.map(p => ({ ...p, expanded: false }));
+
+    lastDept = data.department;
+    lastType = data.type;
+    lastRes = data.showResolved;
+  }
+  else {
+    showAlert("error", "Ha ocurrido un error al aplicar los filtros");
   }
 }
 
+const fetchUnresolvedForms = async () => {
+  const result = await petitionMaker.makePetition("/api/UnresolvedFormsCount", "GET");
+
+  console.log(result);
+
+  if(result.status == 200) {
+    unsolvedPetitions.value = result.data.count;
+  }
+}
 
 //Fetch all the forms that aren't resolved
-onMounted(() => {
+onMounted(async () => {
+  await fetchUnresolvedForms();
   fetchForms(department.value, type.value, showResolved.value);
 });
 </script>
@@ -83,6 +122,14 @@ onMounted(() => {
 
     <div class="Home_content_wrapper">
       <div class="Home_content">
+        <BaseAlert
+                :show="displayAlert"
+                :type="alertType"
+                :message="alertMessage"
+
+                @close="displayAlert = false"
+            />
+
         <div class="Home_Welcome">
           <h2 class="Home_Welcome_Text">¡Bienvenido de nuevo, USER!</h2>
           <p class="Home_UnsolvedPetitionsCount"> Hay {{ unsolvedPetitions }} solicitudes pendientes </p>
@@ -177,8 +224,9 @@ onMounted(() => {
                 </div>
               </transition>
 
-              <div class="ResolvePetition" v-if="!petition.solved">
+              <div class="ResolvePetitionDiv" v-if="!petition.solved">
                 <BaseButton variant="primary" v-on:click="markAsResolved(petition.type, petition.request_id)"> Marcar como resuelta </BaseButton>
+                <BaseButton variant="danger" v-on:click="markAsResolved(petition.type, petition.request_id)"> Eliminar solicitud </BaseButton>
               </div>
             </BaseCard>
           </div>
@@ -230,6 +278,7 @@ onMounted(() => {
   height: 100%;
 
   margin-left: 20px;
+  cursor:pointer;
 }
 
 .ServiceLogo {
@@ -355,7 +404,8 @@ onMounted(() => {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-width: 70%;
+  min-width: 80%;
+  gap: 5px
 }
 
 .Home_Department {
@@ -364,13 +414,10 @@ onMounted(() => {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
+  gap: 10px;
 
   margin-bottom: 10px;
-}
-
-.Home_StatusSelection {
-  width: 50%;
-  margin-left: 5px;
 }
 
 .Home_Type {
@@ -379,8 +426,16 @@ onMounted(() => {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
+  gap: 10px;
 
   margin-bottom: 10px;
+}
+
+.Home_StatusSelection {
+  width: 50%;
+  margin-left: 5px;
+  gap: 10px;
 }
 
 .Home_OnlyPending {
@@ -389,6 +444,7 @@ onMounted(() => {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
 
   margin-bottom: 10px;
 }
@@ -495,4 +551,16 @@ onMounted(() => {
 .collapse-leave-active {
   transition: all 0.3s ease;
 }
+
+.ResolvePetitionDiv {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  @media (orientation: portrait) and (max-width: 500px) {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
 </style>

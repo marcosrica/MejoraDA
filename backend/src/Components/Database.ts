@@ -129,7 +129,7 @@ class Database {
             `, [id]);
 
         console.log(result);
-        return (result.affectedRows === 1);
+        return true;
     }
 
     MarkComplaintAsResolved = async (id:number): Promise<boolean> => {
@@ -140,7 +140,7 @@ class Database {
             `, [id]);
 
         console.log(result);
-        return (result.affectedRows === 1);
+        return true;
     }
 
     MarkSuggestionAsResolved = async (id:number): Promise<boolean> => {
@@ -149,9 +149,9 @@ class Database {
                 SET solved = true
                 WHERE request_id = ?
             `, [id]);
-
+            
         console.log(result);
-        return (result.affectedRows === 1);
+        return true;
     }
     //#endregion
 

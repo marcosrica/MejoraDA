@@ -4,9 +4,9 @@
     import BaseAlert from './BaseAlert.vue'; //For showing when the form has been submitted successfully
     import BaseInput from './BaseInput.vue';
     import BaseTextArea from './BaseTextArea.vue';
-import BaseButton from './BaseButton.vue';
-import BaseSelect from './BaseSelect.vue';
-import BaseRadioGroup from './BaseRadioGroup.vue';
+    import BaseButton from './BaseButton.vue';
+    import BaseSelect from './BaseSelect.vue';
+    import BaseRadioGroup from './BaseRadioGroup.vue';
 
     //Object needed to fulfill the petition
     const petitionMaker:PetitionMaker = new PetitionMaker();
@@ -147,15 +147,16 @@ import BaseRadioGroup from './BaseRadioGroup.vue';
         height: 100dvh;
 
         display: flex;
-        flex-direction: column;
+        flex-direction: column-reverse;
         align-items: center;
     }
 
+    /* #region Top bar */
     .TopBarDiv {
         background-color: var(--main-color);
         box-shadow:
-            0 1px 2px rgba(0, 0, 0, 0.921),
-            0 2px 6px rgba(0, 0, 0, 0.284);
+          0 1px 2px rgba(0, 0, 0, 0.921),
+          0 2px 6px rgba(0, 0, 0, 0.284);
 
         width: 100%;
         height: 10%;
@@ -181,6 +182,7 @@ import BaseRadioGroup from './BaseRadioGroup.vue';
         height: 100%;
 
         margin-left: 20px;
+        cursor:pointer;
     }
 
     .ServiceLogo {
@@ -188,24 +190,24 @@ import BaseRadioGroup from './BaseRadioGroup.vue';
         margin-right: 15px;
     }
 
+    /* #endregion */
+
     .ContentDiv {
         /* Width and height */
         box-sizing: border-box;
         overflow-y: auto;
         width:100%;
+        height: 90%;
 
         /* Overall structure */
         display:flex;
-        flex: 1;
         flex-direction: column;
         align-items: center;
         justify-content: top;
 
         /* Margins and paddings */
-        margin-top: 12dvh;
-        margin-bottom: 2dvh;
-        padding-top: 15px;
-        padding-bottom: 15px;
+        padding-top: 2dvh;
+        padding-bottom: 2dvh;
         padding-left: 5px;
         padding-right: 5px;
     }
@@ -214,18 +216,14 @@ import BaseRadioGroup from './BaseRadioGroup.vue';
         display: flex;
         flex-direction: column;
         align-items: center;
-        width: 80%; /* Controls the width of both header and form */
-    }
-
-    @media (orientation: landscape) {
-      .FormWrapper {
         width: 80%;
-      }
-    }
-    @media (orientation: portrait) {
-      .FormWrapper {
-        width: 95%;
-      }
+
+        @media (orientation: landscape) {
+            width: 80%;
+        }
+        @media (orientation: portrait) {
+          width: 95%;
+        }
     }
 
     .FormHeader {

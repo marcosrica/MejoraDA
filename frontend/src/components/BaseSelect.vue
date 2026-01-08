@@ -54,7 +54,6 @@ const onChange = (event: Event) => {
 .BaseSelect {
   display: flex;
   flex-direction: column;
-  margin-bottom: 16px;
   font-family: 'Montserrat', sans-serif;
 }
 

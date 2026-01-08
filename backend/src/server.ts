@@ -15,6 +15,19 @@ app.get("/Hello", (req:Request, res:Response) => {
   res.status(200).send("Hello World");
 });
 
+app.get("/api/UnresolvedFormsCount", async (req:Request, res:Response) => {
+  const [complaints, ideas, suggestions] = await Promise.all([
+      db.RetrieveComplaints("All", false),
+      db.RetrieveIdeas("All", false),
+      db.RetrieveSuggestions("All", false),
+  ]);
+
+  const count = complaints.length + ideas.length + suggestions.length;
+  console.log(count + "is the amount of petitions");
+
+  res.status(200).json({count});
+});
+
 app.post("/api/newForm", async (req: Request, res: Response) => {
   //First verify that fields are not empty
   if(req.body.department != "" && req.body.description != "") {
@@ -55,26 +68,31 @@ app.post("/api/petitions/filter", async (req: Request, res: Response) => {
 app.post("/api/petitions/markAsResolved", async (req:Request, res:Response) => {
   console.log("Reached marking as valid endpoint. Data: " + req.body.id + ";   Data type: " + typeof req.body.id)
   let result:boolean = false;
+  console.log("Reqyest type: " + req.body.type);
     
   switch(req.body.type) {
     case "Idea": 
       result = await db.MarkIdeaAsResolved(req.body.id);
       break;
 
-    case "Complaint":
+    case "Queja":
       result = await db.MarkComplaintAsResolved(req.body.id);
       break;
 
-    case "Suggestion":
+    case "Sugerencia":
       result = await db.MarkSuggestionAsResolved(req.body.id);
       break;
   }
 
+  console.log("result: " + result);
+
   if(result) {
-    res.status(200).send("OK");
+    console.log("Sending OK");
+    res.status(200).json("OK");
   }
   else {
-    res.status(500).send("Internal server error");
+    console.log("Sensing error");
+    res.status(404).json("Internal server error");
   }
 });
 

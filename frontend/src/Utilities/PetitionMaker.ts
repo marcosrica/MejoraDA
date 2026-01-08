@@ -19,8 +19,9 @@ class PetitionMaker {
         this.routes = new serverRoutes();
     }
 
-    makePetition = async (url: string, method: string, body?: any): Promise<PetitionResult> => {
+    makePetition = async (url: string, method: string, body?: any, debug:boolean = false): Promise<PetitionResult> => {
         let result: PetitionResult = new PetitionResult();
+        console.log(this.routes.backend + url);
 
         try {
             const response:Response = await fetch(this.routes.backend + url, {
@@ -31,12 +32,14 @@ class PetitionMaker {
                 body: JSON.stringify(body),
             });
 
+
             const data = await response.json();
             console.log(data);
 
             result = new PetitionResult(response.status, data, false);
         }
         catch (error) {
+            throw error;
             result.error = true;
         }
 
