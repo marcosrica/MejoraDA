@@ -8,7 +8,7 @@ import BaseButton from './BaseComponents/BaseButton.vue';
 import BaseSelect from './BaseComponents/BaseSelect.vue';
 import BaseCheckbox from './BaseComponents/BaseCheckbox.vue';
 import BaseCard from './BaseComponents/BaseCard.vue';
-import Header from './BuildingBlocks/Header.vue';
+import BasePage from './BuildingBlocks/BasePage.vue';
 
 //Class that holds the method to make petitions to the backend
 const petitionMaker:PetitionMaker = new PetitionMaker();
@@ -111,196 +111,126 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="Home_background">
-    <Header />
+  <BasePage>
+    <!-- Alert for user feedback -->
+    <BaseAlert
+      :show="displayAlert"
+      :type="alertType"
+      :message="alertMessage"
 
-    <div class="Home_content_wrapper">
-      <div class="Home_content">
-        <BaseAlert
-                :show="displayAlert"
-                :type="alertType"
-                :message="alertMessage"
+      @close="displayAlert = false" 
+    />
 
-                @close="displayAlert = false"
-            />
+    <!-- Header -->
+    <div class="Home_Welcome">
+      <h2 class="Home_Welcome_Text">¡Bienvenido de nuevo, USER!</h2>
+      <p class="Home_UnsolvedPetitionsCount"> Hay {{ unsolvedPetitions }} solicitudes pendientes </p>
+    </div>
 
-        <div class="Home_Welcome">
-          <h2 class="Home_Welcome_Text">¡Bienvenido de nuevo, USER!</h2>
-          <p class="Home_UnsolvedPetitionsCount"> Hay {{ unsolvedPetitions }} solicitudes pendientes </p>
+    <!-- Filters Section -->
+    <div class="Home_Filters">
+      <p class="Home_Big_Text"> Filtrar solicitudes </p>
+      <form class="Filters_Form"  @submit.prevent="handleSubmit">
+        <div class="Home_Department">
+          <label for="status">Subdelegación:</label>
+          <BaseSelect
+            v-model="department"
+            custom-class="Home_StatusSelection"
+            label=""
+            placeholder="Selecciona una opción"
+            :options="[
+              { value: 'All', label: 'Todas' },
+              { value: 'General', label: 'General' },
+              { value: 'AtencionEstudiante', label: 'Subdelegación de Ayuda y Servicios para el Estudiante' },
+              { value: 'Comunicacion', label: 'Subdelegación de Comunicación' },
+              { value: 'Calidad', label: 'Subdelegación de Mediación y Calidad Académica' },
+              { value: 'TIC', label: 'Subdelegación de Estrategia y Desarrollo Tecnológico' },
+              { value: 'Eventos', label: 'Subdelegación de Eventos' },
+              { value: 'Igualdad', label: 'Subdelegación de Bienestar e Igualdad Social' }
+            ]"
+          />
         </div>
-        
-        <div class="Home_Filters">
-          <p class="Home_Big_Text"> Filtrar solicitudes </p>
-          <form class="Filters_Form"  @submit.prevent="handleSubmit">
-            <div class="Home_Department">
-              <label for="status">Subdelegación:</label>
-              <BaseSelect
-                v-model="department"
-                custom-class="Home_StatusSelection"
-                label=""
-                placeholder="Selecciona una opción"
-                :options="[
-                  { value: 'All', label: 'Todas' },
-                  { value: 'General', label: 'General' },
-                  { value: 'AtencionEstudiante', label: 'Subdelegación de Ayuda y Servicios para el Estudiante' },
-                  { value: 'Comunicacion', label: 'Subdelegación de Comunicación' },
-                  { value: 'Calidad', label: 'Subdelegación de Mediación y Calidad Académica' },
-                  { value: 'TIC', label: 'Subdelegación de Estrategia y Desarrollo Tecnológico' },
-                  { value: 'Eventos', label: 'Subdelegación de Eventos' },
-                  { value: 'Igualdad', label: 'Subdelegación de Bienestar e Igualdad Social' }
-                ]"
-              />
-            </div>
-            <div class="Home_Type">
-              <label for="status" >Tipo:</label>
-              <BaseSelect
-                v-model="type"
-                label=""
-                placeholder="Selecciona una opción"
-                :options="[
-                  { value: 'All', label: 'Todos' },
-                  { value: 'Complaint', label: 'Quejas' },
-                  { value: 'Idea', label: 'Ideas' },
-                  { value: 'Suggestion', label: 'Sugerencia' },
-                ]"
-              />
-            </div>
-            <div class="Home_OnlyPending">
-              <label for="status">Mostrar también las incidencias resueltas</label>
-              <BaseCheckbox
-                v-model="showResolved"
-                name="onlyPending"
-                customClass="Home_OnlyPendingCheckbox"
-              />
-            </div>
-            <div class="Home_Submit">
-              <BaseButton type="submit" variant="primary"> Aplicar filtros </BaseButton>
-            </div>
-          </form>
+        <div class="Home_Type">
+          <label for="status" >Tipo:</label>
+          <BaseSelect
+            v-model="type"
+            label=""
+            placeholder="Selecciona una opción"
+            :options="[
+              { value: 'All', label: 'Todos' },
+              { value: 'Complaint', label: 'Quejas' },
+              { value: 'Idea', label: 'Ideas' },
+              { value: 'Suggestion', label: 'Sugerencia' },
+            ]"
+          />
         </div>
+        <div class="Home_OnlyPending">
+          <label for="status">Mostrar también las incidencias resueltas</label>
+          <BaseCheckbox
+            v-model="showResolved"
+            name="onlyPending"
+            customClass="Home_OnlyPendingCheckbox"
+          />
+        </div>
+        <div class="Home_Submit">
+          <BaseButton type="submit" variant="primary"> Aplicar filtros </BaseButton>
+        </div>
+      </form>
+    </div>
 
-        <div class="Home_Forms">
-          <div class="Home_Forms_ExpandableHeader">
-            <p class="Home_Big_Text"> Se han encontrado {{ petitions.length }} solicitudes </p>
+    <!-- Retrieved Forms Section -->
+    <div class="Home_Forms">
+      <div class="Home_Forms_ExpandableHeader">
+        <p class="Home_Big_Text"> Se han encontrado {{ petitions.length }} solicitudes </p>
+      </div>
+
+      <div class="Home_PetitionsList" >
+        <BaseCard
+          v-for="petition in petitions"
+          :key="petition.public_id || petition.request_id"
+          class="PetitionCard"
+        >
+          <!-- Header: Subject -->
+          <div 
+            class="PetitionHeader"
+            @click="petition.expanded = !petition.expanded"
+          >
+            <h3 class="PetitionSubject">{{ petition.subject }}</h3>
+            <span class="ToggleIndicator">
+              {{ petition.expanded ? '▲' : '▼' }}
+            </span>
           </div>
-
-          <div class="Home_PetitionsList" >
-            <BaseCard
-              v-for="petition in petitions"
-              :key="petition.public_id || petition.request_id"
-              class="PetitionCard"
+            
+          <!-- Subtitle: type, department, status -->
+          <div class="PetitionSubtitle">
+            <p class="Cards_SubtitleText"><strong>Tipo:</strong> {{ petition.type }}</p>
+            <p><strong>Dirigido a:</strong> {{ petition.department }}</p>
+            <p>
+              <strong>Estado:</strong> {{ petition.solved ? 'Resuelta' : 'Pendiente' }}
+            </p>
+          </div>
+            
+          <!-- Expandable description -->
+          <transition name="collapse">
+            <div 
+              class="PetitionDescription"
+              v-if="petition.expanded"
             >
-              <!-- Header: Subject -->
-              <div 
-                class="PetitionHeader"
-                @click="petition.expanded = !petition.expanded"
-              >
-                <h3 class="PetitionSubject">{{ petition.subject }}</h3>
-                <span class="ToggleIndicator">
-                  {{ petition.expanded ? '▲' : '▼' }}
-                </span>
-              </div>
-            
-              <!-- Subtitle: type, department, status -->
-              <div class="PetitionSubtitle">
-                <p class="Cards_SubtitleText"><strong>Tipo:</strong> {{ petition.type }}</p>
-                <p><strong>Dirigido a:</strong> {{ petition.department }}</p>
-                <p>
-                  <strong>Estado:</strong> {{ petition.solved ? 'Resuelta' : 'Pendiente' }}
-                </p>
-              </div>
-            
-              <!-- Expandable description -->
-              <transition name="collapse">
-                <div 
-                  class="PetitionDescription"
-                  v-if="petition.expanded"
-                >
-                  <p class="DescriptionHeader"> <strong> Descripción:  </strong> </p>
-                  <p>{{ petition.description }}</p>
-                </div>
-              </transition>
-              <div class="ResolvePetitionDiv" v-if="!petition.solved">
-                <BaseButton variant="primary" v-on:click="markAsResolved(petition.type, petition.request_id)"> Marcar como resuelta </BaseButton>
-                <BaseButton variant="danger" v-on:click="markAsResolved(petition.type, petition.request_id)"> Eliminar solicitud </BaseButton>
-              </div>
-            </BaseCard>
+              <p class="DescriptionHeader"> <strong> Descripción:  </strong> </p>
+              <p>{{ petition.description }}</p>
+            </div>
+          </transition>
+          <div class="ResolvePetitionDiv" v-if="!petition.solved">
+            <BaseButton variant="primary" v-on:click="markAsResolved(petition.type, petition.request_id)"> Marcar como resuelta </BaseButton>
+            <BaseButton variant="danger" v-on:click="markAsResolved(petition.type, petition.request_id)"> Eliminar solicitud </BaseButton>
           </div>
-        </div>
+        </BaseCard>
       </div>
     </div>
-  </div>
+  </BasePage>
 </template>
 
 <style scoped> 
-/* Big Blocks */
-.Home_background {
-  height: 100dvh;
-  width: 100dvw;
-
-  display: flex;
-  flex-direction: column;
-
-  background-color: var(--background);
-}
-
-.Home_content_wrapper {
-  box-sizing: border-box;
-  width: 100%;
-  height: auto;
-  margin-top: 10dvh;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-
-  overflow-y: auto;
-}
-
-.Home_content {
-  /* Width and height */
-  box-sizing: border-box;
-
-  width:100%;
-  height: auto;
-
-  /* Margins */
-  padding-top: 20px;
-  padding-bottom: 50px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-@media (orientation: portrait) {
-  .Home_content {
-    width: 95%;
-  }
-}
-  
-@media (orientation: landscape) {
-  @media (max-width: 400px) {
-    .Home_content {
-      width: 95%;
-    }
-  }
-  @media (max-width: 600px) {
-    .Home_content {
-      width: 90%;
-    }
-  }
-  @media (max-width: 900px) {
-    .Home_content {
-      width: 80%;
-    }
-  }
-  @media (min-width: 900px) {
-    .Home_content {
-      width: 70%;
-    }
-  }
-}
-
 .Home_Big_Text {
   font-family: 'Montserrat', sans-serif;
   font-size: large;

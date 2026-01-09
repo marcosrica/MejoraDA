@@ -1,12 +1,14 @@
 <script setup lang="ts">
     import { ref } from 'vue'
     import PetitionMaker from '../Utilities/PetitionMaker'
-    import BaseAlert from './BaseAlert.vue'; //For showing when the form has been submitted successfully
-    import BaseInput from './BaseInput.vue';
-    import BaseTextArea from './BaseTextArea.vue';
-    import BaseButton from './BaseButton.vue';
-    import BaseSelect from './BaseSelect.vue';
-    import BaseRadioGroup from './BaseRadioGroup.vue';
+    import BaseAlert from './BaseComponents/BaseAlert.vue'; //For showing when the form has been submitted successfully
+    import BaseInput from './BaseComponents/BaseInput.vue';
+    import BaseTextArea from './BaseComponents/BaseTextArea.vue';
+    import BaseButton from './BaseComponents/BaseButton.vue';
+    import BaseSelect from './BaseComponents/BaseSelect.vue';
+    import BaseRadioGroup from './BaseComponents/BaseRadioGroup.vue';
+    import Header from './BuildingBlocks/Header.vue';
+import BasePage from './BuildingBlocks/BasePage.vue';
 
     //Object needed to fulfill the petition
     const petitionMaker:PetitionMaker = new PetitionMaker();
@@ -49,17 +51,8 @@
 </script>
 
 <template>
-    <div class="Parent">
-        <div class="TopBarDiv">
-            <div class="PageID" onclick="location.href = '/'">
-                <img src="./../assets/Logo.png" alt="MejoraDA Logo" class="ServiceLogo"/>
-                <h1> MejoraDA </h1>
-            </div>
-
-            <img src="./../assets/Logo.png" alt="MejoraDA Logo" class="ServiceLogo"/>
-        </div>
-        <div class="ContentDiv">
-            <BaseAlert
+    <BasePage>
+        <BaseAlert
                 :show="showAlert"
                 :type="alertType"
                 :message="alertMessage"
@@ -67,163 +60,84 @@
                 @close="showAlert = false"
             />
 
-            <div class="FormWrapper">
-                <div class="FormHeader">
-                    <div class="FormIcon">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"></path>
-                        </svg>
-                    </div>
-
-                    <h2 class="FormHeaderText"> <b> Crear una solicitud </b></h2>
+        <div class="FormWrapper">
+            <div class="FormHeader">
+                <div class="FormIcon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"></path>
+                    </svg>
                 </div>
 
-                <form class="FormDiv"  @submit.prevent="handleSubmit">
-                    <div class="TypeSelection">
-                        <p> <b> Indique el tipo de solicitud </b> </p>
-                        <BaseRadioGroup
-                            v-model="documentType"
-                            name="DocumentType"
-                            :options="[
-                                { value: 'Idea', label: 'Idea' },
-                                { value: 'Complaint', label: 'Queja' },
-                                { value: 'Suggestion', label: 'Sugerencia' }
-                            ]"
-                            custom-class="MultiSelect_Type"
-                            gap="5px"
-                        />
-                    </div>
-
-                    <div class="Department">
-                        <p> <b> Indique la subdelegación a la que se quiere dirigir </b> </p>
-
-                        <BaseSelect
-                          v-model="department"
-                          label=""
-                          placeholder="Selecciona una opción"
-                          :options="[
-                            { value: 'General', label: 'General' },
-                            { value: 'AtencionEstudiante', label: 'Subdelegación de Ayuda y Servicios para el Estudiante' },
-                            { value: 'Comunicacion', label: 'Subdelegación de Comunicación' },
-                            { value: 'Calidad', label: 'Subdelegación de Mediación y Calidad Académica' },
-                            { value: 'TIC', label: 'Subdelegación de Estrategia y Desarrollo Tecnológico' },
-                            { value: 'Eventos', label: 'Subdelegación de Eventos' },
-                            { value: 'Igualdad', label: 'Subdelegación de Bienestar e Igualdad Social' }
-                          ]"
-                        />
-                    </div>
-
-                    <div class="Description">
-                        <p> <b> Describa su solicitud </b> </p>
-                        <BaseInput
-                          v-model="subject"
-                          name="Description"
-                          placeholder="Asunto"
-                          custom-class="Subject"
-                        />
-                        <BaseTextArea
-                          v-model="description"
-                          name="Description"
-                          placeholder="Describa su solicitud..."
-                          customClass="Explanation"
-                        />
-                    </div>
-
-                    <div class="SubmitDiv">
-                        <BaseButton type="submit" variant="primary" customClass="SubmitButton">
-                            <b>Enviar solicitud</b>
-                        </BaseButton>
-                    </div>
-                </form>
+                <h2 class="FormHeaderText"> <b> Crear una solicitud </b></h2>
             </div>
+
+            <form class="FormDiv"  @submit.prevent="handleSubmit">
+                <div class="TypeSelection">
+                    <p> <b> Indique el tipo de solicitud </b> </p>
+                    <BaseRadioGroup
+                        v-model="documentType"
+                        name="DocumentType"
+                        :options="[
+                            { value: 'Idea', label: 'Idea' },
+                            { value: 'Complaint', label: 'Queja' },
+                            { value: 'Suggestion', label: 'Sugerencia' }
+                        ]"
+                        custom-class="MultiSelect_Type"
+                        gap="5px"
+                    />
+                </div>
+
+                <div class="Department">
+                    <p> <b> Indique la subdelegación a la que se quiere dirigir </b> </p>
+
+                    <BaseSelect
+                      v-model="department"
+                      label=""
+                      placeholder="Selecciona una opción"
+                      :options="[
+                        { value: 'General', label: 'General' },
+                        { value: 'AtencionEstudiante', label: 'Subdelegación de Ayuda y Servicios para el Estudiante' },
+                        { value: 'Comunicacion', label: 'Subdelegación de Comunicación' },
+                        { value: 'Calidad', label: 'Subdelegación de Mediación y Calidad Académica' },
+                        { value: 'TIC', label: 'Subdelegación de Estrategia y Desarrollo Tecnológico' },
+                        { value: 'Eventos', label: 'Subdelegación de Eventos' },
+                        { value: 'Igualdad', label: 'Subdelegación de Bienestar e Igualdad Social' }
+                      ]"
+                    />
+                </div>
+
+                <div class="Description">
+                    <p> <b> Describa su solicitud </b> </p>
+                    <BaseInput
+                      v-model="subject"
+                      name="Description"
+                      placeholder="Asunto"
+                      custom-class="Subject"
+                    />
+                    <BaseTextArea
+                      v-model="description"
+                      name="Description"
+                      placeholder="Describa su solicitud..."
+                      customClass="Explanation"
+                    />
+                </div>
+
+                <div class="SubmitDiv">
+                    <BaseButton type="submit" variant="primary" customClass="SubmitButton">
+                        <b>Enviar solicitud</b>
+                    </BaseButton>
+                </div>
+            </form>
         </div>
-    </div>
+    </BasePage>
 </template>
 
 <style scoped>
-    .Parent {
-        background-color: var(--background);
-        width: 100dvw;
-        height: 100dvh;
-
-        display: flex;
-        flex-direction: column-reverse;
-        align-items: center;
-    }
-
-    /* #region Top bar */
-    .TopBarDiv {
-        background-color: var(--main-color);
-        box-shadow:
-          0 1px 2px rgba(0, 0, 0, 0.921),
-          0 2px 6px rgba(0, 0, 0, 0.284);
-
-        width: 100%;
-        height: 10%;
-
-        position: fixed;
-        top: 0;
-
-        display:flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-
-        border-bottom-right-radius: 10px;
-        border-bottom-left-radius: 10px;
-    }
-
-    .PageID {
-        display:flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-
-        height: 100%;
-
-        margin-left: 20px;
-        cursor:pointer;
-    }
-
-    .ServiceLogo {
-        height: 60%;
-        margin-right: 15px;
-    }
-
-    /* #endregion */
-
-    .ContentDiv {
-        /* Width and height */
-        box-sizing: border-box;
-        overflow-y: auto;
-        width:100%;
-        height: 90%;
-
-        /* Overall structure */
-        display:flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: top;
-
-        /* Margins and paddings */
-        padding-top: 2dvh;
-        padding-bottom: 2dvh;
-        padding-left: 5px;
-        padding-right: 5px;
-    }
-
     .FormWrapper {
         display: flex;
         flex-direction: column;
         align-items: center;
-        width: 80%;
-
-        @media (orientation: landscape) {
-            width: 80%;
-        }
-        @media (orientation: portrait) {
-          width: 95%;
-        }
+        width: 100%;
     }
 
     .FormHeader {

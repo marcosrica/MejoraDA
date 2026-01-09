@@ -1,8 +1,9 @@
 <script setup lang="ts">
     import { ref, onMounted } from 'vue'
     import PetitionMaker from '../Utilities/PetitionMaker'
-    import BaseCard from './BaseCard.vue'
-    import BaseButton from './BaseButton.vue'
+    import BaseCard from './BaseComponents/BaseCard.vue'
+    import BaseButton from './BaseComponents/BaseButton.vue'
+    import BasePage from './BuildingBlocks/BasePage.vue';
 
     const totalForms = ref<number | null>(null);
     const totalIdeas = ref<number | null>(null);
@@ -30,7 +31,7 @@
     }
 
     const reviewFormsButtonClicked = () => {
-      location.href = '/Home';
+      location.href = '/Home/review';
     }
     /**
    .ToFormButton {
@@ -73,156 +74,76 @@
 </script>
 
 <template>
-  <div class="Parent">
-        <div class="TopBarDiv">
-            <div class="PageID" onclick="location.href = '/'">
-                <img src="./../assets/Logo.png" alt="MejoraDA Logo" class="ServiceLogo"/>
-                <h1> MejoraDA </h1>
-            </div>
+  <BasePage>
+    <!-- Intro -->
+    <BaseCard custom-class="BaseContainer">
+        <p class="HeaderText"><b>MejoraDA, un medio para la superación de todos</b></p>
+        <p class="DescriptionText">
+          Desde la delegación de alumnos de la ETSISI, estamos siempre atentos a todas 
+        </p>
+    </BaseCard>
 
-            <img src="./../assets/Logo.png" alt="MejoraDA Logo" class="ServiceLogo"/>
-        </div>
+    <!-- Usage -->
+    <BaseCard custom-class="BaseContainer UsageCardContainer">
+      <p class="HeaderText">
+        <b> El programa en cifras: </b>
+      </p>
 
-        <div class="ContentDiv">
-            <!-- Intro -->
-            <BaseCard custom-class="BaseContainer">
-                <p class="HeaderText"><b>MejoraDA, un medio para la superación de todos</b></p>
-                <p class="DescriptionText">
-                  Desde la delegación de alumnos de la ETSISI, estamos siempre atentos a todas 
-                </p>
-            </BaseCard>
-         
-           <!-- Usage -->
-            <BaseCard custom-class="BaseContainer UsageCardContainer">
-              <p class="HeaderText">
-                <b> El programa en cifras: </b>
-              </p>
+      <BaseCard custom-class="TotalFiles"
+        background-color="var(--okColorBackground)"
+        border-color="var(--okColor)">
+          <p class="Index_Numbers"> {{totalForms}} </p>
+          <p class="UsageText_DataIdentifier"> Formularios totales </p>
+      </BaseCard>
 
-              <BaseCard custom-class="TotalFiles"
-                background-color="var(--okColorBackground)"
-                border-color="var(--okColor)">
-                  <p class="Index_Numbers"> {{totalForms}} </p>
-                  <p class="UsageText_DataIdentifier"> Formularios totales </p>
-              </BaseCard>
+      <div class="SubdivisionByType">
+        <BaseCard custom-class="SubdividedForms"
+          background-color="var(--okColorBackground)"
+          border-color="var(--okColor)">
+            <p class="Index_Numbers"> {{totalIdeas}} </p>
+            <p class="UsageText_DataIdentifier"> Ideas </p>
+        </BaseCard>
+        <BaseCard custom-class="SubdividedForms"
+          background-color="var(--notOkColorBackground)"
+          border-color="var(--notOkColor)">
+            <p class="Index_Numbers"> {{totalComplaints}} </p>
+            <p class="UsageText_DataIdentifier"> Quejas </p>
+        </BaseCard>
+        <BaseCard custom-class="SubdividedForms"
+          background-color="var(--okColorBackground)"
+          border-color="var(--okColor)">
+            <p class="Index_Numbers"> {{totalSuggestions}} </p>
+            <p class="UsageText_DataIdentifier"> Sugerencias </p>
+        </BaseCard>
+      </div>
+    </BaseCard>
 
-              <div class="SubdivisionByType">
-                <BaseCard custom-class="SubdividedForms"
-                  background-color="var(--okColorBackground)"
-                  border-color="var(--okColor)">
-                    <p class="Index_Numbers"> {{totalIdeas}} </p>
-                    <p class="UsageText_DataIdentifier"> Ideas </p>
-                </BaseCard>
-                <BaseCard custom-class="SubdividedForms"
-                  background-color="var(--notOkColorBackground)"
-                  border-color="var(--notOkColor)">
-                    <p class="Index_Numbers"> {{totalComplaints}} </p>
-                    <p class="UsageText_DataIdentifier"> Quejas </p>
-                </BaseCard>
-                <BaseCard custom-class="SubdividedForms"
-                  background-color="var(--okColorBackground)"
-                  border-color="var(--okColor)">
-                    <p class="Index_Numbers"> {{totalSuggestions}} </p>
-                    <p class="UsageText_DataIdentifier"> Sugerencias </p>
-                </BaseCard>
-              </div>
-            </BaseCard>
-         
-           <!-- Create a form -->
-           <BaseCard custom-class="BaseContainer">
-             <p class="HelpHeader"><b>¿Tienes algo que contarnos?</b></p>
-             <p class="DescriptionText"><b>No dudes en rellenar una nueva solicitud, ¡es totalmente anónima! Tardarás menos de cinco minutos en hacerla, y nos será muy útil para mejorar la experiencia en la ETSISI.</b></p>
-             <BaseButton  
-              @click="fillFormButtonClicked"
-              variant="primary"
-              custom-class="FillFormButton">
-               Rellenar el formulario
-             </BaseButton>
-           </BaseCard>
-         
-           <BaseCard custom-class="BaseContainer">
-             <p class="ToFormText"><b>Panel para los administradores</b></p>
-             <BaseButton  
-              @click="reviewFormsButtonClicked"
-              variant="primary"
-              custom-class="FillFormButton">
-               Revisar los formularios
-             </BaseButton>
-           </BaseCard>
-         
-         </div>
-    </div>
+    <!-- Create a form -->
+    <BaseCard custom-class="BaseContainer">
+      <p class="HelpHeader"><b>¿Tienes algo que contarnos?</b></p>
+      <p class="DescriptionText"><b>No dudes en rellenar una nueva solicitud, ¡es totalmente anónima! Tardarás menos de cinco minutos en hacerla, y nos será muy útil para mejorar la experiencia en la ETSISI.</b></p>
+      <BaseButton  
+       @click="fillFormButtonClicked"
+       variant="primary"
+       custom-class="FillFormButton">
+        Rellenar el formulario
+      </BaseButton>
+    </BaseCard>
+
+    <!-- Admin panel -->
+    <BaseCard custom-class="BaseContainer">
+      <p class="ToFormText"><b>Panel para los administradores</b></p>
+      <BaseButton  
+       @click="reviewFormsButtonClicked"
+       variant="primary"
+       custom-class="FillFormButton">
+        Revisar los formularios
+      </BaseButton>
+    </BaseCard>
+  </BasePage>
 </template>
 
 <style scoped>
-  .Parent {
-    background-color: var(--background);
-    width: 100dvw;
-    height: 100dvh;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-end;
-  }
-
-  .TopBarDiv {
-    background-color: var(--main-color);
-    box-shadow:
-      0 1px 2px rgba(0, 0, 0, 0.921),
-      0 2px 6px rgba(0, 0, 0, 0.284);
-
-    width: 100%;
-    height: 10%;
-
-    position: fixed;
-    top: 0;
-
-    display:flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-
-    border-bottom-right-radius: 10px;
-    border-bottom-left-radius: 10px;
-  }
-
-  .PageID {
-    display:flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-
-    height: 100%;
-
-    margin-left: 20px;
-    cursor:pointer;
-  }
-
-  .ServiceLogo {
-    height: 60%;
-    margin-right: 15px;
-  }
-
-  .ContentDiv {
-    /* Width and height */
-    box-sizing: border-box;
-    overflow-y: auto;
-    width:100%;
-    height: 90%;
-
-    /* Overall structure */
-    display:flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: top;
-
-    /* Margins and paddings */
-    padding-top: 15px;
-    padding-bottom: 15px;
-    padding-left: 5px;
-    padding-right: 5px;
-  }
-
   .BaseContainer {
     display:flex;
     flex-direction: column;
@@ -231,11 +152,7 @@
 
     margin-bottom: 10px;
     box-sizing: border-box;
-    width: 80%;
-    
-    @media(orientation: portrait) {
-      width: 95%;
-    }
+    width: 100%;
   }
 
   .HeaderText {

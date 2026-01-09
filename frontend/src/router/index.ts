@@ -2,7 +2,7 @@ import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 
 import Index from '../components/Index.vue';
 import Form from '../components/Form.vue';
-import Home from '../components/Home.vue';
+import Home from '../components/ReviewForms.vue';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -16,7 +16,7 @@ const routes: RouteRecordRaw[] = [
     component: Form,
   },
   {
-    path:'/home',
+    path:'/home/review',
     name:'Home',
     component: Home,
   }
