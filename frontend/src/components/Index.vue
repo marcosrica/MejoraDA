@@ -1,26 +1,36 @@
 <script setup lang="ts">
     import { ref, onMounted } from 'vue'
     import PetitionMaker from '../Utilities/PetitionMaker'
-import BaseCard from './BaseCard.vue'
-import BaseButton from './BaseButton.vue'
+    import BaseCard from './BaseCard.vue'
+    import BaseButton from './BaseButton.vue'
 
-    const unresolvedCount = ref<number | null>(null)
+    const totalForms = ref<number | null>(null);
+    const totalIdeas = ref<number | null>(null);
+    const totalComplaints = ref<number | null>(null);
+    const totalSuggestions = ref<number | null>(null);
 
     onMounted(async () => {
-      const pm = new PetitionMaker()
-      const result = await pm.makePetition('/api/UnresolvedFormsCount', 'GET')
+      const pm = new PetitionMaker();
+      const totalFormsResult = await pm.makePetition('/api/index/getTotalForms', 'GET');
+      const brokenDownResult = await pm.makePetition('/api/index/getFormsBreakdown', 'GET');
 
-      if (!result.error && result.data?.count !== undefined) {
-        unresolvedCount.value = result.data.count
+      if (!totalFormsResult.error && totalFormsResult.data?.count !== undefined) {
+        totalForms.value = totalFormsResult.data.count;
+      }
+
+      if(!brokenDownResult.error && brokenDownResult.data) {
+        totalIdeas.value = brokenDownResult.data.ideas;
+        totalComplaints.value = brokenDownResult.data.complaints;
+        totalSuggestions.value = brokenDownResult.data.suggestions;
       }
     })
 
     const fillFormButtonClicked = () => {
-      location.href = '/Form'
+      location.href = '/Form';
     }
 
     const reviewFormsButtonClicked = () => {
-      location.href = '/Home'
+      location.href = '/Home';
     }
     /**
    .ToFormButton {
@@ -76,11 +86,11 @@ import BaseButton from './BaseButton.vue'
         <div class="ContentDiv">
             <!-- Intro -->
             <BaseCard custom-class="BaseContainer">
-                <p class="ToFormText"><b>MejoraDA, un medio para la superación de todos</b></p>
+                <p class="HeaderText"><b>MejoraDA, un medio para la superación de todos</b></p>
                 <p class="DescriptionText">
-                    Pensad en la facultad: en todo lo bueno, en lo malo, en 
+                  Desde la delegación de alumnos de la ETSISI, estamos siempre atentos a todas 
                 </p>
-           </BaseCard>
+            </BaseCard>
          
            <!-- Usage -->
             <BaseCard custom-class="BaseContainer UsageCardContainer">
@@ -89,16 +99,38 @@ import BaseButton from './BaseButton.vue'
               </p>
 
               <BaseCard custom-class="TotalFiles"
-              background-color="var(--okColorBackground)"
-              border-color="var(--okColor)">
-                  <p class="Index_Numbers"> 2048 </p>
+                background-color="var(--okColorBackground)"
+                border-color="var(--okColor)">
+                  <p class="Index_Numbers"> {{totalForms}} </p>
                   <p class="UsageText_DataIdentifier"> Formularios totales </p>
+              </BaseCard>
+
+              <div class="SubdivisionByType">
+                <BaseCard custom-class="SubdividedForms"
+                  background-color="var(--okColorBackground)"
+                  border-color="var(--okColor)">
+                    <p class="Index_Numbers"> {{totalIdeas}} </p>
+                    <p class="UsageText_DataIdentifier"> Ideas </p>
                 </BaseCard>
+                <BaseCard custom-class="SubdividedForms"
+                  background-color="var(--notOkColorBackground)"
+                  border-color="var(--notOkColor)">
+                    <p class="Index_Numbers"> {{totalComplaints}} </p>
+                    <p class="UsageText_DataIdentifier"> Quejas </p>
+                </BaseCard>
+                <BaseCard custom-class="SubdividedForms"
+                  background-color="var(--okColorBackground)"
+                  border-color="var(--okColor)">
+                    <p class="Index_Numbers"> {{totalSuggestions}} </p>
+                    <p class="UsageText_DataIdentifier"> Sugerencias </p>
+                </BaseCard>
+              </div>
             </BaseCard>
          
            <!-- Create a form -->
            <BaseCard custom-class="BaseContainer">
-             <p class="ToFormText"><b>Crear una solicitud</b></p>
+             <p class="HelpHeader"><b>¿Tienes algo que contarnos?</b></p>
+             <p class="DescriptionText"><b>No dudes en rellenar una nueva solicitud, ¡es totalmente anónima! Tardarás menos de cinco minutos en hacerla, y nos será muy útil para mejorar la experiencia en la ETSISI.</b></p>
              <BaseButton  
               @click="fillFormButtonClicked"
               variant="primary"
@@ -108,7 +140,7 @@ import BaseButton from './BaseButton.vue'
            </BaseCard>
          
            <BaseCard custom-class="BaseContainer">
-             <p class="ToFormText"><b>Revisar los formularios</b></p>
+             <p class="ToFormText"><b>Panel para los administradores</b></p>
              <BaseButton  
               @click="reviewFormsButtonClicked"
               variant="primary"
@@ -192,6 +224,11 @@ import BaseButton from './BaseButton.vue'
   }
 
   .BaseContainer {
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
     margin-bottom: 10px;
     box-sizing: border-box;
     width: 80%;
@@ -204,6 +241,7 @@ import BaseButton from './BaseButton.vue'
   .HeaderText {
     font-family: 'Montserrat', sans-serif;
     font-size: x-large;
+    text-align: center;
     margin-bottom: 10px;
   }
 
@@ -244,5 +282,52 @@ import BaseButton from './BaseButton.vue'
     @media(orientation: portrait) {
       width: 90%;
     }
+  }
+
+  .SubdivisionByType {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    width: 100%;
+    margin-top: 20px;
+    gap: 20px;
+
+    @media(orientation: portrait) {
+      flex-direction: column;
+      gap: 10px;
+    }
+  }
+
+  .SubdividedForms {
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    @media(orientation: portrait) {
+      width: 80%;
+    }
+  }
+
+  .HelpHeader {
+    font-family: 'Montserrat', sans-serif;
+    font-size: xx-large;
+    text-align: center;
+    margin-bottom: 5px;
+    margin-top: 0px;
+  }
+
+  .DescriptionText {
+    font-family: 'Montserrat', sans-serif;
+    font-size: large;
+    text-align: justify;
+    max-width: 90%;
+
+    margin-top: 5px;
+    margin-bottom: 7px;
   }
 </style>

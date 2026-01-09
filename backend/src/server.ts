@@ -3,6 +3,7 @@ import cors from "cors";
 import Database from "./Components/Database";
 
 import GetFilters from "./Components/PetitionResolvers/GetForms";
+import IndexPageRouter from "./Components/PetitionResolvers/IndexPagePetitions";
 
 const app = express();
 let db: Database;
@@ -10,10 +11,7 @@ db = new Database();
 
 app.use(cors());
 app.use(express.json());
-
-app.get("/Hello", (req:Request, res:Response) => {
-  res.status(200).send("Hello World");
-});
+app.use("/api/index", IndexPageRouter); //Catching all /api/index routes
 
 app.get("/api/UnresolvedFormsCount", async (req:Request, res:Response) => {
   const [complaints, ideas, suggestions] = await Promise.all([
@@ -95,6 +93,7 @@ app.post("/api/petitions/markAsResolved", async (req:Request, res:Response) => {
     res.status(404).json("Internal server error");
   }
 });
+
 
 app.listen(3000, () => {
   console.log("Backend running at http://localhost:3000");

@@ -9,4 +9,6 @@
 
     --okColor: green;
     --okColorBackground: rgba(0, 128, 0, 0.592);
+    --notOkColor: rgb(189, 0, 0);
+    --notOkColorBackground: rgba(189, 0, 0, 0.592);
 }
