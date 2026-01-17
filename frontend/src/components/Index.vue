@@ -31,7 +31,7 @@
     }
 
     const reviewFormsButtonClicked = () => {
-      location.href = '/Home/review';
+      location.href = '/Home';
     }
     /**
    .ToFormButton {
@@ -79,8 +79,20 @@
     <BaseCard custom-class="BaseContainer">
         <p class="HeaderText"><b>MejoraDA, un medio para la superación de todos</b></p>
         <p class="DescriptionText">
-          Desde la delegación de alumnos de la ETSISI, estamos siempre atentos a todas 
+          Desde la delegación de alumnos, siempre estamos atentos a todo lo que ocurra en nuestra escuela, y estamos buscando constantemente formas de mejorar la ETSISI para todos. 
         </p>
+    </BaseCard>
+
+    <!-- Create a form -->
+    <BaseCard custom-class="BaseContainer">
+      <p class="HelpHeader"><b>¿Tienes algo que contarnos?</b></p>
+      <p class="DescriptionText"><b>No dudes en rellenar una nueva solicitud, ¡es totalmente anónima! Tardarás menos de cinco minutos en hacerla, y nos será muy útil para mejorar la experiencia en la ETSISI.</b></p>
+      <BaseButton  
+       @click="fillFormButtonClicked"
+       variant="primary"
+       custom-class="FillFormButton">
+        Rellenar el formulario
+      </BaseButton>
     </BaseCard>
 
     <!-- Usage -->
@@ -118,18 +130,6 @@
       </div>
     </BaseCard>
 
-    <!-- Create a form -->
-    <BaseCard custom-class="BaseContainer">
-      <p class="HelpHeader"><b>¿Tienes algo que contarnos?</b></p>
-      <p class="DescriptionText"><b>No dudes en rellenar una nueva solicitud, ¡es totalmente anónima! Tardarás menos de cinco minutos en hacerla, y nos será muy útil para mejorar la experiencia en la ETSISI.</b></p>
-      <BaseButton  
-       @click="fillFormButtonClicked"
-       variant="primary"
-       custom-class="FillFormButton">
-        Rellenar el formulario
-      </BaseButton>
-    </BaseCard>
-
     <!-- Admin panel -->
     <BaseCard custom-class="BaseContainer">
       <p class="ToFormText"><b>Panel para los administradores</b></p>
@@ -137,7 +137,7 @@
        @click="reviewFormsButtonClicked"
        variant="primary"
        custom-class="FillFormButton">
-        Revisar los formularios
+        Ir al panel de administración
       </BaseButton>
     </BaseCard>
   </BasePage>
