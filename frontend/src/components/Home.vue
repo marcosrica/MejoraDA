@@ -245,8 +245,14 @@ onMounted(async () => {
 
 /* RIGHT PANEL */
 .ManageSubdelegationsPanel {
+  gap: 10px;
+
   flex: 0 0 50%;
-  transition: transform 0.4s ease, opacity 0.4s ease;
+  max-height: 100%;
+  transition: 
+    transform 0.4s ease, 
+    opacity 0.4s ease;
+    max-height: 0.4s ease;
 }
 
 /* EDITING STATE */
@@ -257,6 +263,7 @@ onMounted(async () => {
 .SubdelegationsContainer.editing .ManageSubdelegationsPanel {
   transform: translateX(100%);
   opacity: 0;
+  max-height: 0;
   pointer-events: none;
 }
 

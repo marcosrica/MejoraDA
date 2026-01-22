@@ -1,12 +1,22 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+import BaseMenu from '../BaseComponents/BaseMenu.vue';
 import Header from './Header.vue';
+
+const isMenuOpen = ref(true);
+
+const toggleMenu = () => {
+  isMenuOpen.value = !isMenuOpen.value
+}
 </script>
 
 <template>
   <div class="Home_background">
-    <Header />
+    <Header @toggle-menu="toggleMenu" />
 
     <div class="Home_content_wrapper">
+      <BaseMenu :isOpen="isMenuOpen" 
+      @close="isMenuOpen = false"/>
       <div class="Home_content">
         <slot />
       </div>
