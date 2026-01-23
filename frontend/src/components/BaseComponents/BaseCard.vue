@@ -25,9 +25,7 @@ defineProps<{
   border-radius: 12px;
   padding: 16px;
 
-  box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.9),
-    0 2px 6px rgba(0, 0, 0, 0.25);
+  box-shadow: var(--shadow);
 
   display: flex;
   flex-direction: column;
