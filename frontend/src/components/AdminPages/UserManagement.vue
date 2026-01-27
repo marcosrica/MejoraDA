@@ -4,8 +4,9 @@
     import BaseAlert from '../BaseComponents/BaseAlert.vue'; //For showing when the form has been submitted successfully
     import BasePage from '../BuildingBlocks/BasePage.vue';
     import BaseCard from '../BaseComponents/BaseCard.vue';
-import type UserData from '../../interfaces/AllowedUserData';
-import BaseButton from '../BaseComponents/BaseButton.vue';
+    import type UserData from '../../interfaces/AllowedUserData';
+    import BaseButton from '../BaseComponents/BaseButton.vue';
+    import BaseInput from '../BaseComponents/BaseInput.vue';
 
     //Object needed to fulfill the petition
     const petitionMaker:PetitionMaker = new PetitionMaker();
@@ -17,6 +18,9 @@ import BaseButton from '../BaseComponents/BaseButton.vue';
     const showAlert = ref(false);
     const alertMessage = ref('');
     const alertType = ref<'success' | 'error' | 'info'>('success');
+
+    //Variables for the add user form
+    const username = ref<String>("");
 
     //Data for the user list
     const users = ref<Array<UserData>>([
@@ -53,10 +57,13 @@ import BaseButton from '../BaseComponents/BaseButton.vue';
             @close="showAlert = false"
         />
 
+
+        <!-- Manage current users -->
+        <!-- Header of section -->
         <BaseCard custom-class="Header" top>
             <h1 class="HeaderText">Administración de usuarios existentes</h1>
         </BaseCard>
-
+        <!-- Panel with allowed users -->
         <div class="Grid">
             <BaseCard
             custom-class="Card"
@@ -83,7 +90,7 @@ import BaseButton from '../BaseComponents/BaseButton.vue';
                 </BaseButton>
             </BaseCard>
         </div>
-
+        <!-- End of section with the current user status -->
         <BaseCard custom-class="CurrentUser" bottom>
             <h1 class="HeaderText">Usuario existente</h1>
             <BaseButton
@@ -91,6 +98,27 @@ import BaseButton from '../BaseComponents/BaseButton.vue';
             v-on:click="">
             Dejar de ser administrador
         </BaseButton>
+        </BaseCard>
+
+
+        <!-- Add new user to the group -->
+        <!-- Header of section -->
+        <BaseCard custom-class="Header" top>
+            <h1 class="HeaderText"> Añadir un nuevo usuario </h1>
+        </BaseCard>
+        <!-- Add user form -->
+        <BaseCard custom-class="AddUserFormWrapper" bottom>
+            <form>
+                <div class="UsernameToAdd">
+                    <p class="marginLess"> Introduzca el nombre del usuario que desee añadir </p>
+                    <BaseInput
+                          v-model="username"
+                          name="Description"
+                          placeholder="Asunto"
+                          custom-class="Subject"
+                        />
+                </div>
+            </form>
         </BaseCard>
     </BasePage>
 
@@ -143,12 +171,19 @@ import BaseButton from '../BaseComponents/BaseButton.vue';
 
     .CurrentUser {
         margin-top: 10px;
-        margin-bottom: 1rem;
+        margin-bottom: 2rem;
 
         display: flex;
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
+    }
+    /* #endregion */
+
+    /* #region Add new users */
+    .UsernameToAdd {
+        width: 80%;
+        border-bottom:  1px solid grey;
     }
     /* #endregion */
 </style>
