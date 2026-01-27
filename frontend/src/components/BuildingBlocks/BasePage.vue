@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import BaseMenu from '../BaseComponents/BaseMenu.vue';
 import Header from './Header.vue';
 
-const isMenuOpen = ref(true);
+const isMenuOpen = ref(false);
 
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value
@@ -15,8 +15,11 @@ const toggleMenu = () => {
     <Header @toggle-menu="toggleMenu" />
 
     <div class="Home_content_wrapper">
+      <!-- Toggle menu that sits on top of the content -->
       <BaseMenu :isOpen="isMenuOpen" 
       @close="isMenuOpen = false"/>
+
+      <!-- Content area -->
       <div class="Home_content">
         <slot />
       </div>
