@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import BaseButton from '../BaseComponents/BaseButton.vue';
 
 const emit = defineEmits<{
   (e: 'toggle-menu'): void
@@ -8,16 +7,12 @@ const emit = defineEmits<{
 
 <template>
     <div class="TopBarDiv">
-        <BaseButton variant="secondary" @click="$emit('toggle-menu')">
-            ☰
-        </BaseButton>
-
-        <div class="PageID" onclick="location.href = '/'">
-            <img src="./../../assets/Logo.png" alt="MejoraDA Logo" class="ServiceLogo"/>
-            <h1> MejoraDA </h1>
-        </div>
-
+      <div class="PageID" onclick="location.href = '/'">
         <img src="./../../assets/Logo.png" alt="MejoraDA Logo" class="ServiceLogo"/>
+        <h1> MejoraDA </h1>
+      </div>
+
+      <img src="./../../assets/Logo.png" alt="MejoraDA Logo" class="ServiceLogo"/>
     </div>
 </template>
 

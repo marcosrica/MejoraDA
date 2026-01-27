@@ -15,14 +15,13 @@ const toggleMenu = () => {
     <Header @toggle-menu="toggleMenu" />
 
     <div class="Home_content_wrapper">
-      <!-- Toggle menu that sits on top of the content -->
-      <BaseMenu :isOpen="isMenuOpen" 
-      @close="isMenuOpen = false"/>
-
       <!-- Content area -->
       <div class="Home_content">
         <slot />
       </div>
+
+      <!-- Toggle menu that sits on top of the content -->
+      <BaseMenu/>
     </div>
   </div>
 </template>
