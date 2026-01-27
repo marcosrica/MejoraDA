@@ -1,8 +1,12 @@
 :root {
     --primary: #0669DB; /* Buttons, active states, links */
     --primary-light: #4A8FFF; /* Hover - secondary buttons*/
+    --primary-light-hover: rgb(26, 88, 187); /* Hover - secondary buttons*/
 
     --secondary: #0D4E8F; /* Navigation backgrounds */
+
+    --danger: #DC3545; /* Error states */
+    --danger-hover: #C82333; /* Error states - hover */
 
     --accent-warm: #FF9F43; /* Highlights, alerts, badges */
 
@@ -16,6 +20,12 @@
     --page-background: #F1F3F5; /* Background color of the whole page */
 
     --form-border: #CED4DA; /* Borders of form elements */
+
+     
+    /* Secondary button */
+    --secondary-button: #e9ecef00;
+    --secondary-button-hover: #F1F3F5; /* Hover - secondary buttons*/
+    --secondary-button-border: 1.5px solid #CED4DA;
 
     --card-shadow: 
         0 1px 2px rgba(0,0,0,0.06),

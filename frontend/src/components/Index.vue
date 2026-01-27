@@ -139,6 +139,13 @@
        custom-class="FillFormButton">
         Ir al panel de administración
       </BaseButton>
+
+      <BaseButton  
+       @click="reviewFormsButtonClicked"
+       variant="secondary"
+       custom-class="FillFormButton">
+        Ir al panel de administración
+      </BaseButton>
     </BaseCard>
   </BasePage>
 </template>

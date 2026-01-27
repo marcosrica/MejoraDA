@@ -46,30 +46,32 @@ const buttonClass = computed(() => [
 
 /* Variants */
 .BaseButton--primary {
-  background-color: var(--main-color);
+  background-color: var(--primary-light);
   color: white;
 }
 
 .BaseButton--primary:hover:not(:disabled) {
-  background-color: #0056b3;
+  background-color: var(--primary-light-hover);
 }
 
 .BaseButton--secondary {
-  background-color: #f0f0f0;
-  color: #333;
+  background-color: var(--secondary-button);
+  border: var(--secondary-button-border);
+  color: #212529;
 }
 
 .BaseButton--secondary:hover:not(:disabled) {
-  background-color: #e0e0e0;
+  background-color: var(--secondary-button-hover);
+  color: #212529;
 }
 
 .BaseButton--danger {
-  background-color: #a61b1b;
+  background-color: var(--danger);
   color: white;
 }
 
 .BaseButton--danger:hover:not(:disabled) {
-  background-color: #7f1414;
+  background-color: var(--danger-hover);
 }
 
 .BaseButton__btn:disabled {
