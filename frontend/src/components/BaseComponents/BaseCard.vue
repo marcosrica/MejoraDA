@@ -28,6 +28,7 @@ const props = defineProps<{
   background-color: var(--base-card-bg, var(--card-background));
   border: 2px solid var(--base-card-border, rgba(255, 255, 255, 0));
   padding: 16px;
+  margin-bottom: 10px;
 
   box-shadow: var(--card-shadow);
 

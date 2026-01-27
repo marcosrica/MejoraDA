@@ -122,13 +122,13 @@ onMounted(async () => {
     />
 
     <!-- Header -->
-    <div class="Home_Welcome">
+    <BaseCard customClass="Home_Welcome" top>
       <h2 class="Home_Welcome_Text">¡Bienvenido de nuevo, USER!</h2>
       <p class="Home_UnsolvedPetitionsCount"> Hay {{ unsolvedPetitions }} solicitudes pendientes </p>
-    </div>
+    </BaseCard>
 
     <!-- Filters Section -->
-    <div class="Home_Filters">
+    <BaseCard customClass="Home_Filters" >
       <p class="Home_Big_Text"> Filtrar solicitudes </p>
       <form class="Filters_Form"  @submit.prevent="handleSubmit">
         <div class="Home_Department">
@@ -176,10 +176,10 @@ onMounted(async () => {
           <BaseButton type="submit" variant="primary"> Aplicar filtros </BaseButton>
         </div>
       </form>
-    </div>
+    </BaseCard>
 
     <!-- Retrieved Forms Section -->
-    <div class="Home_Forms">
+    <BaseCard custom-class="Home_Forms" bottom>
       <div class="Home_Forms_ExpandableHeader">
         <p class="Home_Big_Text"> Se han encontrado {{ petitions.length }} solicitudes </p>
       </div>
@@ -188,7 +188,10 @@ onMounted(async () => {
         <BaseCard
           v-for="petition in petitions"
           :key="petition.public_id || petition.request_id"
+          border-color="rgb(146, 146, 146)"
           class="PetitionCard"
+          top
+          bottom
         >
           <!-- Header: Subject -->
           <div 
@@ -226,7 +229,7 @@ onMounted(async () => {
           </div>
         </BaseCard>
       </div>
-    </div>
+    </BaseCard>
   </BasePage>
 </template>
 
@@ -240,18 +243,10 @@ onMounted(async () => {
 /* Welcome div */
 .Home_Welcome {
   box-sizing: border-box;
-  background-color: var(--panel-background);
-  border-radius: 10px;
-  box-shadow:
-      0 1px 2px rgba(0, 0, 0, 0.921),
-      0 2px 6px rgba(0, 0, 0, 0.284);
 
-  width: 100%;
   color: black;
   text-align: center;
   padding: 20px;
-
-  margin-bottom: 20px;
 }
 
 .Home_Welcome_Text {
@@ -268,13 +263,7 @@ onMounted(async () => {
 /* Filters div */
 .Home_Filters {
   box-sizing: border-box;
-  background-color: var(--panel-background);
-  border-radius: 10px;
-  box-shadow:
-      0 1px 2px rgba(0, 0, 0, 0.921),
-      0 2px 6px rgba(0, 0, 0, 0.284);
 
-  width: 100%;
   color: black;
   text-align: center;
   padding: 20px;
@@ -284,7 +273,6 @@ onMounted(async () => {
   align-items: center;
   justify-content: center;
   
-  margin-bottom: 20px;
 }
 
 .Filters_Form {
@@ -351,12 +339,6 @@ onMounted(async () => {
 
 .Home_Forms {
   box-sizing: border-box;
-  background-color: var(--panel-background);
-  border-radius: 10px;
-  box-shadow:
-      0 1px 2px rgba(0, 0, 0, 0.921),
-      0 2px 6px rgba(0, 0, 0, 0.284);
-
   display: flex;
   flex-direction: column;
   align-items: center;
