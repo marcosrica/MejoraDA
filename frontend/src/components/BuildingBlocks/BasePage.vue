@@ -67,7 +67,15 @@ const toggleMenu = () => {
         padding-right: 5px;
 
         @media (orientation: landscape) {
+          @media (max-width: 1000px) {
+            width: 90%;
+          }
+          @media (max-width: 1450px) {
             width: 80%;
+          }
+          @media (min-width: 1451px) {
+            width: 60%;
+          }
         }
         @media (orientation: portrait) {
           width: 95%;
