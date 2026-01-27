@@ -1,8 +1,5 @@
 <script lang="ts" setup>
 
-const emit = defineEmits<{
-  (e: 'toggle-menu'): void
-}>()
 </script>
 
 <template>
