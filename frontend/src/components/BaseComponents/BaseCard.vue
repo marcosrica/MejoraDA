@@ -1,14 +1,19 @@
 <script setup lang="ts">
-defineProps<{
-  customClass?: string
-  backgroundColor?: string
-  borderColor?: string
+import { ref } from 'vue';
+
+const props = defineProps<{
+  customClass?: string,
+  backgroundColor?: string,
+  borderColor?: string,
+  top?: boolean,
+  bottom?: boolean,
 }>()
+
 </script>
 
 <template>
   <div 
-    :class="['BaseCard', customClass]"
+    :class="['BaseCard', customClass, top ? 'TOP' : '', bottom ? 'BOTTOM' : '']"
     :style="{
       '--base-card-bg': backgroundColor,
       '--base-card-border': borderColor
@@ -22,7 +27,6 @@ defineProps<{
 .BaseCard {
   background-color: var(--base-card-bg, var(--card-background));
   border: 2px solid var(--base-card-border, rgba(255, 255, 255, 0));
-  border-radius: 12px;
   padding: 16px;
 
   box-shadow: var(--card-shadow);
@@ -30,5 +34,15 @@ defineProps<{
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+.TOP {
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.BOTTOM {
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
 }
 </style>

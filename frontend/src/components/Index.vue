@@ -76,7 +76,7 @@
 <template>
   <BasePage>
     <!-- Intro -->
-    <BaseCard custom-class="BaseContainer">
+    <BaseCard custom-class="BaseContainer" top>
         <p class="HeaderText"><b>MejoraDA, un medio para la superación de todos</b></p>
         <p class="DescriptionText">
           Desde la delegación de alumnos, siempre estamos atentos a todo lo que ocurra en nuestra escuela, y estamos buscando constantemente formas de mejorar la ETSISI para todos. 
@@ -95,54 +95,12 @@
       </BaseButton>
     </BaseCard>
 
-    <!-- Usage -->
-    <BaseCard custom-class="BaseContainer UsageCardContainer">
-      <p class="HeaderText">
-        <b> El programa en cifras: </b>
-      </p>
-
-      <BaseCard custom-class="TotalFiles"
-        background-color="var(--okColorBackground)"
-        border-color="var(--okColor)">
-          <p class="Index_Numbers"> {{totalForms}} </p>
-          <p class="UsageText_DataIdentifier"> Formularios totales </p>
-      </BaseCard>
-
-      <div class="SubdivisionByType">
-        <BaseCard custom-class="SubdividedForms"
-          background-color="var(--okColorBackground)"
-          border-color="var(--okColor)">
-            <p class="Index_Numbers"> {{totalIdeas}} </p>
-            <p class="UsageText_DataIdentifier"> Ideas </p>
-        </BaseCard>
-        <BaseCard custom-class="SubdividedForms"
-          background-color="var(--notOkColorBackground)"
-          border-color="var(--notOkColor)">
-            <p class="Index_Numbers"> {{totalComplaints}} </p>
-            <p class="UsageText_DataIdentifier"> Quejas </p>
-        </BaseCard>
-        <BaseCard custom-class="SubdividedForms"
-          background-color="var(--okColorBackground)"
-          border-color="var(--okColor)">
-            <p class="Index_Numbers"> {{totalSuggestions}} </p>
-            <p class="UsageText_DataIdentifier"> Sugerencias </p>
-        </BaseCard>
-      </div>
-    </BaseCard>
-
     <!-- Admin panel -->
-    <BaseCard custom-class="BaseContainer">
+    <BaseCard custom-class="BaseContainer" bottom>
       <p class="ToFormText"><b>Panel para los administradores</b></p>
       <BaseButton  
        @click="reviewFormsButtonClicked"
        variant="primary"
-       custom-class="FillFormButton">
-        Ir al panel de administración
-      </BaseButton>
-
-      <BaseButton  
-       @click="reviewFormsButtonClicked"
-       variant="secondary"
        custom-class="FillFormButton">
         Ir al panel de administración
       </BaseButton>
