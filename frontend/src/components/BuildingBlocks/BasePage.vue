@@ -35,7 +35,7 @@ const toggleMenu = () => {
         display: flex;
         flex-direction: column;
 
-        background-color: var(--background);
+        background-color: var(--page-background);
     }
 
     .Home_content_wrapper {

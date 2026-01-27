@@ -20,12 +20,12 @@ defineProps<{
 
 <style scoped>
 .BaseCard {
-  background-color: var(--base-card-bg, var(--panel-background));
+  background-color: var(--base-card-bg, var(--card-background));
   border: 2px solid var(--base-card-border, rgba(255, 255, 255, 0));
   border-radius: 12px;
   padding: 16px;
 
-  box-shadow: var(--shadow);
+  box-shadow: var(--card-shadow);
 
   display: flex;
   flex-direction: column;

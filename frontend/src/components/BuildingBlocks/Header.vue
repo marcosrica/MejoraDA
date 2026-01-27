@@ -23,7 +23,7 @@ const emit = defineEmits<{
 
 <style scoped>
 .TopBarDiv {
-  background-color: var(--main-color);
+  background-color: var(--primary);
   box-shadow:
     0 1px 2px rgba(0, 0, 0, 0.921),
     0 2px 6px rgba(0, 0, 0, 0.284);
