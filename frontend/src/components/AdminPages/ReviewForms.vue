@@ -2,14 +2,13 @@
 import { ref } from 'vue';
 import { onMounted } from 'vue';
 
-import BaseAlert from './BaseComponents/BaseAlert.vue'; 
-import PetitionMaker from '../Utilities/PetitionMaker'
-import BaseButton from './BaseComponents/BaseButton.vue'; 
-import BaseSelect from './BaseComponents/BaseSelect.vue';
-import BaseCheckbox from './BaseComponents/BaseCheckbox.vue';
-import BaseCard from './BaseComponents/BaseCard.vue';
-import BasePage from './BuildingBlocks/BasePage.vue';
-
+import BaseAlert from '../BaseComponents/BaseAlert.vue'; 
+import PetitionMaker from '../../Utilities/PetitionMaker'
+import BaseButton from '../BaseComponents/BaseButton.vue'; 
+import BaseSelect from '../BaseComponents/BaseSelect.vue';
+import BaseCheckbox from '../BaseComponents/BaseCheckbox.vue';
+import BaseCard from '../BaseComponents/BaseCard.vue';
+import BasePage from '../BuildingBlocks/BasePage.vue';
 //Class that holds the method to make petitions to the backend
 const petitionMaker:PetitionMaker = new PetitionMaker();
 

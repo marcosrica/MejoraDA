@@ -7,9 +7,8 @@
     import BaseButton from './BaseComponents/BaseButton.vue';
     import BaseSelect from './BaseComponents/BaseSelect.vue';
     import BaseRadioGroup from './BaseComponents/BaseRadioGroup.vue';
-    import Header from './BuildingBlocks/Header.vue';
-import BasePage from './BuildingBlocks/BasePage.vue';
-import BaseCard from './BaseComponents/BaseCard.vue';
+    import BasePage from './BuildingBlocks/BasePage.vue';
+    import BaseCard from './BaseComponents/BaseCard.vue';
 
     //Object needed to fulfill the petition
     const petitionMaker:PetitionMaker = new PetitionMaker();
@@ -149,7 +148,7 @@ import BaseCard from './BaseComponents/BaseCard.vue';
     }
 
     .FormIcon {
-        color: var(--icon-color);
+        color: var(--primary);
         height:40px;
         width: 40px;
         margin-right: 10px;
