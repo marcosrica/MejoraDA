@@ -8,21 +8,30 @@ const open = ref(false);
 const redirect = (url: string) => {
   window.location.href = url;
 }
+
+const props = defineProps<{
+  visible?: boolean
+}>();
 </script>
 
 <template>
-  <BaseRoundedButton class="ToggleButton" @click="open = !open">☰</BaseRoundedButton>
+  <BaseRoundedButton v-if="visible" class="ToggleButton" @click="open = !open">☰</BaseRoundedButton>
 
   <transition name="menu-panel">
-    <BaseCard custom-class="menu" v-if="open" top bottom
-    border-color="grey">
+    <BaseCard 
+    custom-class="menu" 
+    v-if="open"
+    border-color="grey"
+    top 
+    bottom>
       <div class="MenuHeader">
         <h3 class="MenuHeaderText">Menú</h3>
       </div>
       <div class="MenuOptions">
         <div class="MenuOption" v-on:click="redirect('/')">Página principal</div>
         <div class="MenuOption" v-on:click="redirect('/Home/review')">Revisión de formularios</div>
-        <div class="MenuOption" v-on:click="redirect('/admin')">Panel de administración</div>
+        <div class="MenuOption" v-on:click="redirect('/Home/users')">Administración de usuarios</div>
+        <div class="MenuOption" v-on:click="redirect('/Home/departments')">Administración de subdelegaciones</div>
       </div>
     </BaseCard>
   </transition>

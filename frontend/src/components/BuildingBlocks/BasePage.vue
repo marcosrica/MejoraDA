@@ -3,16 +3,12 @@ import { ref } from 'vue';
 import BaseMenu from '../BaseComponents/BaseMenu.vue';
 import Header from './Header.vue';
 
-const isMenuOpen = ref(false);
-
-const toggleMenu = () => {
-  isMenuOpen.value = !isMenuOpen.value
-}
+const privilegedUser = ref(true); // This should be set based on actual user privileges
 </script>
 
 <template>
   <div class="Home_background">
-    <Header @toggle-menu="toggleMenu" />
+    <Header />
 
     <div class="Home_content_wrapper">
       <!-- Content area -->
@@ -21,7 +17,7 @@ const toggleMenu = () => {
       </div>
 
       <!-- Toggle menu that sits on top of the content -->
-      <BaseMenu/>
+      <BaseMenu :visible="privilegedUser"/>
     </div>
   </div>
 </template>
