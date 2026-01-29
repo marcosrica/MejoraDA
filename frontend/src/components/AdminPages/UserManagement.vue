@@ -20,7 +20,7 @@
     const alertType = ref<'success' | 'error' | 'info'>('success');
 
     //Variables for the add user form
-    const username = ref<String>("");
+    const username = ref('');
 
     //Data for the user list
     const users = ref<Array<UserData>>([
@@ -67,27 +67,29 @@
         <div class="Grid">
             <BaseCard
             custom-class="Card"
-            v-for="(card, index) in users">
+            v-for="(card) in users">
                 <div class="UserCard">
                     <h2 class="marginlessText">{{ card.name }} {{ card.surname }}</h2>
                     <p class="marginlessText">Permiso: {{ getPermissionTranslation(card.permission) }}</p>
                 </div>
-                <BaseButton
-                    v-if="card.permission != 'admin'"
-                    custom-class="DeleteButton"
-                    variant="primary"
-                    @click=""
-                >
-                    Fijar como administrador
-                </BaseButton>
-                <BaseButton
-                    v-if="card.permission != 'admin'"
-                    custom-class="DeleteButton"
-                    variant="danger"
-                    @click=""
-                >
-                    Eliminar usuario
-                </BaseButton>
+                <div class="CardButtons">
+                    <BaseButton
+                        v-if="card.permission != 'admin'"
+                        custom-class="DeleteButton"
+                        variant="primary"
+                        @click=""
+                    >
+                        Fijar como administrador
+                    </BaseButton>
+                    <BaseButton
+                        v-if="card.permission != 'admin'"
+                        custom-class="DeleteButton"
+                        variant="danger"
+                        @click=""
+                    >
+                        Eliminar usuario
+                    </BaseButton>
+                </div>
             </BaseCard>
         </div>
         <!-- End of section with the current user status -->
@@ -108,16 +110,22 @@
         </BaseCard>
         <!-- Add user form -->
         <BaseCard custom-class="AddUserFormWrapper" bottom>
-            <form>
+            <form class="AddUserForm">
                 <div class="UsernameToAdd">
-                    <p class="marginLess"> Introduzca el nombre del usuario que desee añadir </p>
+                    <p class="formMarginless"> Introduzca el nombre del usuario que desee añadir </p>
                     <BaseInput
                           v-model="username"
                           name="Description"
-                          placeholder="Asunto"
+                          placeholder="Nombre de usuario"
                           custom-class="Subject"
                         />
                 </div>
+
+                <BaseButton 
+                    type="submit" 
+                    variant="primary">
+                    Añadir usuario
+                </BaseButton>
             </form>
         </BaseCard>
     </BasePage>
@@ -169,6 +177,22 @@
         box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     }
 
+    .CardButtons {
+        box-sizing: border-box;
+        width: 100%;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        gap: 5px;
+    }
+
+    .DeleteButton {
+        width: 80%;
+    }
+
     .CurrentUser {
         margin-top: 10px;
         margin-bottom: 2rem;
@@ -181,9 +205,37 @@
     /* #endregion */
 
     /* #region Add new users */
+    .AddUserFormWrapper {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .AddUserForm {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        width: 60%;
+    }
+
     .UsernameToAdd {
-        width: 80%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+
         border-bottom:  1px solid grey;
+
+        padding-bottom: 10px;
+        margin-bottom: 10px;
+    }
+
+    .formMarginless {
+        margin-top: 2px;
+        margin-bottom: 2px;
     }
     /* #endregion */
 </style>

@@ -87,7 +87,7 @@
     </BaseCard>
 
     <!-- Create a form -->
-    <BaseCard custom-class="BaseContainer">
+    <BaseCard custom-class="BaseContainer" bottom>
       <p class="HelpHeader"><b>¿Tienes algo que contarnos?</b></p>
       <p class="DescriptionText">No dudes en rellenar una nueva solicitud, <b>¡es totalmente anónima!</b> </p>
       <p class="DescriptionText">Tardarás <b>menos de cinco minutos</b> en hacerla, y nos será muy útil para <b>mejorar la experiencia de todos</b> en la escuela.</p>
@@ -96,17 +96,6 @@
        variant="primary"
        custom-class="FillFormButton">
         Rellenar el formulario
-      </BaseButton>
-    </BaseCard>
-
-    <!-- Admin panel -->
-    <BaseCard custom-class="BaseContainer" bottom>
-      <p class="ToFormText"><b>Panel para los administradores</b></p>
-      <BaseButton  
-       @click="reviewFormsButtonClicked"
-       variant="primary"
-       custom-class="FillFormButton">
-        Ir al panel de administración
       </BaseButton>
     </BaseCard>
   </BasePage>

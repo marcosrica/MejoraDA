@@ -6,6 +6,7 @@ import Home from '../components/Home.vue';
 
 import ReviewForms from '../components/AdminPages/ReviewForms.vue';
 import UserManagement from '../components/AdminPages/UserManagement.vue';
+import DepartmentsManagement from '../components/AdminPages/DepartmentsManagement.vue';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -30,8 +31,13 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path:'/home/users',
-    name: 'Manage Users',
+    name: 'Gestionar usuarios',
     component: UserManagement,
+  },
+  {
+    path:'/Home/departments',
+    name: 'Gestionar subdelegaciones',
+    component: DepartmentsManagement,
   }
 ];
 
