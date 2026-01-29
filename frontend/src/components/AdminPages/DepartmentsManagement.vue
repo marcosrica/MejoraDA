@@ -5,8 +5,9 @@
     import BasePage from '../BuildingBlocks/BasePage.vue';
     import BaseCard from '../BaseComponents/BaseCard.vue';
     import BaseButton from '../BaseComponents/BaseButton.vue';
-import type SubdelegationsInfo from '../../interfaces/SubdelegationsInfo';
-import BaseInput from '../BaseComponents/BaseInput.vue';
+    import type SubdelegationsInfo from '../../interfaces/SubdelegationsInfo';
+    import BaseInput from '../BaseComponents/BaseInput.vue';
+    import BasePrompt from '../BaseComponents/BasePrompt.vue';
 
     //Object needed to fulfill the petition
     const petitionMaker:PetitionMaker = new PetitionMaker();
@@ -18,6 +19,11 @@ import BaseInput from '../BaseComponents/BaseInput.vue';
     const showAlert = ref(false);
     const alertMessage = ref('');
     const alertType = ref<'success' | 'error' | 'info'>('success');
+
+    //Variables for controlling the prompt
+    const showPrompt = ref(false);
+    const promptName = ref('');
+    const promptInnerName = ref('');
 
     //Variables for the new department form
     const departmentName = ref('');
@@ -33,6 +39,16 @@ import BaseInput from '../BaseComponents/BaseInput.vue';
         {name:"Subdelegación de Eventos", internalName: "Eventos"},
         {name:"Subdelegación de Bienestar e Igualdad Social", internalName: "Igualdad"},
     ]);
+
+    const enablePrompt = (name:string, innerName:string) => {
+        promptName.value = name;
+        promptInnerName.value = innerName;
+        showPrompt.value = true;
+    }
+
+    const departmentEditAccepted = () => {
+        console.log("Should edit the department");
+    }
 </script>
 
 <template>
@@ -63,7 +79,7 @@ import BaseInput from '../BaseComponents/BaseInput.vue';
                     <BaseButton
                         custom-class="DeleteButton"
                         variant="primary"
-                        @click=""
+                        @click="enablePrompt(card.name, card.internalName)"
                     >
                         Editar subdelegación
                     </BaseButton>
@@ -115,6 +131,42 @@ import BaseInput from '../BaseComponents/BaseInput.vue';
                 </div>
             </form>
         </BaseCard>
+
+
+        <!-- Prompt for editing -->
+        <BasePrompt :show="showPrompt"
+        title="Editar subdelegación">
+            <form>
+                <div class="EditFormDiv notFinalEditFormDiv">
+                    <p class="editFormText"> <b> Nombre de la subdelegación: </b> </p>
+                    <BaseInput class="EditFormInput"
+                        v-model="promptName"
+                        name="New name of the department"
+                        placeholder="Nombre de la delegación"
+                        custom-class="formInput">
+                    </BaseInput>
+                </div>
+                <div class="EditFormDiv">
+                    <p class="editFormText"> <b> Nombre interno de la subdelegación: </b> </p>
+                    <BaseInput class="EditFormInput"
+                        v-model="promptInnerName"
+                        name="New inner name for the department"
+                        placeholder="Nombre interno de la delegación"
+                        custom-class="formInput">
+                    </BaseInput>
+                </div>
+                <div class="EditFormDiv">
+                    <BaseButton variant="primary"
+                        type="submit"
+                        @click="departmentEditAccepted">
+                        Aceptar cambios
+                    </BaseButton>
+                </div>
+            </form>
+            <BaseButton variant="danger" @click="showPrompt=false">
+                Cancelar
+            </BaseButton>
+        </BasePrompt>
     </BasePage>
 
     <div v-if="!showContent">
@@ -256,6 +308,40 @@ import BaseInput from '../BaseComponents/BaseInput.vue';
         display: flex;
         justify-content: center;
         align-items: center;
+    }
+
+    /* #endregion */
+
+
+    /* #region editForm */
+
+    .EditFormDiv {
+        margin-top: 10px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .firstEditFormDiv {
+        margin-top: 0px;
+    }
+
+    .notFinalEditFormDiv {
+        padding-bottom: 10px;
+        border-bottom: 2px solid var(--form-border);
+        margin-bottom: 10px;
+        margin-top: 0px;
+    }
+
+    .editFormText {
+        margin: 0px;
+        text-align: center;
+        font-size: 18px;
+    }
+
+    .EditFormInput {
+        box-sizing: border-box;
+        width: 100%;
     }
 
     /* #endregion */

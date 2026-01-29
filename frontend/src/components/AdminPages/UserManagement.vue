@@ -7,6 +7,7 @@
     import type UserData from '../../interfaces/AllowedUserData';
     import BaseButton from '../BaseComponents/BaseButton.vue';
     import BaseInput from '../BaseComponents/BaseInput.vue';
+    import BasePrompt from '../BaseComponents/BasePrompt.vue';
 
     //Object needed to fulfill the petition
     const petitionMaker:PetitionMaker = new PetitionMaker();
