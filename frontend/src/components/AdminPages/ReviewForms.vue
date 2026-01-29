@@ -120,14 +120,8 @@ onMounted(async () => {
       @close="displayAlert = false" 
     />
 
-    <!-- Header -->
-    <BaseCard customClass="Home_Welcome" top>
-      <h2 class="Home_Welcome_Text">¡Bienvenido de nuevo, USER!</h2>
-      <p class="Home_UnsolvedPetitionsCount"> Hay {{ unsolvedPetitions }} solicitudes pendientes </p>
-    </BaseCard>
-
     <!-- Filters Section -->
-    <BaseCard customClass="Home_Filters" >
+    <BaseCard customClass="Home_Filters" top>
       <p class="Home_Big_Text"> Filtrar solicitudes </p>
       <form class="Filters_Form"  @submit.prevent="handleSubmit">
         <div class="Home_Department">
