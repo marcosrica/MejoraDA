@@ -1,76 +1,11 @@
 <script setup lang="ts">
-    import { ref, onMounted } from 'vue'
-    import PetitionMaker from '../Utilities/PetitionMaker'
-    import BaseCard from './BaseComponents/BaseCard.vue'
-    import BaseButton from './BaseComponents/BaseButton.vue'
-    import BasePage from './BuildingBlocks/BasePage.vue';
+  import BaseCard from './BaseComponents/BaseCard.vue'
+  import BaseButton from './BaseComponents/BaseButton.vue'
+  import BasePage from './BuildingBlocks/BasePage.vue';
 
-    const totalForms = ref<number | null>(null);
-    const totalIdeas = ref<number | null>(null);
-    const totalComplaints = ref<number | null>(null);
-    const totalSuggestions = ref<number | null>(null);
-
-    onMounted(async () => {
-      const pm = new PetitionMaker();
-      const totalFormsResult = await pm.makePetition('/api/index/getTotalForms', 'GET');
-      const brokenDownResult = await pm.makePetition('/api/index/getFormsBreakdown', 'GET');
-
-      if (!totalFormsResult.error && totalFormsResult.data?.count !== undefined) {
-        totalForms.value = totalFormsResult.data.count;
-      }
-
-      if(!brokenDownResult.error && brokenDownResult.data) {
-        totalIdeas.value = brokenDownResult.data.ideas;
-        totalComplaints.value = brokenDownResult.data.complaints;
-        totalSuggestions.value = brokenDownResult.data.suggestions;
-      }
-    })
-
-    const fillFormButtonClicked = () => {
-      location.href = '/Form';
-    }
-
-    const reviewFormsButtonClicked = () => {
-      location.href = '/Home';
-    }
-    /**
-   .ToFormButton {
-      background-color: var(--main-color);
-      color: black;
-      font-family: 'Montserrat', sans-serif;
-      font-size: large;
-      font-weight: 700;
-      border: none;
-      border-radius: 5px;
-      padding: 10px 20px;
-      cursor: pointer;
-    }
-
-    .ToFormText {
-      font-family: 'Montserrat', sans-serif;
-      font-size: x-large;
-      margin-bottom: 10px;
-    }
-
-    .DescriptionText {
-      font-family: 'Montserrat', sans-serif;
-      font-size: large;
-      text-align: center;
-      max-width: 90%;
-    }
-    
-    .PrinciplesList {
-      font-family: 'Montserrat', sans-serif;
-      font-size: large;
-      list-style: disc;
-      padding-left: 20px;
-    }
-    
-    .UsageText {
-      font-family: 'Montserrat', sans-serif;
-      font-size: x-large;
-    }
-   */
+  const fillFormButtonClicked = () => {
+    location.href = '/Form';
+  }
 </script>
 
 <template>
@@ -120,72 +55,8 @@
     margin-bottom: 10px;
   }
 
-  .UsageCardContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
   .FillFormButton {
     min-width: 20%;
-  }
-
-  .Index_Numbers {
-    font-size: 150px;
-    font-weight: 700;
-
-    margin-top: 0px;
-    margin-bottom: 0px;
-  }
-
-  .UsageText_DataIdentifier {
-    margin-top: 0px;
-    margin-bottom: 0px;
-
-    align-self: center;
-  }
-
-  .TotalFiles {
-    width: 40%;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    margin-top: 10px;
-
-    @media(orientation: portrait) {
-      width: 90%;
-    }
-  }
-
-  .SubdivisionByType {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-
-    width: 100%;
-    margin-top: 20px;
-    gap: 20px;
-
-    @media(orientation: portrait) {
-      flex-direction: column;
-      gap: 10px;
-    }
-  }
-
-  .SubdividedForms {
-    flex: 1;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    @media(orientation: portrait) {
-      width: 80%;
-    }
   }
 
   .HelpHeader {
