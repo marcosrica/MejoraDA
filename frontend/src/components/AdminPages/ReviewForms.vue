@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+// #region imports
 import { ref } from 'vue';
 import { onMounted } from 'vue';
 
@@ -9,6 +10,11 @@ import BaseSelect from '../BaseComponents/BaseSelect.vue';
 import BaseCheckbox from '../BaseComponents/BaseCheckbox.vue';
 import BaseCard from '../BaseComponents/BaseCard.vue';
 import BasePage from '../BuildingBlocks/BasePage.vue';
+import type Petition from '../../interfaces/Petition';
+
+// #endregion imports
+
+// #region variables
 //Class that holds the method to make petitions to the backend
 const petitionMaker:PetitionMaker = new PetitionMaker();
 
@@ -28,9 +34,12 @@ let lastType:string;
 let lastRes:boolean;
 
 //Variable containing the forms retrieved from the backend
-const petitions = ref<any[]>([]);
+const petitions = ref<(Petition & { expanded: boolean })[]>([]);
 const unsolvedPetitions = ref<number>(0);
 
+// #endregion variables
+
+// #region functions
 //Handle the alert showing
 const showAlert = (type:'success' | 'error' | 'info', message:string) => {
   alertType.value = type;
@@ -49,6 +58,42 @@ const handleSubmit = async () => {
   console.log(filters);
 
   await fetchForms(filters.department, filters.type, filters.showResolved);
+}
+
+//Retrieve the forms answers from the server with the applied filters
+const fetchForms = async (department:string, type:string, showResolved:boolean) => {
+  const data = {
+    department: department,
+    type: type,
+    showResolved: showResolved,
+  };
+
+  const response = await petitionMaker.makePetition('/api/petitions/filter', 'POST', data);
+  if(!response.error) {
+    petitions.value = []
+    petitions.value = response.data.map((p: Petition) => ({
+      ...p,
+      expanded: false,
+    }));
+
+    lastDept = data.department;
+    lastType = data.type;
+    lastRes = data.showResolved;
+  }
+  else {
+    showAlert("error", "Ha ocurrido un error al aplicar los filtros");
+  }
+}
+
+//Retrieves the amount of unresolved forms
+const fetchUnresolvedForms = async () => {
+  const result = await petitionMaker.makePetition("/api/UnresolvedFormsCount", "GET");
+
+  console.log(result);
+
+  if(result.status == 200) {
+    unsolvedPetitions.value = result.data.count;
+  }
 }
 
 //Mark a certain form as resolved after analisis
@@ -70,43 +115,34 @@ const markAsResolved = async (type:string, petitionId:number) => {
   }
 }
 
-//Retrieve the forms answers from the server with the applied filters
-const fetchForms = async (department:string, type:string, showResolved:boolean) => {
+//Delete a certain petition from the database
+const deletePetition = async (type:string, petitionId:number) => {
   const data = {
-    department: department,
     type: type,
-    showResolved: showResolved,
+    id: petitionId,
   };
 
-  const response = await petitionMaker.makePetition('/api/petitions/filter', 'POST', data);
-  if(!response.error) {
-    petitions.value = []
-    petitions.value = response.data.map(p => ({ ...p, expanded: false }));
+  const response = await petitionMaker.makePetition("/api/petitions/deletePetition", "DELETE", data);
+  console.log(response);
 
-    lastDept = data.department;
-    lastType = data.type;
-    lastRes = data.showResolved;
+  if(response.status == 200) {
+    showAlert("success", "La solicitud ha sido eliminada correctamente");
+    fetchForms(lastDept, lastType, lastRes);
   }
   else {
-    showAlert("error", "Ha ocurrido un error al aplicar los filtros");
+    showAlert("error", "Ha habido un error al eliminar la solicitud");
   }
 }
 
-const fetchUnresolvedForms = async () => {
-  const result = await petitionMaker.makePetition("/api/UnresolvedFormsCount", "GET");
+// #endregion functions
 
-  console.log(result);
-
-  if(result.status == 200) {
-    unsolvedPetitions.value = result.data.count;
-  }
-}
-
+// #region onMounted
 //Fetch all the forms that aren't resolved
 onMounted(async () => {
   await fetchUnresolvedForms();
   fetchForms(department.value, type.value, showResolved.value);
 });
+// #endregion onMounted
 </script>
 
 <template>
@@ -180,7 +216,7 @@ onMounted(async () => {
       <div class="Home_PetitionsList" >
         <BaseCard
           v-for="petition in petitions"
-          :key="petition.public_id || petition.request_id"
+          :key="petition.id || petition.request_id"
           border-color="rgb(146, 146, 146)"
           class="PetitionCard"
           top
@@ -217,8 +253,8 @@ onMounted(async () => {
             </div>
           </transition>
           <div class="ResolvePetitionDiv" v-if="!petition.solved">
-            <BaseButton variant="primary" v-on:click="markAsResolved(petition.type, petition.request_id)"> Marcar como resuelta </BaseButton>
-            <BaseButton variant="danger" v-on:click="markAsResolved(petition.type, petition.request_id)"> Eliminar solicitud </BaseButton>
+            <BaseButton variant="primary" v-on:click="markAsResolved(petition.type, parseInt(petition.request_id))"> Marcar como resuelta </BaseButton>
+            <BaseButton variant="danger" v-on:click="deletePetition(petition.type, parseInt(petition.request_id))"> Eliminar solicitud </BaseButton>
           </div>
         </BaseCard>
       </div>

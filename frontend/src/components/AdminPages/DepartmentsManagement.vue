@@ -40,6 +40,7 @@
         {name:"Subdelegación de Bienestar e Igualdad Social", internalName: "Igualdad"},
     ]);
 
+    //Function for showing the prompt when the edit button is clicked
     const enablePrompt = (name:string, innerName:string) => {
         promptName.value = name;
         promptInnerName.value = innerName;
