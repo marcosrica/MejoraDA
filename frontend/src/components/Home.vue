@@ -1,280 +1,271 @@
-<script setup lang="ts">
-    import { ref } from 'vue'
-    import PetitionMaker from '../Utilities/PetitionMaker'
+<script lang="ts" setup>
+import { ref } from 'vue';
+import { onMounted } from 'vue';
+ 
+import PetitionMaker from '../Utilities/PetitionMaker';
 
-    const petitionMaker:PetitionMaker = new PetitionMaker();
+import BaseAlert from './BaseComponents/BaseAlert.vue';
+import BaseCard from './BaseComponents/BaseCard.vue';
+import BasePage from './BuildingBlocks/BasePage.vue';
+import BaseButton from './BaseComponents/BaseButton.vue';
+import BaseInput from './BaseComponents/BaseInput.vue';
+import BaseDepartmentWrapper from './BaseComponents/BaseDepartmentWrapper.vue';
+import type SubdelegationsInfo from '../interfaces/SubdelegationsInfo';
 
-    const documentType = ref('')
-    const department = ref('General')
-    const description = ref('')
+//Class that holds the method to make petitions to the backend
+const petitionMaker:PetitionMaker = new PetitionMaker();
 
-    const handleSubmit = async () => {
-      const formData = {
-        documentType: documentType.value,
-        department: department.value,
-        description: description.value,
-      }
+//Variables for the alert
+const displayAlert = ref(false);
+const alertMessage = ref('');
+const alertType = ref<'success' | 'error' | 'info'>('success');
 
-      if(!(!formData.documentType || !formData.department || !formData.description)) { //Prevent empty fields
-        console.log('Submitted data:', formData)
-        const response = await petitionMaker.makePetition("/api/newForm", "POST", formData);
-        console.log('Response:', response);
-      }
-    }
+//Variables for generally managing the subdelegations panel
+const EditingSubdelegation = ref(false);
+//const SubdelegationsList = ref(["Subdelegación de Ayuda y Servicios Para el Estudiante", "Subdelegación de Comunicación", "Subdelegación de Mediación y Calidad Académica", "Subdelegación de Estrategia y Desarrollo Tecnológico", "Subdelegación de Eventos", "Subdelegación de Bienestar e Igualdad Social"]);
+const subdelegationsList = ref<SubdelegationsInfo[]>([
+  { name: "Subdelegación de Ayuda y Servicios Para el Estudiante", internalName: "ayuda_servicios" },
+  { name: "Subdelegación de Comunicación", internalName: "comunicacion" },
+  { name: "Subdelegación de Mediación y Calidad Académica", internalName: "mediacion_calidad" },
+  { name: "Subdelegación de Estrategia y Desarrollo Tecnológico", internalName: "TIC" },
+  { name: "Subdelegación de Eventos", internalName: "eventos" },
+  { name: "Subdelegación de Bienestar e Igualdad Social", internalName: "bienestar_igualdad" }
+]);
+
+//Variables for the new subdelegation
+const newName = ref('');
+const newInnerName = ref('');
+
+//Variable storing the amount of forms that need attention
+const unsolvedPetitions = ref<number | null>(null);
+
+//Handle the alert showing
+const showAlert = (type:'success' | 'error' | 'info', message:string) => {
+  alertType.value = type;
+  alertMessage.value = message;
+  displayAlert.value = true;
+}
+
+const reviewFormsButtonClicked = () => {
+  location.href = '/Home/review';
+}
+
+const fetchUnresolvedForms = async () => {
+  const result = await petitionMaker.makePetition("/api/UnresolvedFormsCount", "GET");
+
+  console.log(result);
+
+  if(result.status == 200) {
+    unsolvedPetitions.value = result.data.count;
+  }
+}
+
+//Fetch all the forms that aren't resolved
+onMounted(async () => {
+  await fetchUnresolvedForms();
+});
+
 </script>
 
-
 <template>
-    <div class="Parent">
-        <div class="TopBarDiv">
-            <div class="PageID">
-                <img src="./../assets/Logo.png" alt="MejoraDA Logo" class="ServiceLogo"/>
-                <h1> MejoraDA </h1>
-            </div>
+  <BasePage>
+    <!-- Alert for user feedback -->
+    <BaseAlert
+      :show="displayAlert"
+      :type="alertType"
+      :message="alertMessage"
 
-            <img src="./../assets/Logo.png" alt="MejoraDA Logo" class="ServiceLogo"/>
+      @close="displayAlert = false" 
+    />
+
+    <!-- Header panel, just for welcome -->
+    <BaseCard custom-class="BasePanel" top>
+      <p class="HeaderText"> Panel de administración </p>
+      <p class="SubtitleText"> Bienvenido de nuevo, USER </p>
+    </BaseCard> 
+
+    <!-- Redirecting to form reviewing -->
+    <BaseCard custom-class="BasePanel">
+        <p class="SecondHeaderText"><b> Revisar formularios </b></p>
+        <p class="SubtitleText"> Hay {{ unsolvedPetitions }} formularios que requieren tu atención </p>
+        <BaseButton  
+          custom-class="BaseButton"
+          @click="reviewFormsButtonClicked"
+          variant="primary">
+        Revisar los formularios
+      </BaseButton>
+    </BaseCard>
+
+    <!-- Redirecting to form reviewing -->
+    <BaseCard custom-class="BasePanel SubdelegationsCard" bottom>
+      <p class="SecondHeaderText"> <b> Subdelegaciones </b> </p>
+      <div class="SubdelegationsContainer" :class="{ editing: EditingSubdelegation }">
+        <!-- Departments listing -->
+        <div class="BasePanel SubdelegationsList">
+          <p class="SubtitleText"> Subdelegaciones disponibles actualmente </p>
+          <BaseDepartmentWrapper
+            v-for="(info, index) in subdelegationsList"
+            :key="index"
+            :name="info.name"
+            :inner-name="info.internalName"
+            custom-class="DepartmentWrapper"
+            :show-buttons="EditingSubdelegation"
+          />
+
+          <BaseButton
+            v-if="EditingSubdelegation"
+            custom-class="BaseButton"
+            @click="EditingSubdelegation = false"
+            variant="primary">
+            Volver
+          </BaseButton>
         </div>
-        <div class="ContentDiv">
-            <div class="FormHeader">
-                <div class="FormIcon">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"></path>
-                    </svg>
-                </div>
-                
-                <h2 class="FormHeaderText"> <b> Crear una solicitud </b></h2>
-            </div>
-            <form class="FormDiv"  @submit.prevent="handleSubmit">
-                <p> <b> Indique el tipo de solicitud </b> </p>
-                <div class="MultiSelect_Type">
-                    <div class="Multioption">
-                        <input type="radio" id="Idea" name="DocumentType" value="Idea" v-model="documentType"></input>
-                        <label for="Idea">Idea</label>
-                        <br>
-                    </div>
-                    
-                    <div class="Multioption">
-                        <input type="radio" id="Complaint" name="DocumentType" value="Complaint" v-model="documentType"></input>
-                        <label for="Complaint">Queja</label>
-                        <br>
-                    </div>
+      
+        <!-- Manage / Operations panel -->
+        <div class="BasePanel ManageSubdelegationsPanel">
+          <form class="NewSubdelegationForm">
+            <p class="SubtitleText"> Añadir una nueva subdelegación </p>
+            <BaseInput
+              v-model="newName"
+              name="Description"
+              placeholder="Nombre de la subdelegación"
+              custom-class="Subject"
+            />
+            <BaseInput
+              v-model="newInnerName"
+              name="Description"
+              placeholder="Nombre interno de la subdelegación"
+              custom-class="Subject"
+            />
+            <BaseButton
+              custom-class="BaseButton"
+              variant="primary"
+              type="submit">
+              Crear subdelegación
+            </BaseButton>
+          </form>
+        
+          <BaseButton
+            custom-class="BaseButton"
+            @click="EditingSubdelegation = true"
+            variant="primary">
+            Gestionar subdelegaciones
+          </BaseButton>
 
-                    <div class="Multioption">    
-                        <input type="radio" id="Suggestion" name="DocumentType" value="Suggestion" v-model="documentType"></input>
-                        <label for="Suggestion">Sugerencia</label>
-                        <br>
-                    </div>
-                </div>
-                
-                <div class="Department">
-                    <p> <b> Indique la subdelegación a la que se quiere dirigir </b> </p>
-
-                    <select name="Departments" id="Departments" v-model="department">
-                        <option value="General"> General </option>
-                        <option value="AtencionEstudiante"> Subdelegación de Ayuda y Servicios para el Estudiante </option>
-                        <option value="Comunicacion"> Subdelegación de Comunicación </option>
-                        <option value="Calidad"> Subdelegación de Mediación y Calidad Académica </option>
-                        <option value="TIC"> Subdelegación de Estrategia y Desarrollo Tecnológico </option>
-                        <option value="Eventos"> Subdelegación de Eventos </option>
-                        <option value="Igualdad"> Subdelegación de Bienestar e Igualdad Social </option>
-                    </select>
-                </div>
-
-                <div class="Description">
-                    <p> <b> Describa su solicitud </b> </p>
-                    <textarea class="Explanation" name="Description" id="Description" rows="10" placeholder="Escriba aquí su solicitud..." v-model="description"></textarea>
-                </div>
-
-                <div class="SubmitDiv">
-                    <button type="submit"> <b> Enviar solicitud </b> </button>
-                </div>
-            </form>
+          <BaseButton
+            custom-class="BaseButton"
+            variant="danger">
+            Limpiar subdelegaciones
+          </BaseButton>
         </div>
-    </div>
+      </div>
+    </BaseCard>
+  </BasePage>
 </template>
 
-<style scoped>
-    .Parent {
-        background-color: var(--background);
-        width: 100dvw;
-        height: 100dvh;
+<style scoped> 
+/* #region Basic blocks */
+.BasePanel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+}
 
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
+.BaseButton {
+  max-width: 50%;
 
-    .TopBarDiv {
-        background-color: var(--main-color);
-        box-shadow:
-            0 1px 2px rgba(0, 0, 0, 0.921),
-            0 2px 6px rgba(0, 0, 0, 0.284);
+  @media(orientation: portrait) {
+    max-width: 100%;
+    width: 100%;
+  }
+}
 
-        width: 100%;
-        height: 10%;
+.HeaderText {
+  font-family: 'Montserrat', sans-serif;
+  font-size: xx-large;
+  font-weight: 700;
+  text-align: center;
 
-        position: fixed;
-        top: 0;
+  margin-top: 5px;
+  margin-bottom: 0px;
+}
 
-        display:flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
+.SecondHeaderText {
+  font-family: 'Montserrat', sans-serif;
+  font-size: x-large;
+  text-align: center;
 
-        border-bottom-right-radius: 10px;
-        border-bottom-left-radius: 10px;
-    }
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
 
-    .PageID {
-        display:flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
+.SubtitleText {
+  font-family: 'Montserrat', sans-serif;
+  font-size: large;
+  text-align: center;
 
-        height: 100%;
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
 
-        margin-left: 20px;
-    }
+/* #endregion */
 
-    .ServiceLogo {
-        height: 60%;
-        margin-right: 15px;
-    }
+/* #region Subdelegations */
+.SubdelegationsCard {
+  overflow: hidden;
+}
 
-    .ContentDiv {
-        /* Width and height */
-        box-sizing: border-box;
-        overflow-y: auto;
-        width:100%;
+.SubdelegationsContainer {
+  display: flex;
+  width: 100%;
+  overflow: hidden;
+  flex-direction: row;
 
-        /* Overall structure */
-        display:flex;
-        flex: 1;
-        flex-direction: column;
-        align-items: center;
-        justify-content: top;
+  @media(orientation: portrait) {
+    flex-direction: column;
+  }
+}
 
-        /* Margins and paddings */
-        margin-top: 12dvh;
-        margin-bottom: 2dvh;
-        padding-top: 15px;
-        padding-bottom: 15px;
-        padding-left: 5px;
-        padding-right: 5px;
-    }
+.NewSubdelegationForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
 
-    .FormHeader {
-        /* Width and height */
-        min-width: 80%;
-        min-height: auto;
+/* LEFT PANEL */
+.SubdelegationsList {
+  flex: 0 0 50%;
+  transition: flex-basis 0.4s ease;
+}
 
-        /* Overall structure */
-        display:flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-        
-        /* Colors */
-        background-color: var(--panel-background);
-        box-shadow:
-            0 1px 2px rgba(0, 0, 0, 0.921),
-            0 2px 6px rgba(0, 0, 0, 0.284);
-        border-radius: 10px;
+/* RIGHT PANEL */
+.ManageSubdelegationsPanel {
+  gap: 10px;
 
-        /* Margins and padding */
-        margin-bottom: 10px;
-        padding-top: 10px;
-        padding-bottom: 10px;
-    }
+  flex: 0 0 50%;
+  max-height: 100%;
+  transition: 
+    transform 0.4s ease, 
+    opacity 0.4s ease;
+    max-height: 0.4s ease;
+}
 
-    .FormIcon {
-        color: var(--icon-color);
-        height:40px;
-        width: 40px;
-        margin-right: 10px;
-    }
+/* EDITING STATE */
+.SubdelegationsContainer.editing .SubdelegationsList {
+  flex-basis: 100%;
+}
 
-    .FormHeaderText {
-        margin-bottom:5px;
-        margin-top: 5px;
-    }
+.SubdelegationsContainer.editing .ManageSubdelegationsPanel {
+  transform: translateX(100%);
+  opacity: 0;
+  max-height: 0;
+  pointer-events: none;
+}
 
-    .FormDiv {
-        /* Overall structure */
-        display:flex;
-        flex: 1;
-        flex-direction: column;
-        align-items: center;
-        justify-content: top;
-        
-        /* Width and height */
-        min-width: 80%;
-        min-height: auto;
-
-        /* Colors */
-        background-color: var(--panel-background);
-        box-shadow:
-            0 1px 2px rgba(0, 0, 0, 0.921),
-            0 2px 6px rgba(0, 0, 0, 0.284);
-        border-radius: 10px;
-
-        /* Margins and padding */
-        margin-bottom: 10px;
-        padding-top: 20px;
-    }
-
-    .MultiSelect_Type {
-        /* Overall structure */
-        display:flex;
-        flex-direction: row;
-        align-items: flex-start;
-        justify-content: space-around;
-
-        /* Width and height */
-        width: 90%;
-
-        /* Margins and padding */
-        margin-bottom: 10px;
-        padding-bottom: 15px;
-
-        /* Borders */
-        border-bottom: 2px solid var(--form-border);
-    }
-
-    .Department{
-        /* Width and height */
-        width: 90%;
-
-        /* Overall structure */
-        display:flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: flex-start;
-
-        /* Margins and padding */
-        margin-bottom: 10px;
-        padding-bottom: 15px;
-
-        /* Borders */
-        border-bottom: 2px solid var(--form-border);
-    }
-
-    .Description{
-        /* Width and height */
-        width: 90%;
-
-        /* Overall structure */
-        display:flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: flex-start;
-
-        /* Margins and padding */
-        margin-bottom: 10px;
-        padding-bottom: 15px;
-    }
-
-    .Explanation {
-        width: 80%;
-    }
+/* #endregion */
 </style>

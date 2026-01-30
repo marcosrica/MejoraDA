@@ -1,8 +1,41 @@
 :root {
-    --main-color: #0669db;
-    --background: #d2d2d2;
-    --panel-background: #f1f1f1;
+    --primary: #0669DB; /* Buttons, active states, links */
+    --primary-light: #4A8FFF; /* Hover - secondary buttons*/
+    --primary-light-hover: rgb(26, 88, 187); /* Hover - secondary buttons*/
 
-    --icon-color: #0669db;
-    --form-border: #5e5e5e93;
+    --secondary: #0D4E8F; /* Navigation backgrounds */
+
+    --danger: #DC3545; /* Error states */
+    --danger-hover: #C82333; /* Error states - hover */
+
+    --accent-warm: #FF9F43; /* Highlights, alerts, badges */
+
+    --success: #28A745; /* Success states */
+
+    --neutral-dark: #212529; /* Headings - high contrast text */
+    --neutral-medium: #6C757D; /* Secondary texts, captions */
+    --neutral-light: #F8F9FA; /* Backgrounds, containers */
+
+    --card-background: #FFFFFF; /* Background color of the divs */
+    --page-background: #F1F3F5; /* Background color of the whole page */
+
+    --form-border: #CED4DA; /* Borders of form elements */
+
+     
+    /* Secondary button */
+    --secondary-button: #e9ecef00;
+    --secondary-button-hover: #F1F3F5; /* Hover - secondary buttons*/
+    --secondary-button-border: 1.5px solid #CED4DA;
+
+    --card-shadow: 
+        0 1px 2px rgba(0,0,0,0.06),
+        0 4px 12px rgba(0,0,0,0.08);
+
+
+    --shadow: 
+        0 1px 2px rgba(0, 0, 0, 0.9),
+        0 2px 6px rgba(0, 0, 0, 0.25);
+    --legacy-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.9),
+        0 2px 6px rgba(0, 0, 0, 0.25);
 }
