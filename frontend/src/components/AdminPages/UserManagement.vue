@@ -1,19 +1,22 @@
 <script setup lang="ts">
+    // #region Imports
     import { ref } from 'vue'
     import PetitionMaker from '../../Utilities/PetitionMaker'
-    import BaseAlert from '../BaseComponents/BaseAlert.vue'; //For showing when the form has been submitted successfully
+    import BaseAlert from '../BaseComponents/BaseAlert.vue';
     import BasePage from '../BuildingBlocks/BasePage.vue';
     import BaseCard from '../BaseComponents/BaseCard.vue';
     import type UserData from '../../interfaces/AllowedUserData';
     import BaseButton from '../BaseComponents/BaseButton.vue';
     import BaseInput from '../BaseComponents/BaseInput.vue';
-    import BasePrompt from '../BaseComponents/BasePrompt.vue';
+    // #endregion Imports
 
-    //Object needed to fulfill the petition
-    const petitionMaker:PetitionMaker = new PetitionMaker();
+    // #region variables
 
     //Handles authentication
     const showContent = ref(true); //TODO: Temporary value for testing
+
+    //Object needed to fulfill the petition
+    const petitionMaker:PetitionMaker = new PetitionMaker();
 
     //Variables for the alert
     const showAlert = ref(false);
@@ -35,6 +38,9 @@
         {"name": "Laura", "surname": "Gómez", "permission": "admin"}
     ]);
 
+    //#endregion variables
+
+    //Translates the permission data from the database structure to a spanish human readable format
     const getPermissionTranslation = (permission:String) => {
         if(permission == "overseer") {
             return "gestor"
