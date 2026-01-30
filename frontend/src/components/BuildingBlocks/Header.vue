@@ -1,7 +1,3 @@
-<script lang="ts" setup>
-
-</script>
-
 <template>
     <div class="TopBarDiv">
       <div class="PageID" onclick="location.href = '/'">
