@@ -16,6 +16,10 @@ const props = defineProps<{
 
 <template>
   <BaseRoundedButton v-if="visible" class="ToggleButton" @click="open = !open">☰</BaseRoundedButton>
+  
+  <div class="TranslucentPanel" v-if="open" @click="open = false">
+
+  </div>
 
   <transition name="menu-panel">
     <BaseCard 
@@ -119,5 +123,15 @@ const props = defineProps<{
   display: flex; 
   align-items: center; 
   justify-content: center; 
+}
+
+.TranslucentPanel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100dvw;
+  height: 100dvh;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 900;
 }
 </style>
