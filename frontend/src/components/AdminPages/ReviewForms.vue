@@ -1,147 +1,145 @@
 <script lang="ts" setup>
 // #region imports
-import { ref } from 'vue';
-import { onMounted } from 'vue';
+  import { ref } from 'vue';
+  import { onMounted } from 'vue';
 
-import BaseAlert from '../BaseComponents/BaseAlert.vue'; 
-import PetitionMaker from '../../Utilities/PetitionMaker'
-import BaseButton from '../BaseComponents/BaseButton.vue'; 
-import BaseSelect from '../BaseComponents/BaseSelect.vue';
-import BaseCheckbox from '../BaseComponents/BaseCheckbox.vue';
-import BaseCard from '../BaseComponents/BaseCard.vue';
-import BasePage from '../BuildingBlocks/BasePage.vue';
-import type Petition from '../../interfaces/Petition';
-
+  import BaseAlert from '../BaseComponents/BaseAlert.vue'; 
+  import PetitionMaker from '../../Utilities/PetitionMaker'
+  import BaseButton from '../BaseComponents/BaseButton.vue'; 
+  import BaseSelect from '../BaseComponents/BaseSelect.vue';
+  import BaseCheckbox from '../BaseComponents/BaseCheckbox.vue';
+  import BaseCard from '../BaseComponents/BaseCard.vue';
+  import BasePage from '../BuildingBlocks/BasePage.vue';
+  import type Petition from '../../interfaces/Petition';
 // #endregion imports
 
 // #region variables
-//Class that holds the method to make petitions to the backend
-const petitionMaker:PetitionMaker = new PetitionMaker();
+  //Class that holds the method to make petitions to the backend
+  const petitionMaker:PetitionMaker = new PetitionMaker();
 
-//Variables for the alert
-const displayAlert = ref(false);
-const alertMessage = ref('');
-const alertType = ref<'success' | 'error' | 'info'>('success');
+  //Variables for the alert
+  const displayAlert = ref(false);
+  const alertMessage = ref('');
+  const alertType = ref<'success' | 'error' | 'info'>('success');
 
-//Fields that are completed in the filters form, and accedes in the handleSubmit function
-const department = ref('All');
-const type = ref('All');
-const showResolved = ref(false);
+  //Fields that are completed in the filters form, and accedes in the handleSubmit function
+  const department = ref('All');
+  const type = ref('All');
+  const showResolved = ref(false);
 
-//Group of last applied filters for whenever reloading is needed
-let lastDept:string;
-let lastType:string;
-let lastRes:boolean;
+  //Group of last applied filters for whenever reloading is needed
+  let lastDept:string;
+  let lastType:string;
+  let lastRes:boolean;
 
-//Variable containing the forms retrieved from the backend
-const petitions = ref<(Petition & { expanded: boolean })[]>([]);
-const unsolvedPetitions = ref<number>(0);
-
+  //Variable containing the forms retrieved from the backend
+  const petitions = ref<(Petition & { expanded: boolean })[]>([]);
+  const unsolvedPetitions = ref<number>(0);
 // #endregion variables
 
 // #region functions
-//Handle the alert showing
-const showAlert = (type:'success' | 'error' | 'info', message:string) => {
-  alertType.value = type;
-  alertMessage.value = message;
-  displayAlert.value = true;
-}
-
-//Request the forms that comply with the new filters
-const handleSubmit = async () => {
-  const filters = {
-    department: department.value,
-    type: type.value,
-    showResolved: showResolved.value,
-  };
-
-  console.log(filters);
-
-  await fetchForms(filters.department, filters.type, filters.showResolved);
-}
-
-//Retrieve the forms answers from the server with the applied filters
-const fetchForms = async (department:string, type:string, showResolved:boolean) => {
-  const data = {
-    department: department,
-    type: type,
-    showResolved: showResolved,
-  };
-
-  const response = await petitionMaker.makePetition('/api/petitions/filter', 'POST', data);
-  if(!response.error) {
-    petitions.value = []
-    petitions.value = response.data.map((p: Petition) => ({
-      ...p,
-      expanded: false,
-    }));
-
-    lastDept = data.department;
-    lastType = data.type;
-    lastRes = data.showResolved;
+  //Handle the alert showing
+  const showAlert = (type:'success' | 'error' | 'info', message:string) => {
+    alertType.value = type;
+    alertMessage.value = message;
+    displayAlert.value = true;
   }
-  else {
-    showAlert("error", "Ha ocurrido un error al aplicar los filtros");
+
+  //Request the forms that comply with the new filters
+  const handleSubmit = async () => {
+    const filters = {
+      department: department.value,
+      type: type.value,
+      showResolved: showResolved.value,
+    };
+
+    console.log(filters);
+
+    await fetchForms(filters.department, filters.type, filters.showResolved);
   }
-}
 
-//Retrieves the amount of unresolved forms
-const fetchUnresolvedForms = async () => {
-  const result = await petitionMaker.makePetition("/api/UnresolvedFormsCount", "GET");
+  //Retrieve the forms answers from the server with the applied filters
+  const fetchForms = async (department:string, type:string, showResolved:boolean) => {
+    const data = {
+      department: department,
+      type: type,
+      showResolved: showResolved,
+    };
 
-  console.log(result);
+    const response = await petitionMaker.makePetition('/api/petitions/filter', 'POST', data);
+    if(!response.error) {
+      petitions.value = []
+      petitions.value = response.data.map((p: Petition) => ({
+        ...p,
+        expanded: false,
+      }));
 
-  if(result.status == 200) {
-    unsolvedPetitions.value = result.data.count;
+      lastDept = data.department;
+      lastType = data.type;
+      lastRes = data.showResolved;
+    }
+    else {
+      showAlert("error", "Ha ocurrido un error al aplicar los filtros");
+    }
   }
-}
 
-//Mark a certain form as resolved after analisis
-const markAsResolved = async (type:string, petitionId:number) => {
-  const data = {
-    type: type,
-    id: petitionId,
-  };
+  //Retrieves the amount of unresolved forms
+  const fetchUnresolvedForms = async () => {
+    const result = await petitionMaker.makePetition("/api/UnresolvedFormsCount", "GET");
 
-  const response = await petitionMaker.makePetition("/api/petitions/markAsResolved", "POST", data);
-  console.log(response);
+    console.log(result);
 
-  if(response.status == 200) {
-    showAlert("success", "La solicitud ha sido marcada como resuelta");
-    fetchForms(lastDept, lastType, lastRes);
+    if(result.status == 200) {
+      unsolvedPetitions.value = result.data.count;
+    }
   }
-  else {
-    showAlert("error", "Ha habido un error al marcar la solicitud como resuelta");
-  }
-}
 
-//Delete a certain petition from the database
-const deletePetition = async (type:string, petitionId:number) => {
-  const data = {
-    type: type,
-    id: petitionId,
-  };
+  //Mark a certain form as resolved after analisis
+  const markAsResolved = async (type:string, petitionId:number) => {
+    const data = {
+      type: type,
+      id: petitionId,
+    };
 
-  const response = await petitionMaker.makePetition("/api/petitions/deletePetition", "DELETE", data);
-  console.log(response);
+    const response = await petitionMaker.makePetition("/api/petitions/markAsResolved", "POST", data);
+    console.log(response);
 
-  if(response.status == 200) {
-    showAlert("success", "La solicitud ha sido eliminada correctamente");
-    fetchForms(lastDept, lastType, lastRes);
+    if(response.status == 200) {
+      showAlert("success", "La solicitud ha sido marcada como resuelta");
+      fetchForms(lastDept, lastType, lastRes);
+    }
+    else {
+      showAlert("error", "Ha habido un error al marcar la solicitud como resuelta");
+    }
   }
-  else {
-    showAlert("error", "Ha habido un error al eliminar la solicitud");
+
+  //Delete a certain petition from the database
+  const deletePetition = async (type:string, petitionId:number) => {
+    const data = {
+      type: type,
+      id: petitionId,
+    };
+
+    const response = await petitionMaker.makePetition("/api/petitions/deletePetition", "DELETE", data);
+    console.log(response);
+
+    if(response.status == 200) {
+      showAlert("success", "La solicitud ha sido eliminada correctamente");
+      fetchForms(lastDept, lastType, lastRes);
+    }
+    else {
+      showAlert("error", "Ha habido un error al eliminar la solicitud");
+    }
   }
-}
 
 // #endregion functions
 
 // #region onMounted
-//Fetch all the forms that aren't resolved
-onMounted(async () => {
-  await fetchUnresolvedForms();
-  fetchForms(department.value, type.value, showResolved.value);
-});
+  //Fetch all the forms that aren't resolved
+  onMounted(async () => {
+    await fetchUnresolvedForms();
+    fetchForms(department.value, type.value, showResolved.value);
+  });
 // #endregion onMounted
 </script>
 
@@ -267,26 +265,6 @@ onMounted(async () => {
   font-family: 'Montserrat', sans-serif;
   font-size: large;
   font-weight: bold;
-}
-
-/* Welcome div */
-.Home_Welcome {
-  box-sizing: border-box;
-
-  color: black;
-  text-align: center;
-  padding: 20px;
-}
-
-.Home_Welcome_Text {
-  font-family: 'Montserrat', sans-serif;
-  font-size: large;
-  font-weight: bold;
-  margin-bottom: 0px;
-}
-
-.Home_UnsolvedPetitionsCount {
-  margin-top: 5px;
 }
 
 /* Filters div */
