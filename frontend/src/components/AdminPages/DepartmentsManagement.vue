@@ -1,14 +1,17 @@
 <script setup lang="ts">
+// #region imports
     import { ref } from 'vue'
     import PetitionMaker from '../../Utilities/PetitionMaker'
-    import BaseAlert from '../BaseComponents/BaseAlert.vue'; //For showing when the form has been submitted successfully
+    import BaseAlert from '../BaseComponents/BaseAlert.vue';
     import BasePage from '../BuildingBlocks/BasePage.vue';
     import BaseCard from '../BaseComponents/BaseCard.vue';
     import BaseButton from '../BaseComponents/BaseButton.vue';
     import type SubdelegationsInfo from '../../interfaces/SubdelegationsInfo';
     import BaseInput from '../BaseComponents/BaseInput.vue';
     import BasePrompt from '../BaseComponents/BasePrompt.vue';
+// #endregion imports
 
+// #region variables
     //Object needed to fulfill the petition
     const petitionMaker:PetitionMaker = new PetitionMaker();
 
@@ -40,6 +43,9 @@
         {name:"Subdelegación de Bienestar e Igualdad Social", internalName: "Igualdad"},
     ]);
 
+// #endregion variables
+
+// #region functions
     //Function for showing the prompt when the edit button is clicked
     const enablePrompt = (name:string, innerName:string) => {
         promptName.value = name;
@@ -50,6 +56,7 @@
     const departmentEditAccepted = () => {
         console.log("Should edit the department");
     }
+// #endregion functions
 </script>
 
 <template>
@@ -321,10 +328,6 @@
         width: 100%;
         display: flex;
         flex-direction: column;
-    }
-
-    .firstEditFormDiv {
-        margin-top: 0px;
     }
 
     .notFinalEditFormDiv {
