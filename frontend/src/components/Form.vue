@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// #region imports
     import { ref } from 'vue'
     import PetitionMaker from '../Utilities/PetitionMaker'
     import BaseAlert from './BaseComponents/BaseAlert.vue'; //For showing when the form has been submitted successfully
@@ -9,7 +10,9 @@
     import BaseRadioGroup from './BaseComponents/BaseRadioGroup.vue';
     import BasePage from './BuildingBlocks/BasePage.vue';
     import BaseCard from './BaseComponents/BaseCard.vue';
+// #endregion imports
 
+//#region variables
     //Object needed to fulfill the petition
     const petitionMaker:PetitionMaker = new PetitionMaker();
 
@@ -23,7 +26,9 @@
     const showAlert = ref(false);
     const alertMessage = ref('');
     const alertType = ref<'success' | 'error' | 'info'>('success');
+// #endregion variables
 
+// #region submitFunction
     const handleSubmit = async () => {
         const formData = {
           documentType: documentType.value,
@@ -48,6 +53,7 @@
             showAlert.value = true;
         }
     }
+// #endregion submitFunction
 </script>
 
 <template>
