@@ -1,15 +1,20 @@
 <script lang="ts" setup>
+// #region imports
 import { ref } from 'vue';
 import { onMounted } from 'vue';
 
-import BaseAlert from './BaseComponents/BaseAlert.vue'; 
-import PetitionMaker from '../Utilities/PetitionMaker'
-import BaseButton from './BaseComponents/BaseButton.vue'; 
-import BaseSelect from './BaseComponents/BaseSelect.vue';
-import BaseCheckbox from './BaseComponents/BaseCheckbox.vue';
-import BaseCard from './BaseComponents/BaseCard.vue';
-import BasePage from './BuildingBlocks/BasePage.vue';
+import BaseAlert from '../BaseComponents/BaseAlert.vue'; 
+import PetitionMaker from '../../Utilities/PetitionMaker'
+import BaseButton from '../BaseComponents/BaseButton.vue'; 
+import BaseSelect from '../BaseComponents/BaseSelect.vue';
+import BaseCheckbox from '../BaseComponents/BaseCheckbox.vue';
+import BaseCard from '../BaseComponents/BaseCard.vue';
+import BasePage from '../BuildingBlocks/BasePage.vue';
+import type Petition from '../../interfaces/Petition';
 
+// #endregion imports
+
+// #region variables
 //Class that holds the method to make petitions to the backend
 const petitionMaker:PetitionMaker = new PetitionMaker();
 
@@ -29,9 +34,12 @@ let lastType:string;
 let lastRes:boolean;
 
 //Variable containing the forms retrieved from the backend
-const petitions = ref<any[]>([]);
+const petitions = ref<(Petition & { expanded: boolean })[]>([]);
 const unsolvedPetitions = ref<number>(0);
 
+// #endregion variables
+
+// #region functions
 //Handle the alert showing
 const showAlert = (type:'success' | 'error' | 'info', message:string) => {
   alertType.value = type;
@@ -50,6 +58,42 @@ const handleSubmit = async () => {
   console.log(filters);
 
   await fetchForms(filters.department, filters.type, filters.showResolved);
+}
+
+//Retrieve the forms answers from the server with the applied filters
+const fetchForms = async (department:string, type:string, showResolved:boolean) => {
+  const data = {
+    department: department,
+    type: type,
+    showResolved: showResolved,
+  };
+
+  const response = await petitionMaker.makePetition('/api/petitions/filter', 'POST', data);
+  if(!response.error) {
+    petitions.value = []
+    petitions.value = response.data.map((p: Petition) => ({
+      ...p,
+      expanded: false,
+    }));
+
+    lastDept = data.department;
+    lastType = data.type;
+    lastRes = data.showResolved;
+  }
+  else {
+    showAlert("error", "Ha ocurrido un error al aplicar los filtros");
+  }
+}
+
+//Retrieves the amount of unresolved forms
+const fetchUnresolvedForms = async () => {
+  const result = await petitionMaker.makePetition("/api/UnresolvedFormsCount", "GET");
+
+  console.log(result);
+
+  if(result.status == 200) {
+    unsolvedPetitions.value = result.data.count;
+  }
 }
 
 //Mark a certain form as resolved after analisis
@@ -71,43 +115,34 @@ const markAsResolved = async (type:string, petitionId:number) => {
   }
 }
 
-//Retrieve the forms answers from the server with the applied filters
-const fetchForms = async (department:string, type:string, showResolved:boolean) => {
+//Delete a certain petition from the database
+const deletePetition = async (type:string, petitionId:number) => {
   const data = {
-    department: department,
     type: type,
-    showResolved: showResolved,
+    id: petitionId,
   };
 
-  const response = await petitionMaker.makePetition('/api/petitions/filter', 'POST', data);
-  if(!response.error) {
-    petitions.value = []
-    petitions.value = response.data.map(p => ({ ...p, expanded: false }));
+  const response = await petitionMaker.makePetition("/api/petitions/deletePetition", "DELETE", data);
+  console.log(response);
 
-    lastDept = data.department;
-    lastType = data.type;
-    lastRes = data.showResolved;
+  if(response.status == 200) {
+    showAlert("success", "La solicitud ha sido eliminada correctamente");
+    fetchForms(lastDept, lastType, lastRes);
   }
   else {
-    showAlert("error", "Ha ocurrido un error al aplicar los filtros");
+    showAlert("error", "Ha habido un error al eliminar la solicitud");
   }
 }
 
-const fetchUnresolvedForms = async () => {
-  const result = await petitionMaker.makePetition("/api/UnresolvedFormsCount", "GET");
+// #endregion functions
 
-  console.log(result);
-
-  if(result.status == 200) {
-    unsolvedPetitions.value = result.data.count;
-  }
-}
-
+// #region onMounted
 //Fetch all the forms that aren't resolved
 onMounted(async () => {
   await fetchUnresolvedForms();
   fetchForms(department.value, type.value, showResolved.value);
 });
+// #endregion onMounted
 </script>
 
 <template>
@@ -121,14 +156,8 @@ onMounted(async () => {
       @close="displayAlert = false" 
     />
 
-    <!-- Header -->
-    <div class="Home_Welcome">
-      <h2 class="Home_Welcome_Text">¡Bienvenido de nuevo, USER!</h2>
-      <p class="Home_UnsolvedPetitionsCount"> Hay {{ unsolvedPetitions }} solicitudes pendientes </p>
-    </div>
-
     <!-- Filters Section -->
-    <div class="Home_Filters">
+    <BaseCard customClass="Home_Filters" top>
       <p class="Home_Big_Text"> Filtrar solicitudes </p>
       <form class="Filters_Form"  @submit.prevent="handleSubmit">
         <div class="Home_Department">
@@ -176,10 +205,10 @@ onMounted(async () => {
           <BaseButton type="submit" variant="primary"> Aplicar filtros </BaseButton>
         </div>
       </form>
-    </div>
+    </BaseCard>
 
     <!-- Retrieved Forms Section -->
-    <div class="Home_Forms">
+    <BaseCard custom-class="Home_Forms" bottom>
       <div class="Home_Forms_ExpandableHeader">
         <p class="Home_Big_Text"> Se han encontrado {{ petitions.length }} solicitudes </p>
       </div>
@@ -187,8 +216,11 @@ onMounted(async () => {
       <div class="Home_PetitionsList" >
         <BaseCard
           v-for="petition in petitions"
-          :key="petition.public_id || petition.request_id"
+          :key="petition.id || petition.request_id"
+          border-color="rgb(146, 146, 146)"
           class="PetitionCard"
+          top
+          bottom
         >
           <!-- Header: Subject -->
           <div 
@@ -221,12 +253,12 @@ onMounted(async () => {
             </div>
           </transition>
           <div class="ResolvePetitionDiv" v-if="!petition.solved">
-            <BaseButton variant="primary" v-on:click="markAsResolved(petition.type, petition.request_id)"> Marcar como resuelta </BaseButton>
-            <BaseButton variant="danger" v-on:click="markAsResolved(petition.type, petition.request_id)"> Eliminar solicitud </BaseButton>
+            <BaseButton variant="primary" v-on:click="markAsResolved(petition.type, parseInt(petition.request_id))"> Marcar como resuelta </BaseButton>
+            <BaseButton variant="danger" v-on:click="deletePetition(petition.type, parseInt(petition.request_id))"> Eliminar solicitud </BaseButton>
           </div>
         </BaseCard>
       </div>
-    </div>
+    </BaseCard>
   </BasePage>
 </template>
 
@@ -240,18 +272,10 @@ onMounted(async () => {
 /* Welcome div */
 .Home_Welcome {
   box-sizing: border-box;
-  background-color: var(--panel-background);
-  border-radius: 10px;
-  box-shadow:
-      0 1px 2px rgba(0, 0, 0, 0.921),
-      0 2px 6px rgba(0, 0, 0, 0.284);
 
-  width: 100%;
   color: black;
   text-align: center;
   padding: 20px;
-
-  margin-bottom: 20px;
 }
 
 .Home_Welcome_Text {
@@ -268,13 +292,7 @@ onMounted(async () => {
 /* Filters div */
 .Home_Filters {
   box-sizing: border-box;
-  background-color: var(--panel-background);
-  border-radius: 10px;
-  box-shadow:
-      0 1px 2px rgba(0, 0, 0, 0.921),
-      0 2px 6px rgba(0, 0, 0, 0.284);
 
-  width: 100%;
   color: black;
   text-align: center;
   padding: 20px;
@@ -284,7 +302,6 @@ onMounted(async () => {
   align-items: center;
   justify-content: center;
   
-  margin-bottom: 20px;
 }
 
 .Filters_Form {
@@ -351,12 +368,6 @@ onMounted(async () => {
 
 .Home_Forms {
   box-sizing: border-box;
-  background-color: var(--panel-background);
-  border-radius: 10px;
-  box-shadow:
-      0 1px 2px rgba(0, 0, 0, 0.921),
-      0 2px 6px rgba(0, 0, 0, 0.284);
-
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -403,7 +414,7 @@ onMounted(async () => {
 .PetitionSubject {
   font-size: 1.2em;
   font-weight: bold;
-  margin-bottom: 0px;
+  margin: 0px;
 }
 
 .ToggleIndicator {

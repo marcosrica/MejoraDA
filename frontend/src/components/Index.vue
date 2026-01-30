@@ -76,68 +76,26 @@
 <template>
   <BasePage>
     <!-- Intro -->
-    <BaseCard custom-class="BaseContainer">
+    <BaseCard custom-class="BaseContainer" top>
         <p class="HeaderText"><b>MejoraDA, un medio para la superación de todos</b></p>
         <p class="DescriptionText">
           Desde la delegación de alumnos, siempre estamos atentos a todo lo que ocurra en nuestra escuela, y estamos buscando constantemente formas de mejorar la ETSISI para todos. 
         </p>
+        <p class="DescriptionText">
+          Por ello, os hemos habilitado mejoraDA, una plataforma completamente anónima en la que nos podeis contar vuestra visión de la escuela, todo aquello que os gustaría que ocurriese, y las cosas que desearíais que cambiasen. 
+        </p>
     </BaseCard>
 
     <!-- Create a form -->
-    <BaseCard custom-class="BaseContainer">
+    <BaseCard custom-class="BaseContainer" bottom>
       <p class="HelpHeader"><b>¿Tienes algo que contarnos?</b></p>
-      <p class="DescriptionText"><b>No dudes en rellenar una nueva solicitud, ¡es totalmente anónima! Tardarás menos de cinco minutos en hacerla, y nos será muy útil para mejorar la experiencia en la ETSISI.</b></p>
+      <p class="DescriptionText">No dudes en rellenar una nueva solicitud, <b>¡es totalmente anónima!</b> </p>
+      <p class="DescriptionText">Tardarás <b>menos de cinco minutos</b> en hacerla, y nos será muy útil para <b>mejorar la experiencia de todos</b> en la escuela.</p>
       <BaseButton  
        @click="fillFormButtonClicked"
        variant="primary"
        custom-class="FillFormButton">
         Rellenar el formulario
-      </BaseButton>
-    </BaseCard>
-
-    <!-- Usage -->
-    <BaseCard custom-class="BaseContainer UsageCardContainer">
-      <p class="HeaderText">
-        <b> El programa en cifras: </b>
-      </p>
-
-      <BaseCard custom-class="TotalFiles"
-        background-color="var(--okColorBackground)"
-        border-color="var(--okColor)">
-          <p class="Index_Numbers"> {{totalForms}} </p>
-          <p class="UsageText_DataIdentifier"> Formularios totales </p>
-      </BaseCard>
-
-      <div class="SubdivisionByType">
-        <BaseCard custom-class="SubdividedForms"
-          background-color="var(--okColorBackground)"
-          border-color="var(--okColor)">
-            <p class="Index_Numbers"> {{totalIdeas}} </p>
-            <p class="UsageText_DataIdentifier"> Ideas </p>
-        </BaseCard>
-        <BaseCard custom-class="SubdividedForms"
-          background-color="var(--notOkColorBackground)"
-          border-color="var(--notOkColor)">
-            <p class="Index_Numbers"> {{totalComplaints}} </p>
-            <p class="UsageText_DataIdentifier"> Quejas </p>
-        </BaseCard>
-        <BaseCard custom-class="SubdividedForms"
-          background-color="var(--okColorBackground)"
-          border-color="var(--okColor)">
-            <p class="Index_Numbers"> {{totalSuggestions}} </p>
-            <p class="UsageText_DataIdentifier"> Sugerencias </p>
-        </BaseCard>
-      </div>
-    </BaseCard>
-
-    <!-- Admin panel -->
-    <BaseCard custom-class="BaseContainer">
-      <p class="ToFormText"><b>Panel para los administradores</b></p>
-      <BaseButton  
-       @click="reviewFormsButtonClicked"
-       variant="primary"
-       custom-class="FillFormButton">
-        Ir al panel de administración
       </BaseButton>
     </BaseCard>
   </BasePage>
@@ -169,7 +127,7 @@
   }
 
   .FillFormButton {
-    width: 20%;
+    min-width: 20%;
   }
 
   .Index_Numbers {

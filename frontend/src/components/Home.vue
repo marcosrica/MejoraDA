@@ -79,7 +79,7 @@ onMounted(async () => {
     />
 
     <!-- Header panel, just for welcome -->
-    <BaseCard custom-class="BasePanel">
+    <BaseCard custom-class="BasePanel" top>
       <p class="HeaderText"> Panel de administración </p>
       <p class="SubtitleText"> Bienvenido de nuevo, USER </p>
     </BaseCard> 
@@ -97,7 +97,7 @@ onMounted(async () => {
     </BaseCard>
 
     <!-- Redirecting to form reviewing -->
-    <BaseCard custom-class="BasePanel SubdelegationsCard">
+    <BaseCard custom-class="BasePanel SubdelegationsCard" bottom>
       <p class="SecondHeaderText"> <b> Subdelegaciones </b> </p>
       <div class="SubdelegationsContainer" :class="{ editing: EditingSubdelegation }">
         <!-- Departments listing -->

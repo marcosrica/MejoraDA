@@ -1,29 +1,21 @@
 <script lang="ts" setup>
-import BaseButton from '../BaseComponents/BaseButton.vue';
 
-const emit = defineEmits<{
-  (e: 'toggle-menu'): void
-}>()
 </script>
 
 <template>
     <div class="TopBarDiv">
-        <BaseButton variant="secondary" @click="$emit('toggle-menu')">
-            ☰
-        </BaseButton>
-
-        <div class="PageID" onclick="location.href = '/'">
-            <img src="./../../assets/Logo.png" alt="MejoraDA Logo" class="ServiceLogo"/>
-            <h1> MejoraDA </h1>
-        </div>
-
+      <div class="PageID" onclick="location.href = '/'">
         <img src="./../../assets/Logo.png" alt="MejoraDA Logo" class="ServiceLogo"/>
+        <h1> MejoraDA </h1>
+      </div>
+
+      <img src="./../../assets/Logo.png" alt="MejoraDA Logo" class="ServiceLogo"/>
     </div>
 </template>
 
 <style scoped>
 .TopBarDiv {
-  background-color: var(--main-color);
+  background-color: var(--primary);
   box-shadow:
     0 1px 2px rgba(0, 0, 0, 0.921),
     0 2px 6px rgba(0, 0, 0, 0.284);
@@ -48,6 +40,7 @@ const emit = defineEmits<{
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  color: white;
 
   height: 100%;
 
