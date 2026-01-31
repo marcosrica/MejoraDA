@@ -2,7 +2,13 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import Database from "./Components/Database";
 
-import GetFilters from "./Components/PetitionResolvers/GetForms";
+import AuthRouter from "./Components/Auth/AuthPetitions";
+import GeneralRouter from "./Components/PetitionResolvers/GeneralPetitions";
+import FormRouter from "./Components/PetitionResolvers/FormPetitions";
+import ReviewRouter from "./Components/PetitionResolvers/ReviewPetitions";
+import UsersRouter from "./Components/PetitionResolvers/UsersPetitions";
+import DepartmentsRouter from "./Components/PetitionResolvers/DepartmentsPetitions";
+
 import IndexPageRouter from "./Components/PetitionResolvers/IndexPagePetitions";
 
 const app = express();
@@ -12,7 +18,14 @@ db = new Database();
 app.use(cors());
 app.use(express.json());
 app.use("/api/index", IndexPageRouter); //Catching all /api/index routes
+app.use("/api/auth", AuthRouter); //Catching all /api/auth routes
+app.use("/api/general", GeneralRouter); //Catching all /api/general routes
+app.use("/api/form", FormRouter); //Catching all /api/form routes
+app.use("/api/review", ReviewRouter); //Catching all /api/review routes
+app.use("/api/users", UsersRouter); //Catching all /api/users routes
+app.use("/api/departments", DepartmentsRouter); //Catching all /api/departments routes
 
+/*
 app.get("/api/UnresolvedFormsCount", async (req:Request, res:Response) => {
   const [complaints, ideas, suggestions] = await Promise.all([
       db.RetrieveComplaints("All", false),
@@ -93,7 +106,7 @@ app.post("/api/petitions/markAsResolved", async (req:Request, res:Response) => {
     res.status(404).json("Internal server error");
   }
 });
-
+*/
 
 app.listen(3000, () => {
   console.log("Backend running at http://localhost:3000");
