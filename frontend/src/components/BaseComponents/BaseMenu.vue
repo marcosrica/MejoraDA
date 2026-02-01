@@ -10,7 +10,8 @@ const redirect = (url: string) => {
 }
 
 const props = defineProps<{
-  visible?: boolean
+  visible?: boolean,
+  admin?: boolean,
 }>();
 </script>
 
@@ -34,7 +35,7 @@ const props = defineProps<{
       <div class="MenuOptions">
         <div class="MenuOption" v-on:click="redirect('/')">Página principal</div>
         <div class="MenuOption" v-on:click="redirect('/Home/review')">Revisión de formularios</div>
-        <div class="MenuOption" v-on:click="redirect('/Home/users')">Administración de usuarios</div>
+        <div class="MenuOption" v-on:click="redirect('/Home/users')" v-if="admin">Administración de usuarios</div>
         <div class="MenuOption" v-on:click="redirect('/Home/departments')">Administración de subdelegaciones</div>
       </div>
     </BaseCard>

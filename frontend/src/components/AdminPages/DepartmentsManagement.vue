@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // #region imports
-    import { ref } from 'vue'
+    import { onMounted, ref } from 'vue'
     import PetitionMaker from '../../Utilities/PetitionMaker'
     import BaseAlert from '../BaseComponents/BaseAlert.vue';
     import BasePage from '../BuildingBlocks/BasePage.vue';
@@ -56,11 +56,24 @@
     const departmentEditAccepted = () => {
         console.log("Should edit the department");
     }
+
+    const checkAuth = async () => {
+        const authResponse = await petitionMaker.makePetition('/api/auth/amIPrivileged', 'GET');
+        showContent.value = authResponse.status == 200;
+    }
 // #endregion functions
+
+// #region on mounted (Entry point)
+
+onMounted( async () => {
+    await checkAuth();
+});
+
+// #endregion on mounted (Entry point)
 </script>
 
 <template>
-    <BasePage v-if="showContent">
+    <BasePage :show-content="showContent">
         <BaseAlert
             :show="showAlert"
             :type="alertType"
@@ -176,10 +189,6 @@
             </BaseButton>
         </BasePrompt>
     </BasePage>
-
-    <div v-if="!showContent">
-        <h1> 401 Acceso denegado </h1>
-    </div>
 </template>
 
 <style scoped>

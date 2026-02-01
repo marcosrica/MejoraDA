@@ -9,7 +9,7 @@
 </script>
 
 <template>
-  <BasePage>
+  <BasePage show-content>
     <!-- Intro -->
     <BaseCard custom-class="BaseContainer" top>
         <p class="HeaderText"><b>MejoraDA, un medio para la superación de todos</b></p>

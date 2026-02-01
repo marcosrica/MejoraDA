@@ -57,7 +57,7 @@
 </script>
 
 <template>
-    <BasePage>
+    <BasePage show-content>
         <BaseAlert
                 :show="showAlert"
                 :type="alertType"
