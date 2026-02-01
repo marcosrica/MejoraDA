@@ -17,6 +17,9 @@
   //Class that holds the method to make petitions to the backend
   const petitionMaker:PetitionMaker = new PetitionMaker();
 
+  //Auth controller
+  const showContent = ref(false);
+
   //Variables for the alert
   const displayAlert = ref(false);
   const alertMessage = ref('');
@@ -137,14 +140,19 @@
 // #region onMounted
   //Fetch all the forms that aren't resolved
   onMounted(async () => {
-    await fetchUnresolvedForms();
-    fetchForms(department.value, type.value, showResolved.value);
+    const isAuth = await petitionMaker.makePetition('/api/auth/amIPrivileged', 'GET');
+    showContent.value = isAuth.status == 200;
+
+    if(showContent.value) {
+      await fetchUnresolvedForms();
+      fetchForms(department.value, type.value, showResolved.value);
+    }
   });
 // #endregion onMounted
 </script>
 
 <template>
-  <BasePage>
+  <BasePage :show-content="showContent">
     <!-- Alert for user feedback -->
     <BaseAlert
       :show="displayAlert"
