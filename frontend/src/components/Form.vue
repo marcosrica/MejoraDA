@@ -1,8 +1,8 @@
 <script setup lang="ts">
 // #region imports
-    import { ref } from 'vue'
+    import { onMounted, ref } from 'vue'
     import PetitionMaker from '../Utilities/PetitionMaker'
-    import BaseAlert from './BaseComponents/BaseAlert.vue'; //For showing when the form has been submitted successfully
+    import BaseAlert from './BaseComponents/BaseAlert.vue';
     import BaseInput from './BaseComponents/BaseInput.vue';
     import BaseTextArea from './BaseComponents/BaseTextArea.vue';
     import BaseButton from './BaseComponents/BaseButton.vue';
@@ -10,6 +10,7 @@
     import BaseRadioGroup from './BaseComponents/BaseRadioGroup.vue';
     import BasePage from './BuildingBlocks/BasePage.vue';
     import BaseCard from './BaseComponents/BaseCard.vue';
+    import type FormContent from '../interfaces/FormContent';
 // #endregion imports
 
 //#region variables
@@ -26,34 +27,53 @@
     const showAlert = ref(false);
     const alertMessage = ref('');
     const alertType = ref<'success' | 'error' | 'info'>('success');
+
+    //Variable for storing the different departments
+    const departments = ref<Array<{value:string, label:string}>>([]);
 // #endregion variables
+
+// #region Methods
+    const spawnAlert = (type: 'success' | 'error' | 'info', message: string) => {
+        alertType.value = type;
+        alertMessage.value = message;
+        showAlert.value = true;
+    }
+
+    const getDepartments = async () => {
+        const response = await petitionMaker.makePetition("/api/general/currentDepartments", "GET");
+        if(response.status == 200) {
+            const data = response.data;
+            
+            for(const dept of data.departments) {
+                departments.value.push({value: dept.internalName, label: dept.name});
+            }
+        }
+    }
+// #endregion Methods
 
 // #region submitFunction
     const handleSubmit = async () => {
-        const formData = {
-          documentType: documentType.value,
-          department: department.value,
-          subject: subject.value,
-          description: description.value,
-        }
+        if(!(!documentType.value || !department.value || !description.value || !subject.value)) { //Prevent empty fields
+          const data:FormContent = {type: documentType.value, department: department.value, subject: subject.value, description: description.value};
 
-        if(!(!formData.documentType || !formData.department || !formData.description || !formData.subject)) { //Prevent empty fields
-          console.log('Submitted data:', formData);
-          const response = await petitionMaker.makePetition("/api/newForm", "POST", formData);
+          const response = await petitionMaker.makePetition("/api/form/newForm", "POST", data);
 
           if(response.status == 200) {
-            alertType.value = "success";
-            alertMessage.value = "Su petición ha sido registrada correctamente.";
+            spawnAlert("success", "Su petición ha sido registrada correctamente.");
             showAlert.value = true;
           }
         }
         else {
-            alertType.value = "error";
-            alertMessage.value = "Por favor, complete todos los campos";
-            showAlert.value = true;
+            spawnAlert("error", "Por favor, complete todos los campos");
         }
     }
 // #endregion submitFunction
+
+// #region onMounted
+    onMounted( async () => {
+        await getDepartments();
+    });
+// #endregion onMounted 
 </script>
 
 <template>
@@ -100,15 +120,7 @@
                           v-model="department"
                           label=""
                           placeholder="Selecciona una opción"
-                          :options="[
-                            { value: 'General', label: 'General' },
-                            { value: 'AtencionEstudiante', label: 'Subdelegación de Ayuda y Servicios para el Estudiante' },
-                            { value: 'Comunicacion', label: 'Subdelegación de Comunicación' },
-                            { value: 'Calidad', label: 'Subdelegación de Mediación y Calidad Académica' },
-                            { value: 'TIC', label: 'Subdelegación de Estrategia y Desarrollo Tecnológico' },
-                            { value: 'Eventos', label: 'Subdelegación de Eventos' },
-                            { value: 'Igualdad', label: 'Subdelegación de Bienestar e Igualdad Social' }
-                          ]"
+                          :options="departments"
                         />
                     </div>
 
