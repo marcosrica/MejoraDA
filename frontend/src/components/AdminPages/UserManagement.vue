@@ -1,6 +1,6 @@
 <script setup lang="ts">
-    // #region Imports
-    import { ref } from 'vue'
+// #region Imports
+    import { onMounted, ref } from 'vue'
     import PetitionMaker from '../../Utilities/PetitionMaker'
     import BaseAlert from '../BaseComponents/BaseAlert.vue';
     import BasePage from '../BuildingBlocks/BasePage.vue';
@@ -8,12 +8,12 @@
     import type UserData from '../../interfaces/AllowedUserData';
     import BaseButton from '../BaseComponents/BaseButton.vue';
     import BaseInput from '../BaseComponents/BaseInput.vue';
-    // #endregion Imports
+// #endregion Imports
 
-    // #region variables
+// #region variables
 
     //Handles authentication
-    const showContent = ref(true); //TODO: Temporary value for testing
+    const showContent = ref(false);
 
     //Object needed to fulfill the petition
     const petitionMaker:PetitionMaker = new PetitionMaker();
@@ -38,8 +38,9 @@
         {"name": "Laura", "surname": "Gómez", "permission": "admin"}
     ]);
 
-    //#endregion variables
+//#endregion variables
 
+// #region Methods
     //Translates the permission data from the database structure to a spanish human readable format
     const getPermissionTranslation = (permission:String) => {
         if(permission == "overseer") {
@@ -52,10 +53,22 @@
             return "";
         }
     }
+// #endregion Methods
+
+
+// #region OnMount
+
+onMounted( async () => {
+    const response = await petitionMaker.makePetition('/api/auth/amIAdmin', 'GET');
+
+    showContent.value = response.status == 200;
+});
+
+// #endregion OnMount
 </script>
 
 <template>
-    <BasePage v-if="showContent">
+    <BasePage :show-content="showContent">
         <BaseAlert
             :show="showAlert"
             :type="alertType"
