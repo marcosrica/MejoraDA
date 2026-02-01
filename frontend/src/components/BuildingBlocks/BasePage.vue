@@ -36,10 +36,8 @@ import BaseNotAuth from '../BaseComponents/BaseNotAuth.vue';
     <div class="Home_content_wrapper">
       <!-- Content area -->
       <div class="Home_content">
-        <div class="Home_scrollable">
-          <slot v-if="showContent" />
-          <BaseNotAuth v-else />
-        </div>
+        <slot v-if="showContent" />
+        <BaseNotAuth v-else />
       </div>
 
       <!-- Toggle menu that sits on top of the content -->
@@ -84,11 +82,6 @@ import BaseNotAuth from '../BaseComponents/BaseNotAuth.vue';
     padding-left: 5px;
     padding-right: 5px;
     padding-bottom: 80px;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
 
     @media (orientation: landscape) {
       @media (max-width: 1000px) {

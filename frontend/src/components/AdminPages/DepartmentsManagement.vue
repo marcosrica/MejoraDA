@@ -33,15 +33,7 @@
     const departmentInnerName = ref('');
 
     //Data for the departments list
-    const departments = ref<Array<SubdelegationsInfo>>([
-        {name:"General", internalName: "General"},
-        {name:"Subdelegación de Ayuda y Servicios para el Estudiante", internalName: "AtencionEstudiante"},
-        {name:"Subdelegación de Comunicación", internalName: "Comunicacion"},
-        {name:"Subdelegación de Mediación y Calidad Académica", internalName: "Calidad"},
-        {name:"Subdelegación de Estrategia y Desarrollo Tecnológico", internalName: "TIC"},
-        {name:"Subdelegación de Eventos", internalName: "Eventos"},
-        {name:"Subdelegación de Bienestar e Igualdad Social", internalName: "Igualdad"},
-    ]);
+    const departments = ref<Array<SubdelegationsInfo>>([]);
 
 // #endregion variables
 
@@ -53,13 +45,80 @@
         showPrompt.value = true;
     }
 
-    const departmentEditAccepted = () => {
+    const enableAlert = (message:string, type:'success' | 'error' | 'info') => {
+        alertMessage.value = message;
+        alertType.value = type;
+        showAlert.value = true;
+    }
+
+    const deleteDepartment = async (name:string, internalName:string) => {
+        console.log("Should delete the department with internal name: " + internalName);
+        const data:SubdelegationsInfo = {
+            name: name,
+            internalName: internalName
+        };
+
+        const result = await petitionMaker.makePetition("/api/departments/deleteDepartment", "POST", data);
+
+        if(result.status == 200) {
+            enableAlert('Subdelegación eliminada correctamente.', 'success');
+
+            //Refresh the departments list
+            await getDepartments();
+        } else {
+            enableAlert('Error al eliminar la subdelegación.', 'error');
+        }
+    }
+
+    const departmentEditAccepted = async () => {
         console.log("Should edit the department");
+        const data:SubdelegationsInfo = {
+            name: promptName.value,
+            internalName: promptInnerName.value
+        };
+
+        const result = await petitionMaker.makePetition("/api/departments/editDepartment", "POST", data);
+        if(result.status == 200) {
+            enableAlert('Subdelegación editada correctamente.', 'success');
+
+            //Refresh the departments list
+            await getDepartments();
+        } else {
+            enableAlert('Error al editar la subdelegación.', 'error');
+        }
+
+        showPrompt.value = false;
+    }
+
+    const addDepartment = async () => {
+        console.log("Should add the department");
+        const data:SubdelegationsInfo = {
+            name: departmentName.value,
+            internalName: departmentInnerName.value
+        };
+
+        const result = await petitionMaker.makePetition("/api/departments/newDepartment", "POST", data);
+        if(result.status == 200) {
+            enableAlert("Subdelegación añadida correctamente.", 'success');
+
+            //Refresh the departments list
+            await getDepartments();
+        } else {
+            enableAlert("Error al añadir la subdelegación.", 'error');
+        }
+
+        await getDepartments();
     }
 
     const checkAuth = async () => {
         const authResponse = await petitionMaker.makePetition('/api/auth/amIPrivileged', 'GET');
         showContent.value = authResponse.status == 200;
+    }
+
+    const getDepartments = async () => {
+        const response = await petitionMaker.makePetition("/api/general/currentDepartments", "GET");
+        console.log(response);
+        departments.value = response.data.departments;
     }
 // #endregion functions
 
@@ -67,6 +126,10 @@
 
 onMounted( async () => {
     await checkAuth();
+
+    if(showContent.value) {
+        await getDepartments();
+    }
 });
 
 // #endregion on mounted (Entry point)
@@ -107,7 +170,7 @@ onMounted( async () => {
                     <BaseButton
                         custom-class="DeleteButton"
                         variant="danger"
-                        @click=""
+                        @click="deleteDepartment(card.name, card.internalName)"
                     >
                         Eliminar subdelegación
                     </BaseButton>
@@ -125,7 +188,7 @@ onMounted( async () => {
         </BaseCard>
         <!-- Form content -->
         <BaseCard bottom class="FormHeader">
-            <form class="FormWrapper">
+            <form class="FormWrapper" @submit.prevent="addDepartment">
                 <div class="FormDiv">
                     <p class="FormText"> <b> Nombre de la subdelegación: </b> </p>
                     <BaseInput
@@ -157,7 +220,7 @@ onMounted( async () => {
         <!-- Prompt for editing -->
         <BasePrompt :show="showPrompt"
         title="Editar subdelegación">
-            <form>
+            <form  @submit.prevent="departmentEditAccepted">
                 <div class="EditFormDiv notFinalEditFormDiv">
                     <p class="editFormText"> <b> Nombre de la subdelegación: </b> </p>
                     <BaseInput class="EditFormInput"
@@ -178,8 +241,7 @@ onMounted( async () => {
                 </div>
                 <div class="EditFormDiv">
                     <BaseButton variant="primary"
-                        type="submit"
-                        @click="departmentEditAccepted">
+                        type="submit">
                         Aceptar cambios
                     </BaseButton>
                 </div>
