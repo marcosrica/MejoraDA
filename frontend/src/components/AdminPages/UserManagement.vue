@@ -11,7 +11,6 @@
 // #endregion Imports
 
 // #region variables
-
     //Handles authentication
     const showContent = ref(false);
 
@@ -27,16 +26,7 @@
     const username = ref('');
 
     //Data for the user list
-    const users = ref<Array<UserData>>([
-        {"name": "Juan", "surname": "Pérez", "permission": "admin"},
-        {"name": "María", "surname": "García", "permission": "overseer"},
-        {"name": "Luis", "surname": "López", "permission": "overseer"},
-        {"name": "Ana", "surname": "Martínez", "permission": "admin"},
-        {"name": "Carlos", "surname": "Rodríguez", "permission": "overseer"},
-        {"name": "Elena", "surname": "Sánchez", "permission": "overseer"},
-        {"name": "Miguel", "surname": "Fernández", "permission": "overseer"},
-        {"name": "Laura", "surname": "Gómez", "permission": "admin"}
-    ]);
+    const users = ref<Array<UserData>>([]);
 
 //#endregion variables
 
@@ -53,15 +43,26 @@
             return "";
         }
     }
+
+    //Gets the allowed users for managing
+    const getUsers = async () => {
+        const response = await petitionMaker.makePetition('/api/users/info', 'GET');
+        if(response.status == 200) {
+            users.value = response.data;
+        }
+    }
 // #endregion Methods
 
 
 // #region OnMount
 
-onMounted( async () => {
+onMounted(async () => {
     const response = await petitionMaker.makePetition('/api/auth/amIAdmin', 'GET');
 
     showContent.value = response.status == 200;
+    if(showContent.value) {
+        await getUsers();
+    }
 });
 
 // #endregion OnMount
