@@ -11,6 +11,9 @@
   import BaseCard from '../BaseComponents/BaseCard.vue';
   import BasePage from '../BuildingBlocks/BasePage.vue';
   import type Petition from '../../interfaces/Petition';
+  import type ReviewFilters from '../../interfaces/ReviewFilters';
+import type SubdelegationsInfo from '../../interfaces/SubdelegationsInfo';
+import type PetitionID from '../../interfaces/PetitionID';
 // #endregion imports
 
 // #region variables
@@ -37,7 +40,9 @@
 
   //Variable containing the forms retrieved from the backend
   const petitions = ref<(Petition & { expanded: boolean })[]>([]);
-  const unsolvedPetitions = ref<number>(0);
+
+  //Storing the different possible departments
+  const departments = ref<Array<{value:string, label:string}>>([]);
 // #endregion variables
 
 // #region functions
@@ -58,18 +63,18 @@
 
     console.log(filters);
 
-    await fetchForms(filters.department, filters.type, filters.showResolved);
+    await fetchForms(department.value, type.value, showResolved.value);
   }
 
   //Retrieve the forms answers from the server with the applied filters
   const fetchForms = async (department:string, type:string, showResolved:boolean) => {
-    const data = {
+    const data:ReviewFilters = {
       department: department,
       type: type,
       showResolved: showResolved,
     };
 
-    const response = await petitionMaker.makePetition('/api/petitions/filter', 'POST', data);
+    const response = await petitionMaker.makePetition('/api/review/filter', 'POST', data);
     if(!response.error) {
       petitions.value = []
       petitions.value = response.data.map((p: Petition) => ({
@@ -85,23 +90,12 @@
       showAlert("error", "Ha ocurrido un error al aplicar los filtros");
     }
   }
-
-  //Retrieves the amount of unresolved forms
-  const fetchUnresolvedForms = async () => {
-    const result = await petitionMaker.makePetition("/api/UnresolvedFormsCount", "GET");
-
-    console.log(result);
-
-    if(result.status == 200) {
-      unsolvedPetitions.value = result.data.count;
-    }
-  }
-
+  
   //Mark a certain form as resolved after analisis
   const markAsResolved = async (type:string, petitionId:number) => {
-    const data = {
-      type: type,
+    const data:PetitionID = {
       id: petitionId,
+      type: type,
     };
 
     const response = await petitionMaker.makePetition("/api/petitions/markAsResolved", "POST", data);
@@ -118,12 +112,12 @@
 
   //Delete a certain petition from the database
   const deletePetition = async (type:string, petitionId:number) => {
-    const data = {
-      type: type,
+    const data:PetitionID = {
       id: petitionId,
+      type: type,
     };
 
-    const response = await petitionMaker.makePetition("/api/petitions/deletePetition", "DELETE", data);
+    const response = await petitionMaker.makePetition("/api/petitions/deleteForm", "POST", data);
     console.log(response);
 
     if(response.status == 200) {
@@ -135,6 +129,17 @@
     }
   }
 
+  //Get all the possible departments
+  const getDepartments = async () => {
+    const response = await petitionMaker.makePetition("/api/general/currentDepartments", "GET");
+    if(response.status == 200) {
+      const data = response.data;
+      
+      for(const dept of data.departments) {
+        departments.value.push({value: dept.internalName, label: dept.name});
+      }
+    }
+  }
 // #endregion functions
 
 // #region onMounted
@@ -144,6 +149,8 @@
     showContent.value = isAuth.status == 200;
 
     if(showContent.value) {
+      await getDepartments();
+
       await fetchUnresolvedForms();
       fetchForms(department.value, type.value, showResolved.value);
     }
@@ -173,16 +180,7 @@
             custom-class="Home_StatusSelection"
             label=""
             placeholder="Selecciona una opción"
-            :options="[
-              { value: 'All', label: 'Todas' },
-              { value: 'General', label: 'General' },
-              { value: 'AtencionEstudiante', label: 'Subdelegación de Ayuda y Servicios para el Estudiante' },
-              { value: 'Comunicacion', label: 'Subdelegación de Comunicación' },
-              { value: 'Calidad', label: 'Subdelegación de Mediación y Calidad Académica' },
-              { value: 'TIC', label: 'Subdelegación de Estrategia y Desarrollo Tecnológico' },
-              { value: 'Eventos', label: 'Subdelegación de Eventos' },
-              { value: 'Igualdad', label: 'Subdelegación de Bienestar e Igualdad Social' }
-            ]"
+            :options="departments"
           />
         </div>
         <div class="Home_Type">

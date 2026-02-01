@@ -11,10 +11,10 @@ ReviewRouter.get("/allUnresolved", async (req: Request, res: Response) => {
   res.status(200);
 });
 
-ReviewRouter.post("/departmentUnresolved", async (req: Request, res: Response) => {
+ReviewRouter.post("/unresolvedQuantity", async (req: Request, res: Response) => {
   console.log("Received new unresolved petitions request for a specific department");
   //TODO: Handle retrieval of unresolved petitions of a specific department
-  res.status(200);
+  res.status(200).send({ quantity: 100 });
 });
 
 ReviewRouter.post("/filter", async (req: Request, res: Response) => {
