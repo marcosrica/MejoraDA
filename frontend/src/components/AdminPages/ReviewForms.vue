@@ -12,8 +12,7 @@
   import BasePage from '../BuildingBlocks/BasePage.vue';
   import type Petition from '../../interfaces/Petition';
   import type ReviewFilters from '../../interfaces/ReviewFilters';
-import type SubdelegationsInfo from '../../interfaces/SubdelegationsInfo';
-import type PetitionID from '../../interfaces/PetitionID';
+  import type PetitionID from '../../interfaces/PetitionID';
 // #endregion imports
 
 // #region variables
@@ -150,8 +149,7 @@ import type PetitionID from '../../interfaces/PetitionID';
 
     if(showContent.value) {
       await getDepartments();
-
-      await fetchUnresolvedForms();
+      
       fetchForms(department.value, type.value, showResolved.value);
     }
   });
