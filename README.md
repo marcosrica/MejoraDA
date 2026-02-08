@@ -53,7 +53,7 @@ npm install
 npm run dev
 ```
 
-#### Please note that the backend is expecting to connect to a MySQL server with tables initialized by these commands:
+#### Please note that the backend is expecting to connect to a MySQL or MariaDB server with tables initialized by these commands:
 ```SQL
 CREATE TABLE ideas (
     `request_id` INTEGER PRIMARY KEY AUTO_INCREMENT,
