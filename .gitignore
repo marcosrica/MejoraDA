@@ -40,3 +40,6 @@
 /frontend/__screenshots__/
 
 /frontend/src/style_css.txt
+
+#backend as well
+/backend/node_modules/*
