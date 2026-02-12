@@ -1,4 +1,5 @@
 export default interface SubdelegationsInfo {
     name: string;
-    internalName: string;
+    show: boolean;
+    innerID: number;
 }

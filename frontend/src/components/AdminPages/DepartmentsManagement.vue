@@ -26,7 +26,6 @@
     //Variables for controlling the prompt
     const showPrompt = ref(false);
     const promptName = ref('');
-    const promptInnerName = ref('');
 
     //Variables for the new department form
     const departmentName = ref('');
@@ -39,9 +38,8 @@
 
 // #region functions
     //Function for showing the prompt when the edit button is clicked
-    const enablePrompt = (name:string, innerName:string) => {
+    const enablePrompt = (name:string) => {
         promptName.value = name;
-        promptInnerName.value = innerName;
         showPrompt.value = true;
     }
 
@@ -51,11 +49,9 @@
         showAlert.value = true;
     }
 
-    const deleteDepartment = async (name:string, internalName:string) => {
-        console.log("Should delete the department with internal name: " + internalName);
-        const data:SubdelegationsInfo = {
+    const deleteDepartment = async (name:string,) => {
+        const data = {
             name: name,
-            internalName: internalName
         };
 
         const result = await petitionMaker.makePetition("/api/departments/deleteDepartment", "POST", data);
@@ -72,9 +68,8 @@
 
     const departmentEditAccepted = async () => {
         console.log("Should edit the department");
-        const data:SubdelegationsInfo = {
-            name: promptName.value,
-            internalName: promptInnerName.value
+        const data = {
+            name: promptName.value
         };
 
         const result = await petitionMaker.makePetition("/api/departments/editDepartment", "POST", data);
@@ -92,9 +87,8 @@
 
     const addDepartment = async () => {
         console.log("Should add the department");
-        const data:SubdelegationsInfo = {
-            name: departmentName.value,
-            internalName: departmentInnerName.value
+        const data = {
+            name: departmentName.value
         };
 
         const result = await petitionMaker.makePetition("/api/departments/newDepartment", "POST", data);
@@ -157,20 +151,20 @@ onMounted( async () => {
             v-for="(card) in departments">
                 <div class="UserCard">
                     <h2 class="marginlessText">{{ card.name }}</h2>
-                    <p class="marginlessText">{{card.internalName}}</p>
+                    <!-- <p class="marginlessText">{{card.internalName}}</p> -->
                 </div>
                 <div class="CardButtons">
                     <BaseButton
                         custom-class="DeleteButton"
                         variant="primary"
-                        @click="enablePrompt(card.name, card.internalName)"
+                        @click="enablePrompt(card.name)"
                     >
                         Editar subdelegación
                     </BaseButton>
                     <BaseButton
                         custom-class="DeleteButton"
                         variant="danger"
-                        @click="deleteDepartment(card.name, card.internalName)"
+                        @click="deleteDepartment(card.name)"
                     >
                         Eliminar subdelegación
                     </BaseButton>
@@ -227,15 +221,6 @@ onMounted( async () => {
                         v-model="promptName"
                         name="New name of the department"
                         placeholder="Nombre de la delegación"
-                        custom-class="formInput">
-                    </BaseInput>
-                </div>
-                <div class="EditFormDiv">
-                    <p class="editFormText"> <b> Nombre interno de la subdelegación: </b> </p>
-                    <BaseInput class="EditFormInput"
-                        v-model="promptInnerName"
-                        name="New inner name for the department"
-                        placeholder="Nombre interno de la delegación"
                         custom-class="formInput">
                     </BaseInput>
                 </div>
