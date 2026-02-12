@@ -2,6 +2,8 @@ import mysql from 'mysql2';
 import { ResultSetHeader } from 'mysql2/promise';
 import DatabaseKeys from './../../keys';
 import Petition from '../Interfaces/FormRetrieval';
+import SubdelegationsInfo from 'src/Interfaces/SubdelegationsInfo';
+import { RowDataPacket } from 'mysql2/promise';
 
 const dbKeys = new DatabaseKeys();
 const pool = mysql.createPool({
@@ -15,7 +17,49 @@ const pool = mysql.createPool({
     queueLimit: 0,
 }).promise();
 
+
 class Database {
+// #region Insertions
+    InsertNewForm = async (type:String, department:String, subject:String, description:String):Promise<boolean> => {
+        const [response] = await pool.query(`
+            
+            `, []);
+
+        return true; //TODO: Handle insertion of new form and return status
+    }
+// #endregion
+
+// #region departments
+
+    AddDepartment = async (name:String) => {
+        console.log("Trying to add department with name: " + name)
+
+        const [response] = await pool.query(`
+            INSERT INTO departments (department_name, show_department)
+            VALUES (?, true);
+            `, [name]);
+
+        
+    }
+
+    GetDepartments = async (): Promise<SubdelegationsInfo[]> => {
+        const [response] = await pool.query<RowDataPacket[]>(`
+                SELECT * FROM departments;
+            `, []);
+
+        console.log(response);
+
+        const result:SubdelegationsInfo[] = [];
+        for(const department of response) {
+            result.push({name: department.department_name, show: department.show_department, innerID:department.id_department});
+        }
+
+        return result;
+    }
+
+// #endregion
+
+    
     //#region Insertions
     InsertNewIdea = async (department: string, subject: string, description: string): Promise<boolean> => {
         const [result]:[ResultSetHeader, any] = await pool.query(`
@@ -181,6 +225,8 @@ class Database {
         }
     }
     //#endregion
+    
 }
+
 
 export default Database;
