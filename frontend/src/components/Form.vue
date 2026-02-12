@@ -45,7 +45,9 @@
             const data = response.data;
             
             for(const dept of data.departments) {
-                departments.value.push({value: dept.internalName, label: dept.name});
+                if(dept.show) {
+                    departments.value.push({value: dept.internalName, label: dept.name});
+                }
             }
         }
     }
