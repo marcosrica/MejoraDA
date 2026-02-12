@@ -21,6 +21,7 @@
 
     --form-border: #CED4DA; /* Borders of form elements */
 
+    --disabled: rgba(169, 169, 169, 0.794);
      
     /* Secondary button */
     --secondary-button: #e9ecef00;

@@ -6,21 +6,39 @@ const DepartmentsRouter = Router();
 
 
 DepartmentsRouter.post("/editDepartment", async (req: Request, res: Response) => {
-  console.log("Received new request to edit a department");
-  //TODO: Handle the edition of the department
+  try {
+    const response = await db.EditDepartment(req.body.name, req.body.department_id);
+    res.status(200).send({response: "OK"});
+  }
+  catch(ex) {
+    console.log(ex);
+    res.status(500).send({response: "Server error"});
+  }
+});
+
+DepartmentsRouter.post("/hideShowDepartment", async (req: Request, res: Response) => {
+  await db.ChangeVisibility(req.body.department_id);
   res.status(200).send({response: "OK"});
 });
 
 DepartmentsRouter.post("/newDepartment", async (req: Request, res: Response) => {
-  console.log("Received a request to create a new department");
-  //TODO: Handle the creation of the new department
+  console.log("Received a request to create a new department named: " + req.body.name);
+  
+  const response = await db.AddDepartment(req.body.name);
+
   res.status(200).send({response: "OK"});
 });
 
 DepartmentsRouter.post("/deleteDepartment", async (req: Request, res: Response) => {
-  console.log("Received new request to delete a department");
-  //TODO: Handle the deletion of the department
-  res.status(200).send({response: "OK"});
+  console.log(req.body.department_id);
+  try {
+    const response = await db.DeleteDepartment(req.body.department_id);
+    res.status(200).send({response: "OK"});
+  }
+  catch(ex) {
+    console.log(ex);
+    res.status(500).send({response: "Server error"});
+  }
 });
 
 export default DepartmentsRouter;

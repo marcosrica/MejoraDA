@@ -47,14 +47,35 @@ class Database {
                 SELECT * FROM departments;
             `, []);
 
-        console.log(response);
-
         const result:SubdelegationsInfo[] = [];
         for(const department of response) {
             result.push({name: department.department_name, show: department.show_department, innerID:department.id_department});
         }
 
         return result;
+    }
+
+    ChangeVisibility = async (id:number) => {
+        const [response] = await pool.query(`
+            UPDATE departments
+            SET show_department = NOT show_department
+            WHERE id_department = ?
+            `, [id]);
+    }
+
+    DeleteDepartment = async (id:number) => {
+        const [response] = await pool.query(`
+            DELETE FROM departments
+            WHERE id_department = ?
+            `, [id]);
+    }
+
+    EditDepartment = async (name:String, id:number) => {
+        const [response] = await pool.query(`
+            UPDATE departments
+            SET department_name = ?
+            WHERE id_department = ?
+            `, [name, id]);
     }
 
 // #endregion

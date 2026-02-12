@@ -26,10 +26,14 @@
     //Variables for controlling the prompt
     const showPrompt = ref(false);
     const promptName = ref('');
+    const promptReference = ref<number>();
+
+    //Variables for controlling the deletion prompt
+    const showDeletionPrompt = ref(false);
+    const deletingDepartment = ref<number>();
 
     //Variables for the new department form
     const departmentName = ref('');
-    const departmentInnerName = ref('');
 
     //Data for the departments list
     const departments = ref<Array<SubdelegationsInfo>>([]);
@@ -38,8 +42,9 @@
 
 // #region functions
     //Function for showing the prompt when the edit button is clicked
-    const enablePrompt = (name:string) => {
+    const enablePrompt = (name:string, id:number) => {
         promptName.value = name;
+        promptReference.value = id;
         showPrompt.value = true;
     }
 
@@ -49,9 +54,32 @@
         showAlert.value = true;
     }
 
-    const deleteDepartment = async (name:string,) => {
+    const showDeleteDepartmentPrompt = async (id: number) => {
+        deletingDepartment.value = id;
+        showDeletionPrompt.value = true;
+    }
+
+    const hideShowDepartment = async (id: number) => {
         const data = {
-            name: name,
+            department_id: id,
+        };
+
+        const result = await petitionMaker.makePetition("/api/departments/hideShowDepartment", "POST", data);
+
+        if(result.status == 200) {
+            enableAlert("Cambios aplicados correctamente", "success");
+            await getDepartments();
+        }
+        else {
+            enableAlert("Error al aplicar el cambio", "error");
+        }
+    }
+
+    const deleteDepartment = async () => {
+        showDeletionPrompt.value = false;
+
+        const data = {
+            department_id: deletingDepartment.value,
         };
 
         const result = await petitionMaker.makePetition("/api/departments/deleteDepartment", "POST", data);
@@ -69,7 +97,8 @@
     const departmentEditAccepted = async () => {
         console.log("Should edit the department");
         const data = {
-            name: promptName.value
+            name: promptName.value,
+            department_id: promptReference.value
         };
 
         const result = await petitionMaker.makePetition("/api/departments/editDepartment", "POST", data);
@@ -101,6 +130,7 @@
             enableAlert("Error al añadir la subdelegación.", 'error');
         }
 
+        departmentName.value = "";
         await getDepartments();
     }
 
@@ -147,8 +177,10 @@ onMounted( async () => {
         <!-- Panel with departments -->
         <div class="Grid">
             <BaseCard
-            custom-class="Card"
-            v-for="(card) in departments">
+                :custom-class="`Card ${card.show ? 'Accessible' : 'Disabled'}`"
+                v-for="card in departments"
+                :key="card.innerID"
+            >
                 <div class="UserCard">
                     <h2 class="marginlessText">{{ card.name }}</h2>
                     <!-- <p class="marginlessText">{{card.internalName}}</p> -->
@@ -157,14 +189,21 @@ onMounted( async () => {
                     <BaseButton
                         custom-class="DeleteButton"
                         variant="primary"
-                        @click="enablePrompt(card.name)"
+                        @click="enablePrompt(card.name, card.innerID)"
                     >
                         Editar subdelegación
                     </BaseButton>
                     <BaseButton
                         custom-class="DeleteButton"
+                        variant="primary"
+                        @click="hideShowDepartment(card.innerID)"
+                    >
+                        {{card.show ? 'Ocultar subdelegación' : 'Mostrar subdelegación'}}
+                    </BaseButton>
+                    <BaseButton
+                        custom-class="DeleteButton"
                         variant="danger"
-                        @click="deleteDepartment(card.name)"
+                        @click="showDeleteDepartmentPrompt(card.innerID)"
                     >
                         Eliminar subdelegación
                     </BaseButton>
@@ -189,15 +228,6 @@ onMounted( async () => {
                         v-model="departmentName"
                         name="Description"
                         placeholder="Nombre"
-                        custom-class="formInput">
-                    </BaseInput>
-                </div>
-                <div class="FormDiv SecondDiv">
-                    <p class="FormText"> <b> Nombre interno: </b> </p>
-                    <BaseInput
-                        v-model="departmentInnerName"
-                        name="Description"
-                        placeholder="Nombre interno"
                         custom-class="formInput">
                     </BaseInput>
                 </div>
@@ -234,6 +264,15 @@ onMounted( async () => {
             <BaseButton variant="danger" @click="showPrompt=false">
                 Cancelar
             </BaseButton>
+        </BasePrompt>
+
+        <BasePrompt :show="showDeletionPrompt"
+        title="Eliminar subdelegación">
+            <h1 class="HeaderText"> ¿Seguro que deseas eliminar la subdelegación? </h1>
+            <p class="marginlessText"> Si eliminas la subdelegación, todas las peticiones registradas se eliminarán con ella para siempre </p>
+            <p class="marginlessText"> Si crees que le podría interesar a un equipo posterior, es mejor que ocultes la subdelegación </p>
+            <BaseButton variant="danger" v-on:click="deleteDepartment"> Eliminar subdelegación </BaseButton>
+            <BaseButton variant="primary" v-on:click="showDeletionPrompt = false"> Cancelar </BaseButton>
         </BasePrompt>
     </BasePage>
 </template>
@@ -273,14 +312,22 @@ onMounted( async () => {
     .Card {
         padding: 1rem;
         margin-bottom: 0px;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
 
         display: flex;
         flex-direction: column;
         justify-content: space-between;
     }
 
-    .Card:hover {
+    .Disabled {
+        background-color: var(--disabled);
+    }
+
+    .Accessible {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    }
+
+    .Accessible:hover {
         transform: translateY(-4px);
         box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     }
