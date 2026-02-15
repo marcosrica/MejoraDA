@@ -19,7 +19,7 @@ class PetitionMaker {
         this.routes = new serverRoutes();
     }
 
-    makePetition = async (url: string, method: string, body?: any, debug:boolean = false): Promise<PetitionResult> => {
+    makePetition = async (url: string, method: string, body?: any): Promise<PetitionResult> => {
         let result: PetitionResult = new PetitionResult();
         console.log(this.routes.backend + url);
 

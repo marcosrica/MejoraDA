@@ -19,16 +19,6 @@ const pool = mysql.createPool({
 
 
 class Database {
-// #region Insertions
-    InsertNewForm = async (type:String, department:String, subject:String, description:String):Promise<boolean> => {
-        const [response] = await pool.query(`
-            
-            `, []);
-
-        return true; //TODO: Handle insertion of new form and return status
-    }
-// #endregion
-
 // #region departments
 
     AddDepartment = async (name:String) => {
@@ -80,173 +70,16 @@ class Database {
 
 // #endregion
 
-    
-    //#region Insertions
-    InsertNewIdea = async (department: string, subject: string, description: string): Promise<boolean> => {
-        const [result]:[ResultSetHeader, any] = await pool.query(`
-                INSERT INTO ideas (department, subject, description) 
-                VALUES (?, ?, ?)
-            `, [department, subject, description]);
 
-        return (result.affectedRows === 1) && (result.insertId > 0);
-    }
+// #region Forms
+    InsertNewForm = async (type:number, department:number, subject:string, description:string) => {
+        const [response] = await pool.query(`
+            INSERT INTO forms (id_type, id_department, subject, description, resolved)
+            VALUES (?, ?, ?, ?, false)
+            `, [type, department, subject, description]);
+    } 
+// #endregion
 
-    InsertNewSuggestion = async (department: string, subject: string, description: string): Promise<boolean> => {
-        const [result]:[ResultSetHeader, any] = await pool.query(`
-                INSERT INTO suggestions (department, subject, description) 
-                VALUES (?, ?, ?)
-            `, [department, subject, description]);
-
-        return (result.affectedRows === 1) && (result.insertId > 0);
-    }
-
-    InsertNewComplaint = async (department: string, subject: string, description: string): Promise<boolean> => {
-        const [result]:[ResultSetHeader, any] = await pool.query(`
-                INSERT INTO complaints (department, subject, description) 
-                VALUES (?, ?, ?)
-            `, [department, subject, description]);
-        console.log(result);
-
-        return (result.affectedRows === 1) && (result.insertId > 0);
-    }
-    //#endregion
-
-    //#region Retrievals
-    RetrieveIdeas = async (department:string, solvedToo:boolean): Promise<Petition[]> => {
-        const [result] = await pool.query(`
-            SELECT *
-            FROM ideas
-            WHERE (? = 'all' OR department = ?)
-            AND (solved = 0 OR solved = ?)
-        `, [department, department, solvedToo]);
-    
-        let formatted:Petition[] = [];
-        (result as any[]).forEach((item) => {
-            formatted.push({
-                request_id: item.request_id,
-                department: this.formatDepartment(item.department),
-                subject: item.subject,
-                description: item.description,
-                type: "Idea",
-                solved: item.solved,
-                date: item.date,
-            });
-        });
-        
-        return formatted;
-    }
-
-    RetrieveComplaints = async (department:string, solvedToo:boolean): Promise<Petition[]> => {
-        const [result] = await pool.query(`
-            SELECT *
-            FROM complaints
-            WHERE (? = 'all' OR department = ?)
-            AND (solved = 0 OR solved = ?)
-        `, [department, department, solvedToo]);
-    
-        let formatted:Petition[] = [];
-        (result as any[]).forEach((item) => {
-            formatted.push({
-                request_id: item.request_id,
-                department: this.formatDepartment(item.department),
-                subject: item.subject,
-                description: item.description,
-                type: "Queja",
-                solved: item.solved,
-                date: item.date,
-            });
-        });
-
-        return formatted;
-    }
-
-    RetrieveSuggestions= async (department:string, solvedToo:boolean): Promise<Petition[]> => {
-        const [result] = await pool.query(`
-            SELECT *
-            FROM suggestions
-            WHERE (? = 'all' OR department = ?)
-            AND (solved = 0 OR solved = ?)
-        `, [department, department, solvedToo]);
-    
-        let formatted:Petition[] = [];
-        (result as any[]).forEach((item) => {
-            formatted.push({
-                request_id: item.request_id,
-                department: this.formatDepartment(item.department),
-                subject: item.subject,
-                description: item.description,
-                type: "Sugerencia",
-                solved: item.solved,
-                date: item.date,
-            });
-        });
-
-        return formatted;
-    }
-    //#endregion
-
-    //#region Resolved marking
-    MarkIdeaAsResolved = async (id:number): Promise<boolean> => {
-        const [result]:[ResultSetHeader, any] = await pool.query(`
-                UPDATE ideas
-                SET solved = true
-                WHERE request_id = ?
-            `, [id]);
-
-        console.log(result);
-        return true;
-    }
-
-    MarkComplaintAsResolved = async (id:number): Promise<boolean> => {
-        const [result]:[ResultSetHeader, any] = await pool.query(`
-                UPDATE complaints
-                SET solved = true
-                WHERE request_id = ?
-            `, [id]);
-
-        console.log(result);
-        return true;
-    }
-
-    MarkSuggestionAsResolved = async (id:number): Promise<boolean> => {
-        const [result]:[ResultSetHeader, any] = await pool.query(`
-                UPDATE suggestions
-                SET solved = true
-                WHERE request_id = ?
-            `, [id]);
-            
-        console.log(result);
-        return true;
-    }
-    //#endregion
-
-    //#region auxFunctions
-    formatDepartment = (department:string):string => {
-        switch(department) {
-            case "AtencionEstudiante":
-                return "Subdelegación de Ayuda y Servicios para el Estudiante";
-
-            case "Comunicacion":
-                return "Subdelegación de Comunicación";
-
-            case "Calidad":
-                return "Subdelegación de Mediación y Calidad Académica";
-
-            case "TIC":
-                return "Subdelegación de Estrategia y Desarrollo Tecnológico";
-
-            case "Eventos":
-                return "Subdelegación de Eventos";
-
-            case "Igualdad":
-                return "Subdelegación de Bienestar e Igualdad Social";
-
-            default:
-                return department;
-        }
-    }
-    //#endregion
-    
 }
 
 
