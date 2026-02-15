@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 
 import Index from '../components/Index.vue';
 import Form from '../components/Form.vue';
+import Form_OK from '../components/Form_OK.vue';
 
 import ReviewForms from '../components/AdminPages/ReviewForms.vue';
 import UserManagement from '../components/AdminPages/UserManagement.vue';
@@ -17,6 +18,11 @@ const routes: RouteRecordRaw[] = [
     path: '/form',
     name: 'Form',
     component: Form,
+  },
+  {
+    path: '/form/success',
+    name: 'Form succesfully sent',
+    component: Form_OK,
   },
   {
     path:'/home/review',

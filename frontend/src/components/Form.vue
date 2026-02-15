@@ -19,7 +19,7 @@
 
     //Variables for the form fields
     const documentType = ref('');
-    const department = ref('General');
+    const department = ref('');
     const description = ref('');
     const subject = ref('');
 
@@ -46,7 +46,7 @@
             
             for(const dept of data.departments) {
                 if(dept.show) {
-                    departments.value.push({value: dept.internalName, label: dept.name});
+                    departments.value.push({value: dept.innerID, label: dept.name});
                 }
             }
         }
@@ -56,14 +56,16 @@
 // #region submitFunction
     const handleSubmit = async () => {
         if(!(!documentType.value || !department.value || !description.value || !subject.value)) { //Prevent empty fields
-          const data:FormContent = {type: documentType.value, department: department.value, subject: subject.value, description: description.value};
+            const data:FormContent = {type: documentType.value, department: department.value, subject: subject.value, description: description.value};
 
-          const response = await petitionMaker.makePetition("/api/form/newForm", "POST", data);
+            const response = await petitionMaker.makePetition("/api/form/newForm", "POST", data);
 
-          if(response.status == 200) {
-            spawnAlert("success", "Su petición ha sido registrada correctamente.");
-            showAlert.value = true;
-          }
+            if(response.status == 200) {
+                location.href = "/Form/success"
+            }
+            else {
+                spawnAlert("error", "Ha habido un problema. Por favor, inténtelo de nuevo más tarde");
+            }
         }
         else {
             spawnAlert("error", "Por favor, complete todos los campos");
@@ -106,9 +108,9 @@
                             v-model="documentType"
                             name="DocumentType"
                             :options="[
-                                { value: 'Idea', label: 'Idea' },
-                                { value: 'Complaint', label: 'Queja' },
-                                { value: 'Suggestion', label: 'Sugerencia' }
+                                { value: '1', label: 'Idea' },
+                                { value: '2', label: 'Queja' },
+                                { value: '3', label: 'Sugerencia' }
                             ]"
                             custom-class="MultiSelect_Type"
                             gap="5px"
