@@ -55,30 +55,28 @@ npm run dev
 
 #### Please note that the backend is expecting to connect to a MySQL or MariaDB server with tables initialized by these commands:
 ```SQL
-CREATE TABLE ideas (
-    `request_id` INTEGER PRIMARY KEY AUTO_INCREMENT,
-    `department` TEXT NOT NULL,
-    `subject` TEXT NOT NULL,
-    `description` TEXT NOT NULL,
-    `solved` BOOLEAN NOT NULL DEFAULT FALSE,
-    `date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE types (
+	id_type INTEGER AUTO_INCREMENT UNIQUE,
+	name VARCHAR(500),
+	PRIMARY KEY (id_type)
 );
 
-CREATE TABLE suggestions (
-    `request_id` INTEGER PRIMARY KEY AUTO_INCREMENT,
-    `department` TEXT NOT NULL,
-    `subject` TEXT NOT NULL,
-    `description` TEXT NOT NULL,
-    `solved` BOOLEAN NOT NULL DEFAULT FALSE,
-    `date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE departments ( 
+	id_department INTEGER AUTO_INCREMENT UNIQUE, 
+	department_name VARCHAR(500) NOT NULL, 
+	show_department BOOLEAN NOT NULL,
+	PRIMARY KEY (id_department)
 );
 
-CREATE TABLE complaints (
-    `request_id` INTEGER PRIMARY KEY AUTO_INCREMENT,
-    `department` TEXT NOT NULL,
-    `subject` TEXT NOT NULL,
-    `description` TEXT NOT NULL,
-    `solved` BOOLEAN NOT NULL DEFAULT FALSE,
-    `date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE forms (
+	id_form INTEGER AUTO_INCREMENT UNIQUE,
+	id_type INTEGER NOT NULL,
+	id_department INTEGER NOT NULL,
+	subject VARCHAR(500) NOT NULL,
+	description TEXT,
+	resolved BOOLEAN NOT NULL,
+	PRIMARY KEY (id_form),
+	FOREIGN KEY (id_type) REFERENCES types(id_type) ON DELETE CASCADE,
+	FOREIGN KEY (id_department) REFERENCES departments(id_department) ON DELETE CASCADE
 );
 ```
