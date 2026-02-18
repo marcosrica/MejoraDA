@@ -13,6 +13,7 @@
   import type Petition from '../../interfaces/Petition';
   import type ReviewFilters from '../../interfaces/ReviewFilters';
   import type PetitionID from '../../interfaces/PetitionID';
+  import type TypeInfo from './../../interfaces/TypesInfo';
 // #endregion imports
 
 // #region variables
@@ -42,6 +43,8 @@
 
   //Storing the different possible departments
   const departments = ref<Array<{value:string, label:string}>>([]);
+  //Storing the different possible types
+  const types = ref<Array<{value:string, label:string}>>([{value:"0", label:"Todos"}]);
 // #endregion variables
 
 // #region functions
@@ -139,6 +142,17 @@
       }
     }
   }
+
+  const getTypes = async () => {
+    const response = await petitionMaker.makePetition("/api/general/currentTypes", "GET");
+    if(response.status == 200) {
+      console.log("Data: " + response.data.types );
+      const data:TypeInfo[] = response.data.types;
+      for(const type of data) {
+        types.value.push({value:String(type.inner_id), label:type.name})
+      }
+    }
+  }
 // #endregion functions
 
 // #region onMounted
@@ -149,8 +163,9 @@
 
     if(showContent.value) {
       await getDepartments();
-      
+      await getTypes();
       fetchForms(department.value, type.value, showResolved.value);
+      
     }
   });
 // #endregion onMounted
@@ -187,12 +202,7 @@
             v-model="type"
             label=""
             placeholder="Selecciona una opción"
-            :options="[
-              { value: 'All', label: 'Todos' },
-              { value: 'Complaint', label: 'Quejas' },
-              { value: 'Idea', label: 'Ideas' },
-              { value: 'Suggestion', label: 'Sugerencia' },
-            ]"
+            :options="types"
           />
         </div>
         <div class="Home_OnlyPending">

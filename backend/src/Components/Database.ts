@@ -4,6 +4,7 @@ import DatabaseKeys from './../../keys';
 import Petition from '../Interfaces/FormRetrieval';
 import SubdelegationsInfo from 'src/Interfaces/SubdelegationsInfo';
 import { RowDataPacket } from 'mysql2/promise';
+import TypeInfo from 'src/Interfaces/TypeInfo';
 
 const dbKeys = new DatabaseKeys();
 const pool = mysql.createPool({
@@ -78,6 +79,24 @@ class Database {
             VALUES (?, ?, ?, ?, false)
             `, [type, department, subject, description]);
     } 
+// #endregion
+
+// #region Types
+
+    GetTypes = async ():Promise<TypeInfo[]> => {
+        const [response] = await pool.query<RowDataPacket[]>(`
+            SELECT id_type, name
+            FROM types
+            `, []);
+
+        const result:TypeInfo[] = [];
+        for(const type of response) {
+            result.push({inner_id:type.id_type, name:type.name});
+        }
+        
+        return result;
+    }
+
 // #endregion
 
 }

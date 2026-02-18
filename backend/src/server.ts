@@ -9,15 +9,12 @@ import ReviewRouter from "./Components/PetitionResolvers/ReviewPetitions";
 import UsersRouter from "./Components/PetitionResolvers/UsersPetitions";
 import DepartmentsRouter from "./Components/PetitionResolvers/DepartmentsPetitions";
 
-import IndexPageRouter from "./Components/PetitionResolvers/IndexPagePetitions";
-
 const app = express();
 let db: Database;
 db = new Database();
 
 app.use(cors());
 app.use(express.json());
-app.use("/api/index", IndexPageRouter); //Catching all /api/index routes
 app.use("/api/auth", AuthRouter); //Catching all /api/auth routes
 app.use("/api/general", GeneralRouter); //Catching all /api/general routes
 app.use("/api/form", FormRouter); //Catching all /api/form routes

@@ -1,15 +1,15 @@
 <script setup lang="ts">
 // #region imports
-    import { onMounted, ref } from 'vue'
+    import { onMounted, ref } from 'vue';
     import PetitionMaker from '../Utilities/PetitionMaker'
     import BaseAlert from './BaseComponents/BaseAlert.vue';
     import BaseInput from './BaseComponents/BaseInput.vue';
     import BaseTextArea from './BaseComponents/BaseTextArea.vue';
     import BaseButton from './BaseComponents/BaseButton.vue';
     import BaseSelect from './BaseComponents/BaseSelect.vue';
-    import BaseRadioGroup from './BaseComponents/BaseRadioGroup.vue';
     import BasePage from './BuildingBlocks/BasePage.vue';
     import BaseCard from './BaseComponents/BaseCard.vue';
+    import type TypeInfo from './../interfaces/TypesInfo';
     import type FormContent from '../interfaces/FormContent';
 // #endregion imports
 
@@ -30,6 +30,7 @@
 
     //Variable for storing the different departments
     const departments = ref<Array<{value:string, label:string}>>([]);
+    const types = ref<Array<{value:string, label:string}>>([]);
 // #endregion variables
 
 // #region Methods
@@ -48,6 +49,17 @@
                 if(dept.show) {
                     departments.value.push({value: dept.innerID, label: dept.name});
                 }
+            }
+        }
+    }
+
+    const getTypes = async () => {
+        const response = await petitionMaker.makePetition("/api/general/currentTypes", "GET");
+        if(response.status == 200) {
+            console.log("Data: " + response.data.types );
+            const data:TypeInfo[] = response.data.types;
+            for(const type of data) {
+                types.value.push({value:String(type.inner_id), label:type.name})
             }
         }
     }
@@ -76,6 +88,7 @@
 // #region onMounted
     onMounted( async () => {
         await getDepartments();
+        await getTypes();
     });
 // #endregion onMounted 
 </script>
@@ -104,16 +117,11 @@
                 <form class="FormContent"  @submit.prevent="handleSubmit">
                     <div class="TypeSelection">
                         <p> <b> Indique el tipo de solicitud </b> </p>
-                        <BaseRadioGroup
-                            v-model="documentType"
-                            name="DocumentType"
-                            :options="[
-                                { value: '1', label: 'Idea' },
-                                { value: '2', label: 'Queja' },
-                                { value: '3', label: 'Sugerencia' }
-                            ]"
-                            custom-class="MultiSelect_Type"
-                            gap="5px"
+                        <BaseSelect
+                          v-model="documentType"
+                          label=""
+                          placeholder="Selecciona una opción"
+                          :options="types"
                         />
                     </div>
 
@@ -199,6 +207,7 @@
 
         /* Borders */
         border-bottom: 2px solid var(--form-border);
+        padding-bottom: 15px;
     }
 
     .MultiSelect_Type {
