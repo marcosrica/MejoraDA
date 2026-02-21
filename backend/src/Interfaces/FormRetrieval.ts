@@ -5,5 +5,4 @@ export default interface Petition {
     subject: string;
     description: string;
     solved: boolean;
-    date: string;
 }

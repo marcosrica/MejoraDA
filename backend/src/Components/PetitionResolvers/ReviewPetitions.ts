@@ -1,5 +1,6 @@
 import { Router, Request, Response } from "express";
 import Database from "../Database";
+import Petition from "src/Interfaces/FormRetrieval";
 
 let db: Database = new Database();
 const ReviewRouter = Router();
@@ -18,9 +19,19 @@ ReviewRouter.post("/unresolvedQuantity", async (req: Request, res: Response) => 
 });
 
 ReviewRouter.post("/filter", async (req: Request, res: Response) => {
-  console.log("Received new petition to get the forms with specific filters");
-  //TODO: Handle retrieval of petitions that comply with certain filters
-  res.status(200);
+  const type = req.body.type;
+  const department = req.body.department;
+  const showResolved = req.body.showResolved;
+
+
+  console.log("Received new petition to get the forms with specific filters:");
+  console.log("Type: " + type);
+  console.log("Department: " + department);
+  console.log("Resolved too: " + showResolved);
+
+  const result:Petition[] = await db.RetrievePetitions(type, department, showResolved);
+
+  res.status(200).json(result);
 });
 
 ReviewRouter.get("/markAsResolved", async (req: Request, res: Response) => {

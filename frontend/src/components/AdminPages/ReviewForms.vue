@@ -138,7 +138,7 @@
       const data = response.data;
       
       for(const dept of data.departments) {
-        departments.value.push({value: dept.internalName, label: dept.name});
+        departments.value.push({value: dept.innerID, label: dept.name});
       }
     }
   }

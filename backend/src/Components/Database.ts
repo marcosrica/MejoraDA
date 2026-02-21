@@ -79,6 +79,28 @@ class Database {
             VALUES (?, ?, ?, ?, false)
             `, [type, department, subject, description]);
     } 
+
+    RetrievePetitions = async (type:number, department:number, showResolved:boolean): Promise<Petition[]>  => {
+        const [response] = await pool.query<RowDataPacket[]> (`
+            SELECT * FROM forms     
+            WHERE (resolved = 0 OR ? = 1) 
+            AND (? = 0 OR id_department = ?)
+            AND (? = 0 OR id_type = ?)     
+            `, [showResolved, department, department, type, type]);
+        
+        console.log(response);
+
+        const departments:SubdelegationsInfo[] = await this.GetDepartments();
+        const types:TypeInfo[] = await this.GetTypes();
+
+        const result:Petition[] = [];
+        
+        for(const form of response) {
+            result.push({request_id:form.id_form, type:this.mapToType(form.id_type, types), department:this.mapToDepartment(form.id_department, departments), subject:form.subject, description:form.description, solved:form.resolved});
+        }
+
+        return result;
+    }
 // #endregion
 
 // #region Types
@@ -98,6 +120,31 @@ class Database {
     }
 
 // #endregion
+
+    mapToDepartment(id:number, departments:SubdelegationsInfo[]):string {
+        let result:string = "ERROR";
+
+        departments.forEach((department) => {
+            console.log("Searching for department: " + id + " on iteration: " + department.innerID + "; comparison: " + (id == department.innerID));
+            if(department.innerID == id) {
+                result = department.name;
+            }
+        });
+
+        return result;
+    }
+
+    mapToType(id:number, types:TypeInfo[]):string {
+        let result:string = "ERROR";
+
+        types.forEach((type) => {
+            if(type.inner_id == id) {
+                result = type.name;
+            }
+        });
+
+        return result;
+    }
 
 }
 
