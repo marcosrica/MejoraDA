@@ -101,6 +101,21 @@ class Database {
 
         return result;
     }
+
+    MarkPetitionAsResolved = async (id:number) => {
+        const response = await pool.query(`
+          UPDATE forms
+          SET resolved = true
+          WHERE id_form = ?
+        `, [id]);
+    }
+
+    DeletePetition = async (id:number) => {
+        const [response] = await pool.query(`
+            DELETE FROM forms
+            WHERE id_form = ?
+            `, [id]);
+    }
 // #endregion
 
 // #region Types
@@ -125,7 +140,6 @@ class Database {
         let result:string = "ERROR";
 
         departments.forEach((department) => {
-            console.log("Searching for department: " + id + " on iteration: " + department.innerID + "; comparison: " + (id == department.innerID));
             if(department.innerID == id) {
                 result = department.name;
             }

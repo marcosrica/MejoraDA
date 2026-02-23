@@ -42,7 +42,7 @@
   const petitions = ref<(Petition & { expanded: boolean })[]>([]);
 
   //Storing the different possible departments
-  const departments = ref<Array<{value:string, label:string}>>([]);
+  const departments = ref<Array<{value:string, label:string}>>([{value: "0", label: "Todas"}]);
   //Storing the different possible types
   const types = ref<Array<{value:string, label:string}>>([{value:"0", label:"Todos"}]);
 // #endregion variables
@@ -100,7 +100,7 @@
       type: type,
     };
 
-    const response = await petitionMaker.makePetition("/api/petitions/markAsResolved", "POST", data);
+    const response = await petitionMaker.makePetition("/api/review/markAsResolved", "POST", data);
     console.log(response);
 
     if(response.status == 200) {
@@ -119,7 +119,8 @@
       type: type,
     };
 
-    const response = await petitionMaker.makePetition("/api/petitions/deleteForm", "POST", data);
+    console.log("Petition deleted. Data: " + petitionId);
+    const response = await petitionMaker.makePetition("/api/review/deleteForm", "DELETE", data);
     console.log(response);
 
     if(response.status == 200) {

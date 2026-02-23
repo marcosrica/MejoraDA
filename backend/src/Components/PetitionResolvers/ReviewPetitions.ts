@@ -23,27 +23,31 @@ ReviewRouter.post("/filter", async (req: Request, res: Response) => {
   const department = req.body.department;
   const showResolved = req.body.showResolved;
 
-
-  console.log("Received new petition to get the forms with specific filters:");
-  console.log("Type: " + type);
-  console.log("Department: " + department);
-  console.log("Resolved too: " + showResolved);
-
   const result:Petition[] = await db.RetrievePetitions(type, department, showResolved);
 
   res.status(200).json(result);
 });
 
-ReviewRouter.get("/markAsResolved", async (req: Request, res: Response) => {
-  console.log("Received new request to mark a petition as resolved");
-  //TODO: Handle marking a petition as resolved
-  res.status(200);
+ReviewRouter.post("/markAsResolved", async (req: Request, res: Response) => {
+  try {
+    const id = req.body.id;
+    await db.MarkPetitionAsResolved(id);
+    res.status(200).json({"result": "OK"});
+  }
+  catch (ex) {
+    res.status(500).json({"result": "Internal server error"});
+  }
 });
 
-ReviewRouter.get("/deleteForm", async (req: Request, res: Response) => {
-  console.log("Received new request to delete a petition");
-  //TODO: Handle deletion of the petition
-  res.status(200);
+ReviewRouter.delete("/deleteForm", async (req: Request, res: Response) => {
+  try {
+    const id = req.body.id;
+    await db.DeletePetition(id);
+    res.status(200).json({"result": "OK"});
+  }
+  catch (ex) {
+    res.status(500).json({"result": "Internal server error"});
+  }
 });
 
 export default ReviewRouter;
