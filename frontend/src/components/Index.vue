@@ -2,9 +2,35 @@
   import BaseCard from './BaseComponents/BaseCard.vue'
   import BaseButton from './BaseComponents/BaseButton.vue'
   import BasePage from './BuildingBlocks/BasePage.vue';
+  import { inject } from 'vue';
+  import type Keycloak from 'keycloak-js';
+
+  const keycloak = inject<Keycloak>('keycloak');
 
   const fillFormButtonClicked = () => {
     location.href = '/Form';
+  }
+
+  const loginButtonClicked = () => {
+    if (!keycloak) return;
+
+    // Check if we are already authenticated
+    if (!keycloak.authenticated) {
+      keycloak.login({
+        // Optional: where to go after login (usually your current origin)
+        redirectUri: window.location.origin,
+      });
+    } else {
+      console.log("User is already logged in!");
+      // You could redirect them to /Form here if you want
+    }
+
+    if(keycloak.authenticated) {
+      console.log("User ID:", keycloak.subject); // The unique UUID for the user
+      console.log("Display Name:", keycloak.idTokenParsed?.preferred_username);
+      console.log("Full Token Data:", keycloak.tokenParsed);
+      console.log("User Roles:", keycloak.realmAccess?.roles);
+    }
   }
 </script>
 
@@ -19,6 +45,16 @@
         <p class="DescriptionText">
           Por ello, os hemos habilitado mejoraDA, una plataforma completamente anónima en la que nos podeis contar vuestra visión de la escuela, todo aquello que os gustaría que ocurriese, y las cosas que desearíais que cambiasen. 
         </p>
+    </BaseCard>
+
+    <!-- Create a form -->
+    <BaseCard custom-class="BaseContainer">
+      <BaseButton  
+       @click="loginButtonClicked"
+       variant="primary"
+       custom-class="FillFormButton">
+        Iniciar sesión  
+      </BaseButton>
     </BaseCard>
 
     <!-- Create a form -->

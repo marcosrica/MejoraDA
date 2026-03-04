@@ -3,7 +3,7 @@
   import BaseMenu from '../BaseComponents/BaseMenu.vue';
   import Header from './Header.vue';
   import PetitionMaker from '../../Utilities/PetitionMaker';
-import BaseNotAuth from '../BaseComponents/BaseNotAuth.vue';
+  import BaseNotAuth from '../BaseComponents/BaseNotAuth.vue';
 
   const props = defineProps<{
     showContent: boolean

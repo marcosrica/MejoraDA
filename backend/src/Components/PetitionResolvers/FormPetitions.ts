@@ -7,6 +7,7 @@ const FormRouter = Router();
 // Matches: /api/index/foo
 FormRouter.post("/newForm", async (req: Request, res: Response) => {
   try {
+    console.log(req.body);
     const type = req.body.type;
     const formDepartment = req.body.department;
     const formSubject = req.body.subject; 
