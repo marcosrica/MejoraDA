@@ -1,12 +1,12 @@
 <script setup lang="ts">
   import { inject, onMounted, ref } from 'vue';
   import type Keycloak from 'keycloak-js';
-import BaseButton from '../BaseComponents/BaseButton.vue';
+  import BaseButton from '../BaseComponents/BaseButton.vue';
 
   const keycloak = inject<Keycloak>('keycloak');
-  
-  const loggedIn = ref<boolean>(false);
 
+  const loggedIn = ref<boolean>(false);
+    
   const login = async () => {
     if(!keycloak) { return; }
 

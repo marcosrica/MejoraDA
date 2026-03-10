@@ -69,7 +69,7 @@
     const handleSubmit = async () => {
         if(!(!documentType.value || !department.value || !description.value || !subject.value)) { //Prevent empty fields
             const data:FormContent = {type: documentType.value, department: department.value, subject: subject.value, description: description.value};
-            
+
             const response = await petitionMaker.makePetition("/api/form/newForm", "POST", data);
 
             if(response.status == 200) {
