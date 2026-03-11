@@ -1,18 +1,16 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
-import BaseButton from '../BaseComponents/BaseButton.vue';
 
-  const loggedIn = ref<boolean>(false)
+const loggedIn = ref<boolean>(false)
 </script>
 
 <template>
     <div class="TopBarDiv">
       <img src="./../../assets/Logo.png" alt="MejoraDA Logo" class="ServiceLogo"/>
-      <div class="PageID" onclick="location.href = '/'">
+      <div :class="['PageID',  {loggedIn: 'LoggedIn'}]" onclick="location.href = '/'">
         <h1 class="pageText"> MejoraDA </h1>
         <div class="userPanel">
           <p v-if="loggedIn" class="userText">Test user</p>
-          <BaseButton v-if="!loggedIn" custom-class="loginButton" variant="secondary"> Iniciar sesión </BaseButton>
         </div>
       </div>
     </div>
@@ -59,8 +57,12 @@ import BaseButton from '../BaseComponents/BaseButton.vue';
 
   @media(orientation: portrait) {
     flex-direction: column;
-    justify-content: space-around;
+    justify-content: center;
   }
+}
+
+.LoggedIn {
+  justify-content: space-around;
 }
 
 .ServiceLogo {
@@ -77,10 +79,5 @@ import BaseButton from '../BaseComponents/BaseButton.vue';
   font-size: 20px;
   font-weight: bolder;
   margin: 0px;
-}
-
-.loginButton {
-  color:white;
-  padding: 7px;
 }
 </style>

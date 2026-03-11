@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const props = defineProps<{
+  const props = defineProps<{
   customClass?: string,
   disabled?: boolean
 }>()

@@ -4,6 +4,7 @@
   import Header from './Header.vue';
   import PetitionMaker from '../../Utilities/PetitionMaker';
 import BaseNotAuth from '../BaseComponents/BaseNotAuth.vue';
+import LoginMenuFloating from '../BaseComponents/LoginMenuFloating.vue';
 
   const props = defineProps<{
     showContent: boolean
@@ -16,7 +17,7 @@ import BaseNotAuth from '../BaseComponents/BaseNotAuth.vue';
   //Tracks wether the user is adming, to surface the users panel option in the menu
   const adminUser = ref(true);
   //Tracks wether the user is logged in
-  const loggedIn = ref(true);
+  const loggedIn = ref(false);
 
   onMounted(async () => {
     //Checks wether the currently logged user is privileged
@@ -48,6 +49,8 @@ import BaseNotAuth from '../BaseComponents/BaseNotAuth.vue';
 
       <!-- Toggle menu that sits on top of the content -->
       <BaseMenu :visible="loggedIn" :privileged="privilegedUser" :admin="adminUser"/>
+
+      <LoginMenuFloating :visible="!loggedIn"></LoginMenuFloating>
     </div>
   </div>
 </template>
