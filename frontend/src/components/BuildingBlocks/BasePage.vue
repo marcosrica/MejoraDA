@@ -12,9 +12,9 @@ import BaseNotAuth from '../BaseComponents/BaseNotAuth.vue';
   const petitionMaker:PetitionMaker = new PetitionMaker();
 
   //Tracks wether the user is privileged, to know if it should show the menu
-  const privilegedUser = ref(false);
+  const privilegedUser = ref(true);
   //Tracks wether the user is adming, to surface the users panel option in the menu
-  const adminUser = ref(false);
+  const adminUser = ref(true);
 
   onMounted(async () => {
     //Checks wether the currently logged user is privileged
