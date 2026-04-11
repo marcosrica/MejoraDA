@@ -3,8 +3,8 @@
   import BaseMenu from '../BaseComponents/BaseMenu.vue';
   import Header from './Header.vue';
   import PetitionMaker from '../../Utilities/PetitionMaker';
-import BaseNotAuth from '../BaseComponents/BaseNotAuth.vue';
-import LoginMenuFloating from '../BaseComponents/LoginMenuFloating.vue';
+  import BaseNotAuth from '../BaseComponents/BaseNotAuth.vue';
+  import LoginMenuFloating from '../BaseComponents/LoginMenuFloating.vue';
 
   const props = defineProps<{
     showContent: boolean
@@ -13,11 +13,11 @@ import LoginMenuFloating from '../BaseComponents/LoginMenuFloating.vue';
   const petitionMaker:PetitionMaker = new PetitionMaker();
 
   //Tracks wether the user is privileged, to know if it should show the menu
-  const privilegedUser = ref(true);
+  const privilegedUser = ref(false);
   //Tracks wether the user is adming, to surface the users panel option in the menu
-  const adminUser = ref(true);
+  const adminUser = ref(false);
   //Tracks wether the user is logged in
-  const loggedIn = ref(false);
+  const loggedIn = ref(true);
 
   onMounted(async () => {
     //Checks wether the currently logged user is privileged
@@ -29,16 +29,12 @@ import LoginMenuFloating from '../BaseComponents/LoginMenuFloating.vue';
       const isAdmin = await petitionMaker.makePetition('/api/auth/amIAdmin', 'GET');
       adminUser.value = isAdmin.status == 200;
     }
-
-    //DEBUG. TODO: Remove for production
-    privilegedUser.value = false;
-    adminUser.value = false;
   });
 </script>
 
 <template>
   <div class="Home_background">
-    <Header />
+    <Header :logged-in="loggedIn"/>
 
     <div class="Home_content_wrapper">
       <!-- Content area -->

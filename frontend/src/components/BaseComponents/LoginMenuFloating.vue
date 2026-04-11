@@ -10,7 +10,7 @@ const props = defineProps<{
 </script>
 
 <template>
-  <BaseButton v-if="visible" class="ToggleButton" @click="open = !open">Iniciar sesión</BaseButton>
+  <BaseButton v-if="visible" class="ToggleButton" @click="open = !open">🔒 Iniciar sesión</BaseButton>
 </template>
 
 <style scoped>

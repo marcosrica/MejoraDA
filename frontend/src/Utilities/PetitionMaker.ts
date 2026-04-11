@@ -45,6 +45,33 @@ class PetitionMaker {
 
         return result;
     }
+
+    makeRootPetition = async (url: string, method: string, body?: any): Promise<PetitionResult> => {
+        let result: PetitionResult = new PetitionResult();
+        console.log(url);
+
+        try {
+            const response:Response = await fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: null,
+            });
+
+
+            const data = await response.json();
+            console.log(data);
+
+            result = new PetitionResult(response.status, data, false);
+        }
+        catch (error) {
+            throw error;
+            result.error = true;
+        }
+
+        return result;
+    }
 }
 
 export default PetitionMaker;

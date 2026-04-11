@@ -10,7 +10,9 @@ AuthRouter.get("/amIPrivileged", async (req: Request, res: Response) => {
   console.log("Received new request for info on wether the user is privileged");
   
   const isPrivileged = IsPrivileged(req.headers.authorization || "");
+  console.log("Privileged: " + isPrivileged);
   if(isPrivileged) {
+    console.log("sending OK")
     res.status(200).json({ result: "OK"});
   }
   else {

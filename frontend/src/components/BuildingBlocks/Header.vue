@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
-
-const loggedIn = ref<boolean>(false)
+const props = defineProps<{
+  loggedIn?: boolean,
+}>();
 </script>
 
 <template>
@@ -58,6 +58,8 @@ const loggedIn = ref<boolean>(false)
   @media(orientation: portrait) {
     flex-direction: column;
     justify-content: center;
+    flex-wrap: wrap;
+    align-content: flex-start;
   }
 }
 
