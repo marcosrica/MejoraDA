@@ -7,6 +7,7 @@ import Form_OK from '../components/Form_OK.vue';
 import ReviewForms from '../components/AdminPages/ReviewForms.vue';
 import UserManagement from '../components/AdminPages/UserManagement.vue';
 import DepartmentsManagement from '../components/AdminPages/DepartmentsManagement.vue';
+import AdminLogin from '../components/AdminPages/AdminLogin.vue';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -25,17 +26,22 @@ const routes: RouteRecordRaw[] = [
     component: Form_OK,
   },
   {
-    path:'/home/review',
+    path: '/admin',
+    name: 'AdminLogin',
+    component: AdminLogin,
+  },
+  {
+    path:'/admin/review',
     name:'ReviewForms',
     component: ReviewForms,
   },
   {
-    path:'/home/users',
+    path:'/admin/users',
     name: 'Gestionar usuarios',
     component: UserManagement,
   },
   {
-    path:'/Home/departments',
+    path:'/admin/departments',
     name: 'Gestionar subdelegaciones',
     component: DepartmentsManagement,
   }

@@ -1,18 +1,11 @@
 <script lang="ts" setup>
-const props = defineProps<{
-  loggedIn?: boolean,
-}>();
+
 </script>
 
 <template>
     <div class="TopBarDiv">
       <img src="./../../assets/Logo.png" alt="MejoraDA Logo" class="ServiceLogo"/>
-      <div :class="['PageID',  {loggedIn: 'LoggedIn'}]" onclick="location.href = '/'">
-        <h1 class="pageText"> MejoraDA </h1>
-        <div class="userPanel">
-          <p v-if="loggedIn" class="userText">Test user</p>
-        </div>
-      </div>
+      <h1 class="pageText"> MejoraDA </h1>
     </div>
 </template>
 
@@ -32,54 +25,20 @@ const props = defineProps<{
   display:flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
 
   border-bottom-right-radius: 10px;
   border-bottom-left-radius: 10px;
 }
 
 .pageText {
-  margin: 0px
-}
-
-.PageID {
-  display:flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
+  margin: 0px;
   color: white;
-
-  height: 100%;
-
-  margin-left: 20px;
-  cursor:pointer;
-  flex: 1;
-
-  @media(orientation: portrait) {
-    flex-direction: column;
-    justify-content: center;
-    flex-wrap: wrap;
-    align-content: flex-start;
-  }
-}
-
-.LoggedIn {
-  justify-content: space-around;
 }
 
 .ServiceLogo {
   height: 60%;
   margin-right: 15px;
   margin-left: 20px;
-}
-
-.userPanel {
-  margin-right: 15px;
-}
-
-.userText {
-  font-size: 20px;
-  font-weight: bolder;
-  margin: 0px;
 }
 </style>
