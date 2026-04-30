@@ -25,9 +25,9 @@ const handleSubmit = async () => {
 
     const response = await petitionMaker.makePetition("/api/auth/adminLogin", 'POST', loginData);
 
-    /*if(response.status == 200) {
+    if(response.status == 200) {
         location.href = "/admin/review"
-    }*/
+    }
 }
 </script>
 

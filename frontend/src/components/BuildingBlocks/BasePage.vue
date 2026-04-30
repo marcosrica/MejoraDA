@@ -3,6 +3,7 @@
   import Header from './Header.vue';
   import PetitionMaker from '../../Utilities/PetitionMaker';
   import BaseNotAuth from '../BaseComponents/BaseNotAuth.vue';
+import BaseMenu from '../BaseComponents/BaseMenu.vue';
 
   const props = defineProps<{
     showContent: boolean
@@ -11,9 +12,18 @@
   const petitionMaker:PetitionMaker = new PetitionMaker();
 
   //Tracks wether the user is privileged, to know if it should show the menu
-  const allowedUser = ref(true); //TODO: Change to allow only petitions coming from wordpress
+  const allowedUser = ref(false); //TODO: Change to allow only petitions coming from wordpress
+
+  const getPrivileged = async () => {
+    const response = await petitionMaker.makeGetPetition("/api/auth/amIPrivileged");
+
+    allowedUser.value = response.status == 200;
+  };
 
   onMounted(async () => {
+    console.log("MOuted");
+    await getPrivileged();
+    console.log(allowedUser);
   });
 </script>
 
@@ -29,9 +39,10 @@
       </div>
 
       <!-- Toggle menu that sits on top of the content -->
-      <!--
-      <BaseMenu :visible="loggedIn" :privileged="privilegedUser" :admin="adminUser"/>
       
+      <BaseMenu :visible="allowedUser" :privileged="allowedUser" :admin="true"/>
+      
+      <!--
       <LoginMenuFloating :visible="!loggedIn"></LoginMenuFloating>
       -->
     </div>

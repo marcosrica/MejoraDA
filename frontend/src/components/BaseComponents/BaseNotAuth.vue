@@ -7,8 +7,8 @@ const petititonMaker = new PetitionMaker();
 let reject = ref<String>("");
 
 onMounted(async () => {
-    const response = await petititonMaker.makeRootPetition("https://naas.isalman.dev/no", 'GET', null);
-    reject.value = response.data.reason;
+    //const response = await petititonMaker.makeRootPetition("https://naas.isalman.dev/no", 'GET', null);
+    //reject.value = response.data.reason;
 });
 
 </script>
