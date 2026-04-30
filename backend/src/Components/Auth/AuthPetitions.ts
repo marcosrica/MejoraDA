@@ -32,6 +32,22 @@ AuthRouter.get("/amIAdmin", async (req: Request, res: Response) => {
   }
 });
 
+AuthRouter.post("/adminLogin", async(req: Request, res: Response) => {
+  console.log("recieved new login wanted: " + req.body.user + "; password: " + req.body.password);
+
+  //TODO: Handle login and status
+  const loginCorrect: boolean = false;
+
+  if(loginCorrect) {
+    //TODO: Log the user correctly logging in
+    res.status(200).send({result: "OK"});
+  }
+  else {
+    //TODO: Log the login fail (IP adress + user and password for trying to log in)
+    res.status(401).send({result: "Forbidden"});
+  }
+});
+
 
 
 export default AuthRouter;

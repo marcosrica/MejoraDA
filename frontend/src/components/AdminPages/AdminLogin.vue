@@ -5,13 +5,25 @@ import BaseCard from '../BaseComponents/BaseCard.vue';
 import BasePage from '../BuildingBlocks/BasePage.vue';
 import BaseInput from '../BaseComponents/BaseInput.vue';
 import BaseButton from '../BaseComponents/BaseButton.vue';
+import PetitionMaker from '../../Utilities/PetitionMaker';
+
+import type LoginData from '../../interfaces/LoginData';
+
+const petitionMaker:PetitionMaker = new PetitionMaker();
 
 //Variables for the form fields
 const user = ref('');
 const password = ref('');
 
 const handleSubmit = () => {
+    console.log("User wants to log in: " + user.value + ", password: " + password.value);
 
+    const loginData:LoginData = {
+        user: user.value,
+        password: password.value
+    }
+
+    petitionMaker.makePetition("/api/auth/adminLogin", 'POST', loginData);
 }
 </script>
 
@@ -23,7 +35,7 @@ const handleSubmit = () => {
             <p class="marginless disclaimer"> Esto es un panel exclusivo para miembros de la delegación, y aquí sí que se guardan registros. Si no eres parte del equipo, vuelve a la página de inicio </p>
         </BaseCard>
 
-        <BaseCard>
+        <BaseCard bottom>
             <form class="FormContent"  @submit.prevent="handleSubmit">
                     <div class="prompt firstPrompt">
                         <p> <b> Usuario </b> </p>
