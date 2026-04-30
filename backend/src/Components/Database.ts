@@ -1,6 +1,6 @@
 import mysql from 'mysql2';
 import { ResultSetHeader } from 'mysql2/promise';
-import DatabaseKeys from './../../keys';
+import { DatabaseKeys } from '../../keys';
 import Petition from '../Interfaces/FormRetrieval';
 import SubdelegationsInfo from 'src/Interfaces/SubdelegationsInfo';
 import { RowDataPacket } from 'mysql2/promise';

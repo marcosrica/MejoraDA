@@ -15,7 +15,7 @@ const petitionMaker:PetitionMaker = new PetitionMaker();
 const user = ref('');
 const password = ref('');
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
     console.log("User wants to log in: " + user.value + ", password: " + password.value);
 
     const loginData:LoginData = {
@@ -23,7 +23,11 @@ const handleSubmit = () => {
         password: password.value
     }
 
-    petitionMaker.makePetition("/api/auth/adminLogin", 'POST', loginData);
+    const response = await petitionMaker.makePetition("/api/auth/adminLogin", 'POST', loginData);
+
+    /*if(response.status == 200) {
+        location.href = "/admin/review"
+    }*/
 }
 </script>
 

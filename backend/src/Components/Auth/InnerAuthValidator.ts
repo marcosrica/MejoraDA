@@ -1,7 +1,13 @@
-export function IsAdmin(token: string): boolean {
-    return false; //TODO: Implement actual admin check
+import JWT_Manager from "./JWT_Manager";
+
+export function IsAdmin(token: any): boolean {
+    const decodedToken = JWT_Manager.readToken(token);
+    console.log(decodedToken);
+    return true;
 }
 
 export function IsPrivileged(token: string): boolean {
-    return false; //TODO: Implement actual privileged user check
+    const decodedToken = JWT_Manager.readToken(token);
+    console.log(decodedToken);
+    return true;
 }
