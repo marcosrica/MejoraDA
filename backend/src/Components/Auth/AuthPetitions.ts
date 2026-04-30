@@ -47,4 +47,17 @@ AuthRouter.post("/adminLogin", async(req: Request, res: Response) => {
   }
 });
 
+AuthRouter.get("/adminlogout", async(req:Request, res:Response) => {
+  console.log("Received new logout");
+
+  try{
+    res.clearCookie('token', {httpOnly: true});
+
+    res.status(200).send({status:"OK"});
+  }
+  catch(e) {
+    res.status(500).send({status:"ERROR"});
+  }
+});
+
 export default AuthRouter;

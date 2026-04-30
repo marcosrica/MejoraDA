@@ -35,10 +35,9 @@ const props = defineProps<{
       </div>
       <div class="MenuOptions">
         <div class="MenuOption" v-on:click="redirect('/')">Página principal</div>
-        <div class="MenuOption" v-if="privileged" v-on:click="redirect('/Home/review')">Revisión de formularios</div>
-        <div class="MenuOption" v-if="admin" v-on:click="redirect('/Home/users')">Administración de usuarios</div>
-        <div class="MenuOption" v-if="privileged" v-on:click="redirect('/Home/departments')">Administración de subdelegaciones</div>
-        <div class="MenuOption logoutText" v-on:click="redirect('/Home/logout')">Cerrar sesión</div>
+        <div class="MenuOption" v-if="privileged" v-on:click="redirect('/admin/review')">Revisión de formularios</div>
+        <div class="MenuOption" v-if="privileged" v-on:click="redirect('/admin/departments')">Administración de subdelegaciones</div>
+        <div class="MenuOption logoutText" v-on:click="redirect('/admin/logout')">Cerrar sesión</div>
       </div>
     </BaseCard>
   </transition>
