@@ -1,9 +1,11 @@
 <script lang="ts" setup>
-
+const goHome = () => {
+  location.href = "/";
+}
 </script>
 
 <template>
-    <div class="TopBarDiv">
+    <div class="TopBarDiv" v-on:click="goHome">
       <img src="./../../assets/Logo.png" alt="MejoraDA Logo" class="ServiceLogo"/>
       <h1 class="pageText"> MejoraDA </h1>
     </div>
@@ -29,6 +31,8 @@
 
   border-bottom-right-radius: 10px;
   border-bottom-left-radius: 10px;
+
+  cursor: pointer;
 }
 
 .pageText {
