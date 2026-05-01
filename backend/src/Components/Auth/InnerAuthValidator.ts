@@ -14,7 +14,7 @@ export function IsPrivileged(token: string): boolean {
 }
 
 export function auth(req: Request):boolean {
-    const token = req.cookies.get("token");
+    const token = req.cookies.token;
 
     return IsPrivileged(token);
 }
