@@ -4,7 +4,6 @@ import Database from "../Database";
 let db: Database = new Database();
 const FormRouter = Router();
 
-// Matches: /api/index/foo
 FormRouter.post("/newForm", async (req: Request, res: Response) => {
   try {
     const type = req.body.type;
