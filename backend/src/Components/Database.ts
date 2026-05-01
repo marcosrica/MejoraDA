@@ -157,6 +157,15 @@ class Database {
     }
 // #region Users
 
+// #region logs
+    AddLog = async (user:string, ip:string, description:string) => {
+        const [response] = await pool.query(`
+            INSERT INTO logs(IP, username, description)
+            VALUES (?, ?, ?)            
+            `, [ip, user, description]);
+    }
+// #endregion
+
 // #endregion
 
     mapToDepartment(id:number, departments:SubdelegationsInfo[]):string {

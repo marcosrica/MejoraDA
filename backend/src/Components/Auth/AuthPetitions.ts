@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
 import Database from "../Database";
-import { auth, IsAdmin, IsPrivileged } from "./InnerAuthValidator";
+import { auth } from "./InnerAuthValidator";
 import JWT_Manager from "./JWT_Manager";
 import { Secrets } from "./../../../keys";
 import bcrypt from "bcrypt";
@@ -13,7 +13,7 @@ AuthRouter.get("/amIPrivileged", async (req: Request, res: Response) => {
   console.log("Received new request for info on wether the user is privileged");
   
   const authed = auth(req);
-  if(authed) {
+  if(authed != "") {
     console.log("sending OK")
     res.status(200).json({ result: "OK"});
   }
@@ -30,7 +30,7 @@ AuthRouter.post("/adminLogin", async(req: Request, res: Response) => {
   if(loginCorrect != "") {
     await db.AddLog(req.body.user, req.ip || "", "Logged in correctly");
 
-    const token = JWT_Manager.createToken(loginCorrect); //TODO: Change token ID to correct ID
+    const token = JWT_Manager.createToken(req.body.user); //TODO: Change token ID to correct ID
     console.log(token);
 
     console.log("Created token: " + token);
@@ -51,13 +51,22 @@ AuthRouter.post("/adminLogin", async(req: Request, res: Response) => {
 AuthRouter.get("/adminlogout", async(req:Request, res:Response) => {
   console.log("Received new logout");
 
-  try{
-    res.clearCookie('token', {httpOnly: true});
+  const user = auth(req);
+  if(user != "") {
+    try{
+      res.clearCookie('token', {httpOnly: true});
+      await db.AddLog(user, req.ip || "", "Logged out correctly");
 
-    res.status(200).send({status:"OK"});
+      res.status(200).send({status:"OK"});
+    }
+    catch(e) {
+      await db.AddLog(user, req.ip || "", "Error while trying to log out");
+      res.status(500).send({status:"ERROR"});
+    }
   }
-  catch(e) {
-    res.status(500).send({status:"ERROR"});
+  else {
+      await db.AddLog(user, req.ip || "", "Tried to log out without being logged in");
+    res.status(401).send({status:"No Token"});
   }
 });
 

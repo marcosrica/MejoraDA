@@ -9,7 +9,7 @@ const ReviewRouter = Router();
 
 ReviewRouter.get("/allUnresolved", async (req: Request, res: Response) => {
   const authed = auth(req);
-  if(authed) {
+  if(authed != "") {
     console.log("Received new unresolved petitions request");
     //TODO: Handle retrieval of unresolved petitions
     res.status(200).json({Result: "OK"});
@@ -21,7 +21,7 @@ ReviewRouter.get("/allUnresolved", async (req: Request, res: Response) => {
 
 ReviewRouter.post("/unresolvedQuantity", async (req: Request, res: Response) => {
   const authed = auth(req);
-  if(authed) {
+  if(authed != "") {
     console.log("Received new unresolved petitions request for a specific department");
     //TODO: Handle retrieval of unresolved petitions of a specific department
     res.status(200).send({ quantity: 100 });
@@ -33,50 +33,61 @@ ReviewRouter.post("/unresolvedQuantity", async (req: Request, res: Response) => 
 
 ReviewRouter.post("/filter", async (req: Request, res: Response) => {
   const authed = auth(req);
-  if(authed) {
-    const type = req.body.type;
-    const department = req.body.department;
-    const showResolved = req.body.showResolved;
 
+  const type = req.body.type;
+  const department = req.body.department;
+  const showResolved = req.body.showResolved;
+ 
+  if(authed != "") {
     const result:Petition[] = await db.RetrievePetitions(type, department, showResolved);
 
+    await db.AddLog(authed, req.ip || "", "Retrieved " + result.length + " petitions with filters: TYPE=" + type + "; DEPARTMENT=" + department + "; SHOW_RESOLVED=" + showResolved);
     res.status(200).json(result);
   }
   else {
+    await db.AddLog("Unsigned", req.ip || "", "Tried to retrieve petitions with filters: TYPE=" + type + "; DEPARTMENT=" + department + "; SHOW_RESOLVED=" + showResolved);
     res.status(401).send({Status: "Forbidden"});
   }
 });
 
 ReviewRouter.post("/markAsResolved", async (req: Request, res: Response) => {
   const authed = auth(req);
-  if(authed) {
+  const id = req.body.id;
+
+  if(authed != "") {
     try {
-      const id = req.body.id;
       await db.MarkPetitionAsResolved(id);
+      await db.AddLog(authed, req.ip || "", "Marked petition with ID=" + id + " as resolved");
       res.status(200).json({"result": "OK"});
     }
     catch (ex) {
+      await db.AddLog("authed", req.ip || "", "Error while marking petition with ID=" + id + " as resolved");
       res.status(500).json({"result": "Internal server error"});
     }
   }
   else {
+    await db.AddLog("Unsigned", req.ip || "", "Tried to mark petition with ID=" + id + " as resolved");
     res.status(401).send({Status: "Forbidden"});
   }
 });
 
 ReviewRouter.delete("/deleteForm", async (req: Request, res: Response) => {
   const authed = auth(req);
-  if(authed) {
+  const id = req.body.id;
+
+  if(authed != "") {
     try {
-      const id = req.body.id;
       await db.DeletePetition(id);
+      await db.AddLog(authed, req.ip || "", "Deleted petition with id=" + id);
       res.status(200).json({"result": "OK"});
     }
     catch (ex) {
+      await db.AddLog(authed, req.ip || "", "Error while deleting petition with id=" + id);
       res.status(500).json({"result": "Internal server error"});
     }
   }
   else {
+    await db.AddLog(authed, req.ip || "", "Tried to delete petition with id=" + id);
     res.status(401).send({Status: "Forbidden"});
   }
 });
