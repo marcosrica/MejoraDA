@@ -8,6 +8,7 @@ import BaseButton from '../BaseComponents/BaseButton.vue';
 import PetitionMaker from '../../Utilities/PetitionMaker';
 
 import type LoginData from '../../interfaces/LoginData';
+import startCheck from '../../Utilities/TokenExpiringChecker';
 
 const petitionMaker:PetitionMaker = new PetitionMaker();
 
@@ -26,7 +27,7 @@ const handleSubmit = async () => {
     const response = await petitionMaker.makePetition("/api/auth/adminLogin", 'POST', loginData);
 
     if(response.status == 200) {
-        location.href = "/admin/review"
+        //location.href = "/admin/review"
     }
 }
 </script>

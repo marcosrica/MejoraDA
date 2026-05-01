@@ -60,4 +60,39 @@ AuthRouter.get("/adminlogout", async(req:Request, res:Response) => {
   }
 });
 
+AuthRouter.get("/timeLeft", async(req:Request, res:Response) => {
+  const token = req.cookies.get("token");
+
+  if(!token) {
+    res.status(404).send({Reason:"No token found"});
+  }
+  else {
+    try {
+      const decoded = JWT_Manager.readToken(token);
+      if(token != null) {
+        const remainingMs = (decoded.exp * 1000) - Date.now();
+
+        if(remainingMs < 5000) { // 5 seconds of margin
+          const newToken = JWT_Manager.createToken(99); //TODO: Change token ID to correct ID
+
+          console.log("Created token to replace: " + newToken);
+
+          res.cookie('token', newToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production', //ONly sent over https in production
+          })
+
+          res.status(200).json({status: "Renewed"});
+        }
+      } 
+      else {
+        res.status(401).send({Reason:"Corrupted token"});
+      }
+    }
+    catch(exception) {
+      res.status(401).send({Reason:"Corrupted token"});
+    }
+  }
+});
+
 export default AuthRouter;
