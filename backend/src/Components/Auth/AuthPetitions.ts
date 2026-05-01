@@ -25,11 +25,13 @@ AuthRouter.get("/amIPrivileged", async (req: Request, res: Response) => {
 AuthRouter.post("/adminLogin", async(req: Request, res: Response) => {
   console.log("recieved new login wanted: " + req.body.user + "; password: " + req.body.password);
 
-  const loginCorrect: boolean = await tryToLogIn(req.body.user, req.body.password);
+  const loginCorrect: string = await tryToLogIn(req.body.user, req.body.password);
 
-  if(loginCorrect) {
-    //TODO: Log the user correctly logging in
-    const token = JWT_Manager.createToken(99); //TODO: Change token ID to correct ID
+  if(loginCorrect != "") {
+    await db.AddLog(req.body.user, req.ip || "", "Logged in correctly");
+
+    const token = JWT_Manager.createToken(loginCorrect); //TODO: Change token ID to correct ID
+    console.log(token);
 
     console.log("Created token: " + token);
 
@@ -41,7 +43,7 @@ AuthRouter.post("/adminLogin", async(req: Request, res: Response) => {
     res.status(200).json({result: "OK"});
   }
   else {
-    //TODO: Log the login fail (IP adress + user and password for trying to log in)
+    await db.AddLog(req.body.user, req.ip || "", "Failed to log in");
     res.status(401).send({result: "Forbidden"});
   }
 });
@@ -72,7 +74,7 @@ AuthRouter.get("/timeLeft", async(req:Request, res:Response) => {
         const remainingMs = (decoded.exp * 1000) - Date.now();
 
         if(remainingMs < 5000) { // 5 seconds of margin
-          const newToken = JWT_Manager.createToken(99); //TODO: Change token ID to correct ID
+          const newToken = JWT_Manager.createToken(token.id); //TODO: Change token ID to correct ID
 
           console.log("Created token to replace: " + newToken);
 
@@ -94,17 +96,17 @@ AuthRouter.get("/timeLeft", async(req:Request, res:Response) => {
   }
 });
 
-const tryToLogIn = async(user:string, password:string):Promise<boolean> => {
+const tryToLogIn = async(user:string, password:string):Promise<string> => {
   const hashedPassword = await db.GetHashedPassword(user);
   const match = await bcrypt.compare(password, hashedPassword);
 
   console.log(match);
 
   if(!match) {
-    return false;
+    return "";
   }
   else {
-    return true;
+    return hashedPassword;
   }
 }
 
