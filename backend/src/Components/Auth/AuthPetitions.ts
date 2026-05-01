@@ -2,8 +2,11 @@ import { Router, Request, Response } from "express";
 import Database from "../Database";
 import { auth, IsAdmin, IsPrivileged } from "./InnerAuthValidator";
 import JWT_Manager from "./JWT_Manager";
+import { Secrets } from "./../../../keys";
+import bcrypt from "bcrypt";
 
 let db: Database = new Database();
+const secrets:Secrets = new Secrets();
 const AuthRouter = Router();
 
 AuthRouter.get("/amIPrivileged", async (req: Request, res: Response) => {
@@ -22,8 +25,7 @@ AuthRouter.get("/amIPrivileged", async (req: Request, res: Response) => {
 AuthRouter.post("/adminLogin", async(req: Request, res: Response) => {
   console.log("recieved new login wanted: " + req.body.user + "; password: " + req.body.password);
 
-  //TODO: Handle login and status
-  const loginCorrect: boolean = true;
+  const loginCorrect: boolean = await tryToLogIn(req.body.user, req.body.password);
 
   if(loginCorrect) {
     //TODO: Log the user correctly logging in
@@ -91,5 +93,19 @@ AuthRouter.get("/timeLeft", async(req:Request, res:Response) => {
     }
   }
 });
+
+const tryToLogIn = async(user:string, password:string):Promise<boolean> => {
+  const hashedPassword = await db.GetHashedPassword(user);
+  const match = await bcrypt.compare(password, hashedPassword);
+
+  console.log(match);
+
+  if(!match) {
+    return false;
+  }
+  else {
+    return true;
+  }
+}
 
 export default AuthRouter;

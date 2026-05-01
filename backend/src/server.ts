@@ -9,6 +9,7 @@ import FormRouter from "./Components/PetitionResolvers/FormPetitions";
 import ReviewRouter from "./Components/PetitionResolvers/ReviewPetitions";
 import UsersRouter from "./Components/PetitionResolvers/UsersPetitions";
 import DepartmentsRouter from "./Components/PetitionResolvers/DepartmentsPetitions";
+import createAdmin from "./Components/Auth/CreateAdmin";
 
 const cookieParser = require('cookie-parser');
 

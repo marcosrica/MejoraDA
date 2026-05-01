@@ -135,6 +135,29 @@ class Database {
     }
 
 // #endregion
+    GetHashedPassword = async (user:string):Promise<string> => {
+        const [response]:any = await pool.query(`
+            SELECT password FROM users
+            WHERE username = ?
+            `, [user]);
+
+        if(response.length > 0) {
+            return response[0].password;
+        }
+        else {
+            return "";
+        }
+    } 
+
+    AddAdmin = async (hashedPassword:string, username:string) => {
+        const [response]:any = await pool.query(`
+            INSERT INTO users(username, password)
+            VALUES(?, ?)
+            `, [hashedPassword, username]);
+    }
+// #region Users
+
+// #endregion
 
     mapToDepartment(id:number, departments:SubdelegationsInfo[]):string {
         let result:string = "ERROR";
