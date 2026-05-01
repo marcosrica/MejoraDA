@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
 import Database from "../Database";
-import { IsAdmin, IsPrivileged } from "./InnerAuthValidator";
+import { auth, IsAdmin, IsPrivileged } from "./InnerAuthValidator";
 import JWT_Manager from "./JWT_Manager";
 
 let db: Database = new Database();
@@ -9,11 +9,8 @@ const AuthRouter = Router();
 AuthRouter.get("/amIPrivileged", async (req: Request, res: Response) => {
   console.log("Received new request for info on wether the user is privileged");
   
-  const token = req.cookies.token;   
-  console.log("TOken recieved: " + token)
-  const isPrivileged = IsPrivileged(token || "");
-  console.log("Privileged: " + isPrivileged);
-  if(isPrivileged) {
+  const authed = auth(req);
+  if(authed) {
     console.log("sending OK")
     res.status(200).json({ result: "OK"});
   }

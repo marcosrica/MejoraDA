@@ -1,4 +1,5 @@
 import JWT_Manager from "./JWT_Manager";
+import {Request} from "express";
 
 export function IsAdmin(token: any): boolean {
     const decodedToken = JWT_Manager.readToken(token);
@@ -10,4 +11,10 @@ export function IsPrivileged(token: string): boolean {
     const decodedToken = JWT_Manager.readToken(token);
     console.log(decodedToken);
     return (decodedToken != null);
+}
+
+export function auth(req: Request):boolean {
+    const token = req.cookies.get("token");
+
+    return IsPrivileged(token);
 }
