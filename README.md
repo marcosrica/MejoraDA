@@ -1,6 +1,8 @@
 # MejoraDA
 ### Platform for centralising communications with DA-ETSISI (UPM).  
 
+Made by [@marcosrica](https://github.com/marcosrica) with ❤️ for [@DA-ETSISI](https://github.com/DA-ETSISI). 
+
 MejoraDA is a web platform designed to collect, organize, and manage student and proffesor's suggestions, feedback, and improvement ideas for the student representatives of ETSI-SI (UPM).    
 
 The goal of the project is to create a simple channel that enables the representatives to track down and take action about what the school really needs.  
