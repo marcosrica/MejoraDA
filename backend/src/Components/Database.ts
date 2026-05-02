@@ -4,6 +4,7 @@ import { DatabaseKeys } from '../../keys';
 import Petition from '../Interfaces/FormRetrieval';
 import SubdelegationsInfo from 'src/Interfaces/SubdelegationsInfo';
 import { RowDataPacket } from 'mysql2/promise';
+import UserInfo from '../Interfaces/UserInfo';
 import TypeInfo from 'src/Interfaces/TypeInfo';
 
 const dbKeys = new DatabaseKeys();
@@ -135,17 +136,22 @@ class Database {
     }
 
 // #endregion
-    GetHashedPassword = async (user:string):Promise<string> => {
+    GetUserInfo = async (user:string):Promise<UserInfo | null> => {
+        const result:UserInfo = {userId:0, hashedPassword:""};
+
         const [response]:any = await pool.query(`
-            SELECT password FROM users
+            SELECT id, password FROM users
             WHERE username = ?
             `, [user]);
 
         if(response.length > 0) {
-            return response[0].password;
+            result.userId = response[0].id;
+            result.hashedPassword = response[0].password;
+
+            return result;
         }
         else {
-            return "";
+            return null;
         }
     } 
 
@@ -158,11 +164,11 @@ class Database {
 // #region Users
 
 // #region logs
-    AddLog = async (user:string, ip:string, description:string) => {
+    AddLog = async (user:number, ip:string, description:string) => {
         const [response] = await pool.query(`
-            INSERT INTO logs(IP, username, description)
+            INSERT INTO logs(user_id, ip, description)
             VALUES (?, ?, ?)            
-            `, [ip, user, description]);
+            `, [user, ip, description]);
     }
 // #endregion
 

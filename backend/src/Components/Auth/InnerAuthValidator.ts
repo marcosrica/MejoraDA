@@ -1,7 +1,7 @@
 import JWT_Manager from "./JWT_Manager";
 import {Request} from "express";
 
-export function isPrivileged(token: any): string {
+export function isPrivileged(token: any):number {
     const decodedToken = JWT_Manager.readToken(token);
     console.log(decodedToken);
     if(decodedToken != null) {
@@ -9,15 +9,15 @@ export function isPrivileged(token: any): string {
             return decodedToken.id;
         }
         catch {
-            return "";
+            return 1;
         }
     }
     else {
-        return "";
+        return 1;
     }
 }
 
-export function auth(req: Request):string {
+export function auth(req: Request):number {
     const token = req.cookies.token;
 
     return isPrivileged(token);

@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 
 const secrets:Secrets = new Secrets();
 
-const createToken = (id:string) => {
+const createToken = (id:number) => {
   return jwt.sign({id: id}, secrets.JWT_Secret, {expiresIn: secrets.JWT_Timeout});
 }
 

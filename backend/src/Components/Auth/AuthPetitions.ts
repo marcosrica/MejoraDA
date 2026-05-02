@@ -13,7 +13,7 @@ AuthRouter.get("/amIPrivileged", async (req: Request, res: Response) => {
   console.log("Received new request for info on wether the user is privileged");
   
   const authed = auth(req);
-  if(authed != "") {
+  if(authed > 1) {
     console.log("sending OK")
     res.status(200).json({ result: "OK"});
   }
@@ -25,12 +25,12 @@ AuthRouter.get("/amIPrivileged", async (req: Request, res: Response) => {
 AuthRouter.post("/adminLogin", async(req: Request, res: Response) => {
   console.log("recieved new login wanted: " + req.body.user + "; password: " + req.body.password);
 
-  const loginCorrect: string = await tryToLogIn(req.body.user, req.body.password);
+  const loginCorrect:number = await tryToLogIn(req.body.user, req.body.password);
 
-  if(loginCorrect != "") {
-    await db.AddLog(req.body.user, req.ip || "", "Logged in correctly");
+  if(loginCorrect > 1) {
+    await db.AddLog(loginCorrect, req.ip || "", "Logged in correctly");
 
-    const token = JWT_Manager.createToken(req.body.user); //TODO: Change token ID to correct ID
+    const token = JWT_Manager.createToken(loginCorrect); //TODO: Change token ID to correct ID
     console.log(token);
 
     console.log("Created token: " + token);
@@ -43,7 +43,7 @@ AuthRouter.post("/adminLogin", async(req: Request, res: Response) => {
     res.status(200).json({result: "OK"});
   }
   else {
-    await db.AddLog(req.body.user, req.ip || "", "Failed to log in");
+    await db.AddLog(loginCorrect, req.ip || "", "Failed to log in with user: " + req.body.user);
     res.status(401).send({result: "Forbidden"});
   }
 });
@@ -52,7 +52,7 @@ AuthRouter.get("/adminlogout", async(req:Request, res:Response) => {
   console.log("Received new logout");
 
   const user = auth(req);
-  if(user != "") {
+  if(user > 1) {
     try{
       res.clearCookie('token', {httpOnly: true});
       await db.AddLog(user, req.ip || "", "Logged out correctly");
@@ -65,7 +65,7 @@ AuthRouter.get("/adminlogout", async(req:Request, res:Response) => {
     }
   }
   else {
-      await db.AddLog(user, req.ip || "", "Tried to log out without being logged in");
+    await db.AddLog(user, req.ip || "", "Tried to log out without being logged in");
     res.status(401).send({status:"No Token"});
   }
 });
@@ -105,17 +105,23 @@ AuthRouter.get("/timeLeft", async(req:Request, res:Response) => {
   }
 });
 
-const tryToLogIn = async(user:string, password:string):Promise<string> => {
-  const hashedPassword = await db.GetHashedPassword(user);
-  const match = await bcrypt.compare(password, hashedPassword);
+const tryToLogIn = async(user:string, password:string):Promise<number> => {
+  const info = await db.GetUserInfo(user);
 
-  console.log(match);
+  if(info != null) {
+    const match = await bcrypt.compare(password, info.hashedPassword);
 
-  if(!match) {
-    return "";
+    console.log(match);
+
+    if(!match) {
+      return 1;
+    }
+    else {
+      return info.userId;
+    }
   }
   else {
-    return hashedPassword;
+    return 1;
   }
 }
 
