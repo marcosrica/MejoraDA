@@ -1,21 +1,25 @@
 <script setup lang="ts">
-    import { ref } from 'vue'
+// #region imports
+    import { onMounted, ref } from 'vue';
     import PetitionMaker from '../Utilities/PetitionMaker'
-    import BaseAlert from './BaseComponents/BaseAlert.vue'; //For showing when the form has been submitted successfully
+    import BaseAlert from './BaseComponents/BaseAlert.vue';
     import BaseInput from './BaseComponents/BaseInput.vue';
     import BaseTextArea from './BaseComponents/BaseTextArea.vue';
     import BaseButton from './BaseComponents/BaseButton.vue';
     import BaseSelect from './BaseComponents/BaseSelect.vue';
-    import BaseRadioGroup from './BaseComponents/BaseRadioGroup.vue';
     import BasePage from './BuildingBlocks/BasePage.vue';
     import BaseCard from './BaseComponents/BaseCard.vue';
+    import type TypeInfo from './../interfaces/TypesInfo';
+    import type FormContent from '../interfaces/FormContent';
+// #endregion imports
 
+//#region variables
     //Object needed to fulfill the petition
     const petitionMaker:PetitionMaker = new PetitionMaker();
 
     //Variables for the form fields
     const documentType = ref('');
-    const department = ref('General');
+    const department = ref('');
     const description = ref('');
     const subject = ref('');
 
@@ -24,34 +28,73 @@
     const alertMessage = ref('');
     const alertType = ref<'success' | 'error' | 'info'>('success');
 
-    const handleSubmit = async () => {
-        const formData = {
-          documentType: documentType.value,
-          department: department.value,
-          subject: subject.value,
-          description: description.value,
-        }
+    //Variable for storing the different departments
+    const departments = ref<Array<{value:string, label:string}>>([]);
+    const types = ref<Array<{value:string, label:string}>>([]);
+// #endregion variables
 
-        if(!(!formData.documentType || !formData.department || !formData.description || !formData.subject)) { //Prevent empty fields
-          console.log('Submitted data:', formData);
-          const response = await petitionMaker.makePetition("/api/newForm", "POST", formData);
+// #region Methods
+    const spawnAlert = (type: 'success' | 'error' | 'info', message: string) => {
+        alertType.value = type;
+        alertMessage.value = message;
+        showAlert.value = true;
+    }
 
-          if(response.status == 200) {
-            alertType.value = "success";
-            alertMessage.value = "Su petición ha sido registrada correctamente.";
-            showAlert.value = true;
-          }
-        }
-        else {
-            alertType.value = "error";
-            alertMessage.value = "Por favor, complete todos los campos";
-            showAlert.value = true;
+    const getDepartments = async () => {
+        const response = await petitionMaker.makePetition("/api/general/currentDepartments", "GET");
+        if(response.status == 200) {
+            const data = response.data;
+            
+            for(const dept of data.departments) {
+                if(dept.show) {
+                    departments.value.push({value: dept.innerID, label: dept.name});
+                }
+            }
         }
     }
+
+    const getTypes = async () => {
+        const response = await petitionMaker.makePetition("/api/general/currentTypes", "GET");
+        if(response.status == 200) {
+            console.log("Data: " + response.data.types );
+            const data:TypeInfo[] = response.data.types;
+            for(const type of data) {
+                types.value.push({value:String(type.inner_id), label:type.name})
+            }
+        }
+    }
+// #endregion Methods
+
+// #region submitFunction
+    const handleSubmit = async () => {
+        if(!(!documentType.value || !department.value || !description.value || !subject.value)) { //Prevent empty fields
+            const data:FormContent = {type: documentType.value, department: department.value, subject: subject.value, description: description.value};
+
+            const response = await petitionMaker.makePetition("/api/form/newForm", "POST", data);
+
+            if(response.status == 200) {
+                location.href = "/Form/success"
+            }
+            else {
+                spawnAlert("error", "Ha habido un problema. Por favor, inténtelo de nuevo más tarde");
+            }
+        }
+        else {
+            spawnAlert("error", "Por favor, complete todos los campos");
+        }
+    }
+// #endregion submitFunction
+
+// #region onMounted
+    onMounted( async () => {
+        await getDepartments();
+        await getTypes();
+    });
+// #endregion onMounted 
 </script>
 
 <template>
-    <BasePage>
+    <BasePage show-content>
         <BaseAlert
                 :show="showAlert"
                 :type="alertType"
@@ -74,16 +117,11 @@
                 <form class="FormContent"  @submit.prevent="handleSubmit">
                     <div class="TypeSelection">
                         <p> <b> Indique el tipo de solicitud </b> </p>
-                        <BaseRadioGroup
-                            v-model="documentType"
-                            name="DocumentType"
-                            :options="[
-                                { value: 'Idea', label: 'Idea' },
-                                { value: 'Complaint', label: 'Queja' },
-                                { value: 'Suggestion', label: 'Sugerencia' }
-                            ]"
-                            custom-class="MultiSelect_Type"
-                            gap="5px"
+                        <BaseSelect
+                          v-model="documentType"
+                          label=""
+                          placeholder="Selecciona una opción"
+                          :options="types"
                         />
                     </div>
 
@@ -94,15 +132,7 @@
                           v-model="department"
                           label=""
                           placeholder="Selecciona una opción"
-                          :options="[
-                            { value: 'General', label: 'General' },
-                            { value: 'AtencionEstudiante', label: 'Subdelegación de Ayuda y Servicios para el Estudiante' },
-                            { value: 'Comunicacion', label: 'Subdelegación de Comunicación' },
-                            { value: 'Calidad', label: 'Subdelegación de Mediación y Calidad Académica' },
-                            { value: 'TIC', label: 'Subdelegación de Estrategia y Desarrollo Tecnológico' },
-                            { value: 'Eventos', label: 'Subdelegación de Eventos' },
-                            { value: 'Igualdad', label: 'Subdelegación de Bienestar e Igualdad Social' }
-                          ]"
+                          :options="departments"
                         />
                     </div>
 
@@ -177,6 +207,7 @@
 
         /* Borders */
         border-bottom: 2px solid var(--form-border);
+        padding-bottom: 15px;
     }
 
     .MultiSelect_Type {

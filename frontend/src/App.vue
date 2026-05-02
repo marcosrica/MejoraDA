@@ -1,5 +1,10 @@
 <script setup lang="ts">
-  
+import { onMounted } from 'vue';
+import startCheck from './Utilities/TokenExpiringChecker';
+
+onMounted(() => {
+  startCheck();
+})
 </script>
 
 <template>

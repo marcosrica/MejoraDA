@@ -1,0 +1,18 @@
+export class DatabaseKeys {
+    host: string = 'your_db_domain';
+    user: string = 'your_db_user';
+    password: string = 'your_db_password';
+    database: string = 'your_db_name';
+}
+
+export class Secrets {
+    JWT_Secret:string = "SecretToProtectJWT";
+    JWT_Timeout:string = "Xs";
+    FrontendOrigin:string = "route_to_the_frontend";
+    SaltRounds:number = 0; //Amount of rounds of hashing for the password
+}
+
+export class AdminCreation {
+    AdminPassword:string = "your_admin_password";
+    AdminUsername:string = "your_admin_user";
+}

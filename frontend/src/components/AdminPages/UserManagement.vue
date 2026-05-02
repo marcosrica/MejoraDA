@@ -1,19 +1,21 @@
 <script setup lang="ts">
-    import { ref } from 'vue'
+// #region Imports
+    import { onMounted, ref } from 'vue'
     import PetitionMaker from '../../Utilities/PetitionMaker'
-    import BaseAlert from '../BaseComponents/BaseAlert.vue'; //For showing when the form has been submitted successfully
+    import BaseAlert from '../BaseComponents/BaseAlert.vue';
     import BasePage from '../BuildingBlocks/BasePage.vue';
     import BaseCard from '../BaseComponents/BaseCard.vue';
     import type UserData from '../../interfaces/AllowedUserData';
     import BaseButton from '../BaseComponents/BaseButton.vue';
     import BaseInput from '../BaseComponents/BaseInput.vue';
-    import BasePrompt from '../BaseComponents/BasePrompt.vue';
+// #endregion Imports
+
+// #region variables
+    //Handles authentication
+    const showContent = ref(false);
 
     //Object needed to fulfill the petition
     const petitionMaker:PetitionMaker = new PetitionMaker();
-
-    //Handles authentication
-    const showContent = ref(true); //TODO: Temporary value for testing
 
     //Variables for the alert
     const showAlert = ref(false);
@@ -24,17 +26,12 @@
     const username = ref('');
 
     //Data for the user list
-    const users = ref<Array<UserData>>([
-        {"name": "Juan", "surname": "Pérez", "permission": "admin"},
-        {"name": "María", "surname": "García", "permission": "overseer"},
-        {"name": "Luis", "surname": "López", "permission": "overseer"},
-        {"name": "Ana", "surname": "Martínez", "permission": "admin"},
-        {"name": "Carlos", "surname": "Rodríguez", "permission": "overseer"},
-        {"name": "Elena", "surname": "Sánchez", "permission": "overseer"},
-        {"name": "Miguel", "surname": "Fernández", "permission": "overseer"},
-        {"name": "Laura", "surname": "Gómez", "permission": "admin"}
-    ]);
+    const users = ref<Array<UserData>>([]);
 
+//#endregion variables
+
+// #region Methods
+    //Translates the permission data from the database structure to a spanish human readable format
     const getPermissionTranslation = (permission:String) => {
         if(permission == "overseer") {
             return "gestor"
@@ -46,10 +43,33 @@
             return "";
         }
     }
+
+    //Gets the allowed users for managing
+    const getUsers = async () => {
+        const response = await petitionMaker.makePetition('/api/users/info', 'GET');
+        if(response.status == 200) {
+            users.value = response.data;
+        }
+    }
+// #endregion Methods
+
+
+// #region OnMount
+
+onMounted(async () => {
+    const response = await petitionMaker.makePetition('/api/auth/amIAdmin', 'GET');
+
+    showContent.value = response.status == 200;
+    if(showContent.value) {
+        await getUsers();
+    }
+});
+
+// #endregion OnMount
 </script>
 
 <template>
-    <BasePage v-if="showContent">
+    <BasePage :show-content="showContent">
         <BaseAlert
             :show="showAlert"
             :type="alertType"

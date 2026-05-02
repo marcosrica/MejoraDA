@@ -40,3 +40,14 @@
 /frontend/__screenshots__/
 
 /frontend/src/style_css.txt
+
+#backend as well
+/backend/.vscode/*
+/backend/!.vscode/extensions.json
+/backend/.idea
+/backend/*.suo
+/backend/*.ntvs*
+/backend/*.njsproj
+/backend/*.sln
+/backend/*.sw?
+/backend/node_modules

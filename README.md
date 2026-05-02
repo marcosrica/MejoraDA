@@ -1,6 +1,8 @@
 # MejoraDA
 ### Platform for centralising communications with DA-ETSISI (UPM).  
 
+Made by [@marcosrica](https://github.com/marcosrica) with ❤️ for [@DA-ETSISI](https://github.com/DA-ETSISI). 
+
 MejoraDA is a web platform designed to collect, organize, and manage student and proffesor's suggestions, feedback, and improvement ideas for the student representatives of ETSI-SI (UPM).    
 
 The goal of the project is to create a simple channel that enables the representatives to track down and take action about what the school really needs.  
@@ -47,38 +49,13 @@ npm run dev
 ```
 
 ### Backend Setup
+
+> [!WARNING]
+> Before running the database creation tool, you must have set up a new empty database and the proper configuration in the keys.ts document on the backend. For more info on keys.ts, refer to keys.ts.example
+
 ```bash
 cd backend
 npm install
+npm run create-db #Creates the database and seeds it with the types of forms, basic departments and an admin user
 npm run dev
-```
-
-#### Please note that the backend is expecting to connect to a MySQL server with tables initialized by these commands:
-```SQL
-CREATE TABLE ideas (
-    `request_id` INTEGER PRIMARY KEY AUTO_INCREMENT,
-    `department` TEXT NOT NULL,
-    `subject` TEXT NOT NULL,
-    `description` TEXT NOT NULL,
-    `solved` BOOLEAN NOT NULL DEFAULT FALSE,
-    `date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE suggestions (
-    `request_id` INTEGER PRIMARY KEY AUTO_INCREMENT,
-    `department` TEXT NOT NULL,
-    `subject` TEXT NOT NULL,
-    `description` TEXT NOT NULL,
-    `solved` BOOLEAN NOT NULL DEFAULT FALSE,
-    `date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE complaints (
-    `request_id` INTEGER PRIMARY KEY AUTO_INCREMENT,
-    `department` TEXT NOT NULL,
-    `subject` TEXT NOT NULL,
-    `description` TEXT NOT NULL,
-    `solved` BOOLEAN NOT NULL DEFAULT FALSE,
-    `date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
 ```

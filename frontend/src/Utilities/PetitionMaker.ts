@@ -19,7 +19,32 @@ class PetitionMaker {
         this.routes = new serverRoutes();
     }
 
-    makePetition = async (url: string, method: string, body?: any, debug:boolean = false): Promise<PetitionResult> => {
+    makeGetPetition = async(url:string) => {
+        let result: PetitionResult = new PetitionResult();
+        console.log(this.routes.backend + url);
+
+        try {
+            const response:Response = await fetch(this.routes.backend + url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+            });
+            const data = await response.json();
+            console.log(data);
+
+            result = new PetitionResult(response.status, data, false);
+        }
+        catch (error) {
+            throw error;
+            result.error = true;
+        }
+
+        return result;
+    }
+
+    makePetition = async (url: string, method: string, body?: any): Promise<PetitionResult> => {
         let result: PetitionResult = new PetitionResult();
         console.log(this.routes.backend + url);
 
@@ -30,6 +55,33 @@ class PetitionMaker {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(body),
+                credentials: 'include',
+            });
+            
+            const data = await response.json();
+            console.log(data);
+
+            result = new PetitionResult(response.status, data, false);
+        }
+        catch (error) {
+            throw error;
+            result.error = true;
+        }
+
+        return result;
+    }
+
+    makeRootPetition = async (url: string, method: string, body?: any): Promise<PetitionResult> => {
+        let result: PetitionResult = new PetitionResult();
+        console.log(url);
+
+        try {
+            const response:Response = await fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: null,
             });
 
 

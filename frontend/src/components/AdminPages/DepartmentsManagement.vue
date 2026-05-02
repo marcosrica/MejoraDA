@@ -1,14 +1,17 @@
 <script setup lang="ts">
-    import { ref } from 'vue'
+// #region imports
+    import { onMounted, ref } from 'vue'
     import PetitionMaker from '../../Utilities/PetitionMaker'
-    import BaseAlert from '../BaseComponents/BaseAlert.vue'; //For showing when the form has been submitted successfully
+    import BaseAlert from '../BaseComponents/BaseAlert.vue';
     import BasePage from '../BuildingBlocks/BasePage.vue';
     import BaseCard from '../BaseComponents/BaseCard.vue';
     import BaseButton from '../BaseComponents/BaseButton.vue';
     import type SubdelegationsInfo from '../../interfaces/SubdelegationsInfo';
     import BaseInput from '../BaseComponents/BaseInput.vue';
     import BasePrompt from '../BaseComponents/BasePrompt.vue';
+// #endregion imports
 
+// #region variables
     //Object needed to fulfill the petition
     const petitionMaker:PetitionMaker = new PetitionMaker();
 
@@ -23,37 +26,141 @@
     //Variables for controlling the prompt
     const showPrompt = ref(false);
     const promptName = ref('');
-    const promptInnerName = ref('');
+    const promptReference = ref<number>();
+
+    //Variables for controlling the deletion prompt
+    const showDeletionPrompt = ref(false);
+    const deletingDepartment = ref<number>();
 
     //Variables for the new department form
     const departmentName = ref('');
-    const departmentInnerName = ref('');
 
     //Data for the departments list
-    const departments = ref<Array<SubdelegationsInfo>>([
-        {name:"General", internalName: "General"},
-        {name:"Subdelegación de Ayuda y Servicios para el Estudiante", internalName: "AtencionEstudiante"},
-        {name:"Subdelegación de Comunicación", internalName: "Comunicacion"},
-        {name:"Subdelegación de Mediación y Calidad Académica", internalName: "Calidad"},
-        {name:"Subdelegación de Estrategia y Desarrollo Tecnológico", internalName: "TIC"},
-        {name:"Subdelegación de Eventos", internalName: "Eventos"},
-        {name:"Subdelegación de Bienestar e Igualdad Social", internalName: "Igualdad"},
-    ]);
+    const departments = ref<Array<SubdelegationsInfo>>([]);
 
+// #endregion variables
+
+// #region functions
     //Function for showing the prompt when the edit button is clicked
-    const enablePrompt = (name:string, innerName:string) => {
+    const enablePrompt = (name:string, id:number) => {
         promptName.value = name;
-        promptInnerName.value = innerName;
+        promptReference.value = id;
         showPrompt.value = true;
     }
 
-    const departmentEditAccepted = () => {
-        console.log("Should edit the department");
+    const enableAlert = (message:string, type:'success' | 'error' | 'info') => {
+        alertMessage.value = message;
+        alertType.value = type;
+        showAlert.value = true;
     }
+
+    const showDeleteDepartmentPrompt = async (id: number) => {
+        deletingDepartment.value = id;
+        showDeletionPrompt.value = true;
+    }
+
+    const hideShowDepartment = async (id: number) => {
+        const data = {
+            department_id: id,
+        };
+
+        const result = await petitionMaker.makePetition("/api/departments/hideShowDepartment", "POST", data);
+
+        if(result.status == 200) {
+            enableAlert("Cambios aplicados correctamente", "success");
+            await getDepartments();
+        }
+        else {
+            enableAlert("Error al aplicar el cambio", "error");
+        }
+    }
+
+    const deleteDepartment = async () => {
+        showDeletionPrompt.value = false;
+
+        const data = {
+            department_id: deletingDepartment.value,
+        };
+
+        const result = await petitionMaker.makePetition("/api/departments/deleteDepartment", "POST", data);
+
+        if(result.status == 200) {
+            enableAlert('Subdelegación eliminada correctamente.', 'success');
+
+            //Refresh the departments list
+            await getDepartments();
+        } else {
+            enableAlert('Error al eliminar la subdelegación.', 'error');
+        }
+    }
+
+    const departmentEditAccepted = async () => {
+        console.log("Should edit the department");
+        const data = {
+            name: promptName.value,
+            department_id: promptReference.value
+        };
+
+        const result = await petitionMaker.makePetition("/api/departments/editDepartment", "POST", data);
+        if(result.status == 200) {
+            enableAlert('Subdelegación editada correctamente.', 'success');
+
+            //Refresh the departments list
+            await getDepartments();
+        } else {
+            enableAlert('Error al editar la subdelegación.', 'error');
+        }
+
+        showPrompt.value = false;
+    }
+
+    const addDepartment = async () => {
+        console.log("Should add the department");
+        const data = {
+            name: departmentName.value
+        };
+
+        const result = await petitionMaker.makePetition("/api/departments/newDepartment", "POST", data);
+        if(result.status == 200) {
+            enableAlert("Subdelegación añadida correctamente.", 'success');
+
+            //Refresh the departments list
+            await getDepartments();
+        } else {
+            enableAlert("Error al añadir la subdelegación.", 'error');
+        }
+
+        departmentName.value = "";
+        await getDepartments();
+    }
+
+    const checkAuth = async () => {
+        const authResponse = await petitionMaker.makePetition('/api/auth/amIPrivileged', 'GET');
+        showContent.value = authResponse.status == 200;
+    }
+
+    const getDepartments = async () => {
+        const response = await petitionMaker.makePetition("/api/general/currentDepartments", "GET");
+        console.log(response);
+        departments.value = response.data.departments;
+    }
+// #endregion functions
+
+// #region on mounted (Entry point)
+
+onMounted( async () => {
+    await checkAuth();
+
+    if(showContent.value) {
+        await getDepartments();
+    }
+});
+
+// #endregion on mounted (Entry point)
 </script>
 
 <template>
-    <BasePage v-if="showContent">
+    <BasePage :show-content="showContent">
         <BaseAlert
             :show="showAlert"
             :type="alertType"
@@ -70,24 +177,33 @@
         <!-- Panel with departments -->
         <div class="Grid">
             <BaseCard
-            custom-class="Card"
-            v-for="(card) in departments">
+                :custom-class="`Card ${card.show ? 'Accessible' : 'Disabled'}`"
+                v-for="card in departments"
+                :key="card.innerID"
+            >
                 <div class="UserCard">
                     <h2 class="marginlessText">{{ card.name }}</h2>
-                    <p class="marginlessText">{{card.internalName}}</p>
+                    <!-- <p class="marginlessText">{{card.internalName}}</p> -->
                 </div>
                 <div class="CardButtons">
                     <BaseButton
                         custom-class="DeleteButton"
                         variant="primary"
-                        @click="enablePrompt(card.name, card.internalName)"
+                        @click="enablePrompt(card.name, card.innerID)"
                     >
                         Editar subdelegación
                     </BaseButton>
                     <BaseButton
                         custom-class="DeleteButton"
+                        variant="primary"
+                        @click="hideShowDepartment(card.innerID)"
+                    >
+                        {{card.show ? 'Ocultar subdelegación' : 'Mostrar subdelegación'}}
+                    </BaseButton>
+                    <BaseButton
+                        custom-class="DeleteButton"
                         variant="danger"
-                        @click=""
+                        @click="showDeleteDepartmentPrompt(card.innerID)"
                     >
                         Eliminar subdelegación
                     </BaseButton>
@@ -105,22 +221,13 @@
         </BaseCard>
         <!-- Form content -->
         <BaseCard bottom class="FormHeader">
-            <form class="FormWrapper">
+            <form class="FormWrapper" @submit.prevent="addDepartment">
                 <div class="FormDiv">
                     <p class="FormText"> <b> Nombre de la subdelegación: </b> </p>
                     <BaseInput
                         v-model="departmentName"
                         name="Description"
                         placeholder="Nombre"
-                        custom-class="formInput">
-                    </BaseInput>
-                </div>
-                <div class="FormDiv SecondDiv">
-                    <p class="FormText"> <b> Nombre interno: </b> </p>
-                    <BaseInput
-                        v-model="departmentInnerName"
-                        name="Description"
-                        placeholder="Nombre interno"
                         custom-class="formInput">
                     </BaseInput>
                 </div>
@@ -137,7 +244,7 @@
         <!-- Prompt for editing -->
         <BasePrompt :show="showPrompt"
         title="Editar subdelegación">
-            <form>
+            <form  @submit.prevent="departmentEditAccepted">
                 <div class="EditFormDiv notFinalEditFormDiv">
                     <p class="editFormText"> <b> Nombre de la subdelegación: </b> </p>
                     <BaseInput class="EditFormInput"
@@ -148,18 +255,8 @@
                     </BaseInput>
                 </div>
                 <div class="EditFormDiv">
-                    <p class="editFormText"> <b> Nombre interno de la subdelegación: </b> </p>
-                    <BaseInput class="EditFormInput"
-                        v-model="promptInnerName"
-                        name="New inner name for the department"
-                        placeholder="Nombre interno de la delegación"
-                        custom-class="formInput">
-                    </BaseInput>
-                </div>
-                <div class="EditFormDiv">
                     <BaseButton variant="primary"
-                        type="submit"
-                        @click="departmentEditAccepted">
+                        type="submit">
                         Aceptar cambios
                     </BaseButton>
                 </div>
@@ -168,11 +265,16 @@
                 Cancelar
             </BaseButton>
         </BasePrompt>
-    </BasePage>
 
-    <div v-if="!showContent">
-        <h1> 401 Acceso denegado </h1>
-    </div>
+        <BasePrompt :show="showDeletionPrompt"
+        title="Eliminar subdelegación">
+            <h1 class="HeaderText"> ¿Seguro que deseas eliminar la subdelegación? </h1>
+            <p class="marginlessText"> Si eliminas la subdelegación, todas las peticiones registradas se eliminarán con ella para siempre </p>
+            <p class="marginlessText"> Si crees que le podría interesar a un equipo posterior, es mejor que ocultes la subdelegación </p>
+            <BaseButton variant="danger" v-on:click="deleteDepartment"> Eliminar subdelegación </BaseButton>
+            <BaseButton variant="primary" v-on:click="showDeletionPrompt = false"> Cancelar </BaseButton>
+        </BasePrompt>
+    </BasePage>
 </template>
 
 <style scoped>
@@ -210,14 +312,22 @@
     .Card {
         padding: 1rem;
         margin-bottom: 0px;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
 
         display: flex;
         flex-direction: column;
         justify-content: space-between;
     }
 
-    .Card:hover {
+    .Disabled {
+        background-color: var(--disabled);
+    }
+
+    .Accessible {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    }
+
+    .Accessible:hover {
         transform: translateY(-4px);
         box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     }
@@ -321,10 +431,6 @@
         width: 100%;
         display: flex;
         flex-direction: column;
-    }
-
-    .firstEditFormDiv {
-        margin-top: 0px;
     }
 
     .notFinalEditFormDiv {

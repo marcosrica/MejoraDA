@@ -1,18 +1,37 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
 import Database from "./Components/Database";
+import { Secrets } from "./../keys";
 
-import GetFilters from "./Components/PetitionResolvers/GetForms";
-import IndexPageRouter from "./Components/PetitionResolvers/IndexPagePetitions";
+import AuthRouter from "./Components/Auth/AuthPetitions";
+import GeneralRouter from "./Components/PetitionResolvers/GeneralPetitions";
+import FormRouter from "./Components/PetitionResolvers/FormPetitions";
+import ReviewRouter from "./Components/PetitionResolvers/ReviewPetitions";
+import UsersRouter from "./Components/PetitionResolvers/UsersPetitions";
+import DepartmentsRouter from "./Components/PetitionResolvers/DepartmentsPetitions";
+import createAdmin from "./Components/Auth/CreateAdmin";
+
+const cookieParser = require('cookie-parser');
 
 const app = express();
 let db: Database;
 db = new Database();
 
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true,
+}));
 app.use(express.json());
-app.use("/api/index", IndexPageRouter); //Catching all /api/index routes
+app.use(cookieParser());
 
+app.use("/api/auth", AuthRouter); //Catching all /api/auth routes
+app.use("/api/general", GeneralRouter); //Catching all /api/general routes
+app.use("/api/form", FormRouter); //Catching all /api/form routes
+app.use("/api/review", ReviewRouter); //Catching all /api/review routes
+app.use("/api/users", UsersRouter); //Catching all /api/users routes
+app.use("/api/departments", DepartmentsRouter); //Catching all /api/departments routes
+
+/*
 app.get("/api/UnresolvedFormsCount", async (req:Request, res:Response) => {
   const [complaints, ideas, suggestions] = await Promise.all([
       db.RetrieveComplaints("All", false),
@@ -93,7 +112,7 @@ app.post("/api/petitions/markAsResolved", async (req:Request, res:Response) => {
     res.status(404).json("Internal server error");
   }
 });
-
+*/
 
 app.listen(3000, () => {
   console.log("Backend running at http://localhost:3000");
