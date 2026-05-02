@@ -49,36 +49,13 @@ npm run dev
 ```
 
 ### Backend Setup
+
+> [!WARNING]
+> Before running the database creation tool, you must have set up a new empty database and the proper configuration in the keys.ts document on the backend. For more info on keys.ts, refer to keys.ts.example
+
 ```bash
 cd backend
 npm install
+npm run create-db #Creates the database and seeds it with the types of forms, basic departments and an admin user
 npm run dev
-```
-
-#### Please note that the backend is expecting to connect to a MySQL or MariaDB server with tables initialized by these commands:
-```SQL
-CREATE TABLE types (
-	id_type INTEGER AUTO_INCREMENT UNIQUE,
-	name VARCHAR(500),
-	PRIMARY KEY (id_type)
-);
-
-CREATE TABLE departments ( 
-	id_department INTEGER AUTO_INCREMENT UNIQUE, 
-	department_name VARCHAR(500) NOT NULL, 
-	show_department BOOLEAN NOT NULL,
-	PRIMARY KEY (id_department)
-);
-
-CREATE TABLE forms (
-	id_form INTEGER AUTO_INCREMENT UNIQUE,
-	id_type INTEGER NOT NULL,
-	id_department INTEGER NOT NULL,
-	subject VARCHAR(500) NOT NULL,
-	description TEXT,
-	resolved BOOLEAN NOT NULL,
-	PRIMARY KEY (id_form),
-	FOREIGN KEY (id_type) REFERENCES types(id_type) ON DELETE CASCADE,
-	FOREIGN KEY (id_department) REFERENCES departments(id_department) ON DELETE CASCADE
-);
 ```
