@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
 import Database from "./Components/Database";
+import { Secrets } from "./../keys";
 
 import AuthRouter from "./Components/Auth/AuthPetitions";
 import GeneralRouter from "./Components/PetitionResolvers/GeneralPetitions";
@@ -8,13 +9,21 @@ import FormRouter from "./Components/PetitionResolvers/FormPetitions";
 import ReviewRouter from "./Components/PetitionResolvers/ReviewPetitions";
 import UsersRouter from "./Components/PetitionResolvers/UsersPetitions";
 import DepartmentsRouter from "./Components/PetitionResolvers/DepartmentsPetitions";
+import createAdmin from "./Components/Auth/CreateAdmin";
+
+const cookieParser = require('cookie-parser');
 
 const app = express();
 let db: Database;
 db = new Database();
 
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true,
+}));
 app.use(express.json());
+app.use(cookieParser());
+
 app.use("/api/auth", AuthRouter); //Catching all /api/auth routes
 app.use("/api/general", GeneralRouter); //Catching all /api/general routes
 app.use("/api/form", FormRouter); //Catching all /api/form routes

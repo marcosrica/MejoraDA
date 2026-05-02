@@ -1,10 +1,9 @@
 <script setup lang="ts">
   import { onMounted, ref } from 'vue';
-  import BaseMenu from '../BaseComponents/BaseMenu.vue';
   import Header from './Header.vue';
   import PetitionMaker from '../../Utilities/PetitionMaker';
   import BaseNotAuth from '../BaseComponents/BaseNotAuth.vue';
-  import LoginMenuFloating from '../BaseComponents/LoginMenuFloating.vue';
+import BaseMenu from '../BaseComponents/BaseMenu.vue';
 
   const props = defineProps<{
     showContent: boolean
@@ -13,28 +12,24 @@
   const petitionMaker:PetitionMaker = new PetitionMaker();
 
   //Tracks wether the user is privileged, to know if it should show the menu
-  const privilegedUser = ref(false);
-  //Tracks wether the user is adming, to surface the users panel option in the menu
-  const adminUser = ref(false);
-  //Tracks wether the user is logged in
-  const loggedIn = ref(true);
+  const allowedUser = ref(false); //TODO: Change to allow only petitions coming from wordpress
+
+  const getPrivileged = async () => {
+    const response = await petitionMaker.makeGetPetition("/api/auth/amIPrivileged");
+
+    allowedUser.value = response.status == 200;
+  };
 
   onMounted(async () => {
-    //Checks wether the currently logged user is privileged
-    const result = await petitionMaker.makePetition('/api/auth/amIPrivileged', 'GET');
-    privilegedUser.value = result.status == 200;
-
-    if(privilegedUser.value) {
-      //If the user is privileged, checks wether it is admin or not
-      const isAdmin = await petitionMaker.makePetition('/api/auth/amIAdmin', 'GET');
-      adminUser.value = isAdmin.status == 200;
-    }
+    console.log("MOuted");
+    await getPrivileged();
+    console.log(allowedUser);
   });
 </script>
 
 <template>
   <div class="Home_background">
-    <Header :logged-in="loggedIn"/>
+    <Header/>
 
     <div class="Home_content_wrapper">
       <!-- Content area -->
@@ -44,9 +39,12 @@
       </div>
 
       <!-- Toggle menu that sits on top of the content -->
-      <BaseMenu :visible="loggedIn" :privileged="privilegedUser" :admin="adminUser"/>
-
+      
+      <BaseMenu :visible="allowedUser" :privileged="allowedUser" :admin="true"/>
+      
+      <!--
       <LoginMenuFloating :visible="!loggedIn"></LoginMenuFloating>
+      -->
     </div>
   </div>
 </template>

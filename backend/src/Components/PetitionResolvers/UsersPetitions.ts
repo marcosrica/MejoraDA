@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 import Database from "../Database";
 import AllowedUserData from "src/Interfaces/AllowedUserData";
+import { auth } from "../Auth/InnerAuthValidator";
 
 let db: Database = new Database();
 const UsersRouter = Router();

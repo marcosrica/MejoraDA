@@ -4,19 +4,28 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon --legacy-watch src/server.ts"
+    "dev": "nodemon --legacy-watch src/server.ts",
+    "create-db": "npm run migrate && npm run seed",
+    "migrate": "knex migrate:latest --knexfile ./src/knexfile.ts",
+    "seed": "knex seed:run --knexfile ./src/knexfile.ts"
   },
   "keywords": [],
   "author": "Marcos Rica Sánchez",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "express": "^5.2.0",
+    "jsonwebtoken": "^9.0.3",
+    "knex": "^3.2.9",
     "mysql2": "^3.15.3"
   },
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.5",
+    "@types/knex": "^0.15.2",
     "@types/node": "^24.10.1",
     "nodemon": "^3.1.11",
     "ts-node": "^10.9.2",

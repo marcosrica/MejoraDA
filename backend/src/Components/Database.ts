@@ -1,9 +1,10 @@
 import mysql from 'mysql2';
 import { ResultSetHeader } from 'mysql2/promise';
-import DatabaseKeys from './../../keys';
+import { DatabaseKeys } from '../../keys';
 import Petition from '../Interfaces/FormRetrieval';
 import SubdelegationsInfo from 'src/Interfaces/SubdelegationsInfo';
 import { RowDataPacket } from 'mysql2/promise';
+import UserInfo from '../Interfaces/UserInfo';
 import TypeInfo from 'src/Interfaces/TypeInfo';
 
 const dbKeys = new DatabaseKeys();
@@ -133,6 +134,43 @@ class Database {
         
         return result;
     }
+
+// #endregion
+    GetUserInfo = async (user:string):Promise<UserInfo | null> => {
+        const result:UserInfo = {userId:0, hashedPassword:""};
+
+        const [response]:any = await pool.query(`
+            SELECT id, password FROM users
+            WHERE username = ?
+            `, [user]);
+
+        if(response.length > 0) {
+            result.userId = response[0].id;
+            result.hashedPassword = response[0].password;
+
+            return result;
+        }
+        else {
+            return null;
+        }
+    } 
+
+    AddAdmin = async (hashedPassword:string, username:string) => {
+        const [response]:any = await pool.query(`
+            INSERT INTO users(username, password)
+            VALUES(?, ?)
+            `, [hashedPassword, username]);
+    }
+// #region Users
+
+// #region logs
+    AddLog = async (user:number, ip:string, description:string) => {
+        const [response] = await pool.query(`
+            INSERT INTO logs(user_id, ip, description)
+            VALUES (?, ?, ?)            
+            `, [user, ip, description]);
+    }
+// #endregion
 
 // #endregion
 
