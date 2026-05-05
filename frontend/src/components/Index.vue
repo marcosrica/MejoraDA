@@ -38,28 +38,9 @@
     margin-top: 50px;
   }
 
-  .HeaderText {
-    font-family: 'Montserrat', sans-serif;
-    font-size: x-large;
-    text-align: center;
-    margin-bottom: 10px;
-  }
-
   .Marginless {
     margin: 0px;
     text-align: center;
-  }
-
-  .FillFormButton {
-    min-width: 20%;
-  }
-
-  .HelpHeader {
-    font-family: 'Montserrat', sans-serif;
-    font-size: xx-large;
-    text-align: center;
-    margin-bottom: 5px;
-    margin-top: 0px;
   }
 
   .DescriptionText {

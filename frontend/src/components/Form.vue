@@ -202,21 +202,6 @@
         padding-bottom: 15px;
     }
 
-    .MultiSelect_Type {
-        /* Overall structure */
-        display:flex;
-        flex-direction: row;
-        align-items: flex-start;
-        justify-content: space-around;
-        
-        /* Width and height */
-        width: 90%;
-
-        /* Margins and padding */
-        margin-bottom: 10px;
-        padding-bottom: 15px;
-    }
-
     .Department{
         /* Width and height */
         width: 90%;
