@@ -1,11 +1,31 @@
 <script setup lang="ts">
+  import { ref } from 'vue';
+  import BaseAlert from './BaseComponents/BaseAlert.vue';
   import BaseCard from './BaseComponents/BaseCard.vue';
   import BasePage from './BuildingBlocks/BasePage.vue';
   import Form from './Form.vue';
+  
+  const showAlert = ref(false);
+  const alertMessage = ref('');
+  const alertType = ref<'success' | 'error' | 'info'>('success');
+
+  const triggerAlert = (type: 'success' | 'error' | 'info', message:string) => {
+    alertType.value = type;
+    alertMessage.value = message;
+    showAlert.value = true;
+  }
 </script>
 
 <template>
   <BasePage show-content>
+    <BaseAlert
+        :show="showAlert"
+        :type="alertType"
+        :message="alertMessage"
+
+        @close="showAlert = false"
+    />
+
     <!-- Intro -->
     <BaseCard top>
       <h1 class="Marginless"> MejoraDA, un medio para la superación de todos </h1>
@@ -18,7 +38,7 @@
       </p>
     </BaseCard>
 
-    <Form class="FormWrapper"></Form>
+    <Form class="FormWrapper" :throwError="triggerAlert"></Form>
   </BasePage>
 </template>
 

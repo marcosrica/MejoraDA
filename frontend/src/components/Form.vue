@@ -1,19 +1,21 @@
 <script setup lang="ts">
 // #region imports
     import { onMounted, ref } from 'vue';
-    import PetitionMaker from '../Utilities/PetitionMaker'
-    import BaseAlert from './BaseComponents/BaseAlert.vue';
+    import PetitionMaker from '../Utilities/PetitionMaker';
     import BaseInput from './BaseComponents/BaseInput.vue';
     import BaseTextArea from './BaseComponents/BaseTextArea.vue';
     import BaseButton from './BaseComponents/BaseButton.vue';
     import BaseSelect from './BaseComponents/BaseSelect.vue';
-    import BasePage from './BuildingBlocks/BasePage.vue';
     import BaseCard from './BaseComponents/BaseCard.vue';
     import type TypeInfo from './../interfaces/TypesInfo';
     import type FormContent from '../interfaces/FormContent';
 // #endregion imports
 
 //#region variables
+    const props = defineProps< {
+        throwError: (type: 'success' | 'error' | 'info', message:string) => void;
+    }>();
+
     //Object needed to fulfill the petition
     const petitionMaker:PetitionMaker = new PetitionMaker();
 
@@ -23,23 +25,12 @@
     const description = ref('');
     const subject = ref('');
 
-    //Variables for the alert
-    const showAlert = ref(false);
-    const alertMessage = ref('');
-    const alertType = ref<'success' | 'error' | 'info'>('success');
-
     //Variable for storing the different departments
     const departments = ref<Array<{value:string, label:string}>>([]);
     const types = ref<Array<{value:string, label:string}>>([]);
 // #endregion variables
 
 // #region Methods
-    const spawnAlert = (type: 'success' | 'error' | 'info', message: string) => {
-        alertType.value = type;
-        alertMessage.value = message;
-        showAlert.value = true;
-    }
-
     const getDepartments = async () => {
         const response = await petitionMaker.makePetition("/api/general/currentDepartments", "GET");
         if(response.status == 200) {
@@ -50,6 +41,8 @@
                     departments.value.push({value: dept.innerID, label: dept.name});
                 }
             }
+
+            department.value = departments.value[0]?.value || "";
         }
     }
 
@@ -61,26 +54,43 @@
             for(const type of data) {
                 types.value.push({value:String(type.inner_id), label:type.name})
             }
+
+            documentType.value = types.value[0]?.value || "";
         }
     }
 // #endregion Methods
 
 // #region submitFunction
     const handleSubmit = async () => {
-        if(!(!documentType.value || !department.value || !description.value || !subject.value)) { //Prevent empty fields
-            const data:FormContent = {type: documentType.value, department: department.value, subject: subject.value, description: description.value};
+        if(documentType.value) { //Prevent empty fields
+            if(department.value) {
+                if(description.value) {
+                    if(subject.value) {
+                        const data:FormContent = {type: documentType.value, department: department.value, subject: subject.value, description: description.value};
 
-            const response = await petitionMaker.makePetition("/api/form/newForm", "POST", data);
+                        const response = await petitionMaker.makePetition("/api/form/newForm", "POST", data);
 
-            if(response.status == 200) {
-                location.href = "/Form/success"
+                        if(response.status == 200) {
+                            location.href = "/Form/success"
+                        }
+                        else {
+                            props.throwError("error", "Ha habido un problema. Por favor, inténtelo de nuevo más tarde");
+                        }
+                    }
+                    else {
+                        props.throwError("error", "Por favor, añada un asunto");
+                    }
+                }
+                else {
+                    props.throwError("error", "Por favor, añada una descripción");
+                }
             }
             else {
-                spawnAlert("error", "Ha habido un problema. Por favor, inténtelo de nuevo más tarde");
+                props.throwError("error", "Por favor, indique a qué subdelegación desea dirigirse");
             }
         }
         else {
-            spawnAlert("error", "Por favor, complete todos los campos");
+            props.throwError("error", "Por favor, indique de qué tipo de solicitud se trata");
         }
     }
 // #endregion submitFunction
