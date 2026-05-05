@@ -28,8 +28,7 @@
             <p class="text"> ¡Muchas gracias por tu colaboración! </p>
             <div class="Emoji"> 😁 </div>
 
-            <p class="text"> Poco más hay que puedas hacer por aquí. </p>
-            <p class="text"> Siempre puedes rellenar otra solicitud, o volver a la página de inicio, como prefieras. </p>
+            <p class="text"> Puedes rellenar otra solicitud, o volver a la página de inicio. </p>
             <div class="buttons"> 
                 <BaseButton variant="primary" @click="newForm">
                     <p class="text">Rellenar otra solicitud</p>
