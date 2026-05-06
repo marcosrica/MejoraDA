@@ -5,9 +5,11 @@ const goHome = () => {
 </script>
 
 <template>
-    <div class="TopBarDiv" v-on:click="goHome">
-      <img src="./../../assets/Logo.png" alt="MejoraDA Logo" class="ServiceLogo"/>
-      <h1 class="pageText"> MejoraDA </h1>
+    <div class="TopBarDiv">
+      <div class="PageLogoDiv" v-on:click="goHome"> 
+        <img src="./../../assets/Logo.svg" alt="MejoraDA Logo" class="ServiceLogo"/>
+        <h1 class="pageText"> MejoraDA </h1>
+      </div>
     </div>
 </template>
 
@@ -35,14 +37,23 @@ const goHome = () => {
   cursor: pointer;
 }
 
+.PageLogoDiv {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  height: 100%;
+}
+
 .pageText {
   margin: 0px;
   color: white;
 }
 
 .ServiceLogo {
-  height: 60%;
+  height: 100%;
   margin-right: 15px;
   margin-left: 20px;
+  align-items: center;
 }
 </style>
