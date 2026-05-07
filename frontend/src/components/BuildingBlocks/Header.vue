@@ -10,24 +10,24 @@ const goHome = () => {
 
 <template>
     <div class="TopBarDiv">
-      <div class="PageLogoDiv" v-on:click="goHome">
-        <img src="./../../assets/Logo.svg" alt="MejoraDA Logo" class="ServiceLogo"/>
-        <h1 class="pageText"> MejoraDA </h1>
-      </div>
-
-      <div class="AdminOptions">
-        <div class="extendedMenu" v-if="extendMenu">
-          <div>
-            <p class="pageText"> Revisión de formularios </p>
-          </div>
-          <div>
-            <p class="pageText"> Administración de subdelegaciones </p>
-          </div>
-          <div>
-            <p class="pageText"> Cerrar sesión </p>
-          </div>
+        <div class="PageLogoDiv" v-on:click="goHome">
+            <img src="./../../assets/Logo.svg" alt="MejoraDA Logo" class="ServiceLogo"/>
+            <h1 class="pageText"> MejoraDA </h1>
         </div>
-      </div>
+
+        <div class="AdminOptions">
+            <div class="extendedMenu" v-if="extendMenu">
+                <div>
+                    <p class="pageText"> Revisión de formularios </p>
+                </div>
+                <div>
+                    <p class="pageText"> Administración de subdelegaciones </p>
+                </div>
+                <div>
+                    <p class="pageText"> Cerrar sesión </p>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -73,7 +73,11 @@ const goHome = () => {
     flex: 1;
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: flex-end;
+
+    gap: 20px;
+
+    margin-right: 10px;
 }
 
 .pageText {
