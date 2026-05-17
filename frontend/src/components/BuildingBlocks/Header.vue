@@ -1,11 +1,31 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
+
+const props = defineProps<{
+    isAdmin: boolean
+}>()
 
 const extendMenu = ref<boolean>(true);
 
-const goHome = () => {
-  location.href = "/";
+const redirect = (url: String) => {
+    location.href = url;
 }
+
+const goHome = () => {
+    redirect("/")
+}
+
+const handleResize = () => {
+  extendMenu.value = window.innerWidth > 950;
+};
+
+onMounted(() => {
+  window.addEventListener('resize', handleResize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize);
+});
 </script>
 
 <template>
@@ -15,16 +35,16 @@ const goHome = () => {
             <h1 class="pageText"> MejoraDA </h1>
         </div>
 
-        <div class="AdminOptions">
+        <div class="AdminOptions" v-if="isAdmin">
             <div class="extendedMenu" v-if="extendMenu">
                 <div>
-                    <p class="pageText"> Revisión de formularios </p>
+                    <p class="pageText" v-on:click="redirect('/admin/review')"> Revisión de formularios </p>
                 </div>
                 <div>
-                    <p class="pageText"> Administración de subdelegaciones </p>
+                    <p class="pageText" v-on:click="redirect('/admin/departments')"> Administración de subdelegaciones </p>
                 </div>
                 <div>
-                    <p class="pageText"> Cerrar sesión </p>
+                    <p class="pageText" v-on:click="redirect('/admin/logout')"> Cerrar sesión </p>
                 </div>
             </div>
         </div>
@@ -83,6 +103,8 @@ const goHome = () => {
 .pageText {
     margin: 0px;
     color: white;
+
+    cursor: pointer;
 }
 
 .ServiceLogo {

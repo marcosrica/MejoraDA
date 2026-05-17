@@ -3,7 +3,7 @@
   import Header from './Header.vue';
   import PetitionMaker from '../../Utilities/PetitionMaker';
   import BaseNotAuth from '../BaseComponents/BaseNotAuth.vue';
-import BaseMenu from '../BaseComponents/BaseMenu.vue';
+  import BaseMenu from '../BaseComponents/BaseMenu.vue';
 
   const props = defineProps<{
     showContent: boolean
@@ -21,7 +21,6 @@ import BaseMenu from '../BaseComponents/BaseMenu.vue';
   };
 
   onMounted(async () => {
-    console.log("MOuted");
     await getPrivileged();
     console.log(allowedUser);
   });
@@ -29,7 +28,7 @@ import BaseMenu from '../BaseComponents/BaseMenu.vue';
 
 <template>
   <div class="Home_background">
-    <Header/>
+    <Header :isAdmin="allowedUser"/>
 
     <div class="Home_content_wrapper">
       <!-- Content area -->
