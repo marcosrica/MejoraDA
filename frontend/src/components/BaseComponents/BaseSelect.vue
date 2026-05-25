@@ -66,21 +66,34 @@ const onChange = (event: Event) => {
 
 .BaseSelect__field {
   width: 100%;
-  padding: 10px 12px;
+  /* Update padding to add room on the right for the arrow (12px left, 36px right) */
+  padding: 10px 36px 10px 12px; 
   border-radius: 8px;
   border: 1px solid #ccc;
   font-size: 14px;
   background-color: white;
-  appearance: none; /* removes default arrow for styling */
+  
+  appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  
+  /* --- ADDED PROPERTIES FOR THE ARROW --- */
+  /* Clean, modern chevron icon encoded directly into CSS (stroke color is #666) */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23666666' stroke-width='2.5'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5' /%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center; /* Positions arrow 12px from the right edge */
+  background-size: 14px; /* Adjust scale of the arrow */
+  
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-image 0.2s ease;
 }
 
 .BaseSelect__field:focus {
   outline: none;
   border-color: var(--main-color);
   box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.15);
+  
+  /* OPTIONAL: Changes arrow color to a nice digital blue (#007bff) on focus */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23007bff' stroke-width='2.5'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5' /%3E%3C/svg%3E");
 }
 
 .BaseSelect__field:disabled {
@@ -92,7 +105,7 @@ const onChange = (event: Event) => {
 @media (max-width: 600px) {
   .BaseSelect__field {
     font-size: 16px;
-    padding: 12px 14px;
+    padding: 12px 36px 12px 14px; /* Ensure 36px right padding persists */
   }
 }
 </style>
