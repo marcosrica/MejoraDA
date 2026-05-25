@@ -63,9 +63,9 @@ onUnmounted(() => {
                 <Teleport to="body">
                     <Transition name="slide-top">
                         <BaseCard custom-class="hamburguerMenu_Content" top bottom v-if="showHamburgerMenu">
-                            <p> Revisión de formularios </p>
-                            <p> Administración de subdelegaciones </p>
-                            <p> Cerrar sesión </p>
+                            <p class="hamburgerMenu_Option"> Revisión de formularios </p>
+                            <p class="hamburgerMenu_Option"> Administración de subdelegaciones </p>
+                            <p class="hamburgerMenu_Option"> Cerrar sesión </p>
                         </BaseCard>
                     </Transition>
                 </Teleport>
@@ -177,5 +177,18 @@ onUnmounted(() => {
 .slide-top-leave-from {
     transform: translateY(0);
     opacity: 1;
+}
+
+.hamburgerMenu_Option {
+    background-color: rgba(255, 255, 255, 0);
+    margin: 0px;
+    padding: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.hamburgerMenu_Option:hover {
+    background-color: var(--accent-warm);
 }
 </style>
