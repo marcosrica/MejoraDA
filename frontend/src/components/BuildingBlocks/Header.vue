@@ -63,9 +63,9 @@ onUnmounted(() => {
                 <Teleport to="body">
                     <Transition name="slide-top">
                         <BaseCard custom-class="hamburguerMenu_Content" top bottom v-if="showHamburgerMenu">
-                            <p class="hamburgerMenu_Option"> Revisión de formularios </p>
-                            <p class="hamburgerMenu_Option"> Administración de subdelegaciones </p>
-                            <p class="hamburgerMenu_Option"> Cerrar sesión </p>
+                            <p class="hamburgerMenu_Option" v-on:click="redirect('/admin/review')"> Revisión de formularios </p>
+                            <p class="hamburgerMenu_Option" v-on:click="redirect('/admin/departments')"> Administración de subdelegaciones </p>
+                            <p class="hamburgerMenu_Option logoutText" v-on:click="redirect('/admin/logout')"> Cerrar sesión </p>
                         </BaseCard>
                     </Transition>
                 </Teleport>
@@ -186,9 +186,14 @@ onUnmounted(() => {
     border-radius: 5px;
     cursor: pointer;
     transition: 0.3s;
+    font-weight: 800;
 }
 
 .hamburgerMenu_Option:hover {
     background-color: var(--accent-warm);
+}
+
+.logoutText {
+    color: var(--danger);
 }
 </style>
