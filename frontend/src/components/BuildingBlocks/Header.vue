@@ -1,13 +1,16 @@
 <script lang="ts" setup>
 import { ref, onMounted, onUnmounted } from 'vue';
+import BaseCard from './../BaseComponents/BaseCard.vue';
 
 const props = defineProps<{
-    isAdmin: boolean
+    isAdmin: boolean,
+    showHamburgerMenu: boolean;
+    enableHamburguerMenu: () => void,
 }>()
 
 const extendMenu = ref<boolean>(true);
 
-const redirect = (url: String) => {
+const redirect = (url: string) => {
     location.href = url;
 }
 
@@ -15,12 +18,18 @@ const goHome = () => {
     redirect("/")
 }
 
+const showHideHamburguerMenu = () => {
+    props.enableHamburguerMenu();
+}
+
 const handleResize = () => {
   extendMenu.value = window.innerWidth > 950;
 };
 
 onMounted(() => {
-  window.addEventListener('resize', handleResize);
+    handleResize();
+    
+    window.addEventListener('resize', handleResize);
 });
 
 onUnmounted(() => {
@@ -47,6 +56,20 @@ onUnmounted(() => {
                     <p class="pageText" v-on:click="redirect('/admin/logout')"> Cerrar sesión </p>
                 </div>
             </div>
+
+            <div class="hamburgerMenu" v-else>
+                <p class="hamburgetMenu_Button" v-on:click="enableHamburguerMenu"> ☰ </p>
+
+                <Teleport to="body">
+                    <Transition name="slide-top">
+                        <BaseCard custom-class="hamburguerMenu_Content" top bottom v-if="showHamburgerMenu">
+                            <p> Revisión de formularios </p>
+                            <p> Administración de subdelegaciones </p>
+                            <p> Cerrar sesión </p>
+                        </BaseCard>
+                    </Transition>
+                </Teleport>
+            </div>
         </div>
     </div>
 </template>
@@ -71,6 +94,8 @@ onUnmounted(() => {
 
     border-bottom-right-radius: 10px;
     border-bottom-left-radius: 10px;
+
+    z-index: 100;
 }
 
 .PageLogoDiv {
@@ -112,5 +137,45 @@ onUnmounted(() => {
     margin-right: 15px;
     margin-left: 20px;
     align-items: center;
+}
+
+.hamburgerMenu {
+    display: flex;
+    flex: 1;
+
+    flex-direction:row-reverse;
+    margin-right: 25px;
+}
+
+.hamburgetMenu_Button {
+    font-size: 35px;
+    font-weight: 800;
+
+    cursor: pointer;
+}
+
+.hamburguerMenu_Content {
+    position: fixed;
+    z-index: 50;
+
+    top: 9%;
+    right: 10px
+}
+
+.slide-top-enter-active,
+.slide-top-leave-active {
+    transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.9s ease;
+}
+
+.slide-top-enter-from,
+.slide-top-leave-to {
+    transform: translateY(-100%); 
+    opacity: 0; 
+}
+
+.slide-top-enter-to,
+.slide-top-leave-from {
+    transform: translateY(0);
+    opacity: 1;
 }
 </style>
