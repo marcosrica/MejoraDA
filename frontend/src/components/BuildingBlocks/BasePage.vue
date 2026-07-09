@@ -3,7 +3,6 @@
   import Header from './Header.vue';
   import PetitionMaker from '../../Utilities/PetitionMaker';
   import BaseNotAuth from '../BaseComponents/BaseNotAuth.vue';
-import BaseMenu from '../BaseComponents/BaseMenu.vue';
 
   const props = defineProps<{
     showContent: boolean
@@ -12,7 +11,12 @@ import BaseMenu from '../BaseComponents/BaseMenu.vue';
   const petitionMaker:PetitionMaker = new PetitionMaker();
 
   //Tracks wether the user is privileged, to know if it should show the menu
-  const allowedUser = ref(false); //TODO: Change to allow only petitions coming from wordpress
+  const allowedUser = ref(false); 
+  const showHamburgerMenu = ref(false);
+
+  const showHideHamburgerMenu = ():void => {
+    showHamburgerMenu.value = !showHamburgerMenu.value;
+  }
 
   const getPrivileged = async () => {
     const response = await petitionMaker.makeGetPetition("/api/auth/amIPrivileged");
@@ -21,7 +25,6 @@ import BaseMenu from '../BaseComponents/BaseMenu.vue';
   };
 
   onMounted(async () => {
-    console.log("MOuted");
     await getPrivileged();
     console.log(allowedUser);
   });
@@ -29,9 +32,11 @@ import BaseMenu from '../BaseComponents/BaseMenu.vue';
 
 <template>
   <div class="Home_background">
-    <Header/>
+    <Header :isAdmin="allowedUser" :showHamburgerMenu="showHamburgerMenu" :enableHamburguerMenu="showHideHamburgerMenu"/>
 
     <div class="Home_content_wrapper">
+      <div class="HamburgerMenuBlackout" v-if="showHamburgerMenu" v-on:click="showHideHamburgerMenu" />
+
       <!-- Content area -->
       <div class="Home_content">
         <slot v-if="showContent" />
@@ -40,9 +45,10 @@ import BaseMenu from '../BaseComponents/BaseMenu.vue';
 
       <!-- Toggle menu that sits on top of the content -->
       
+      <!--
       <BaseMenu :visible="allowedUser" :privileged="allowedUser" :admin="true"/>
       
-      <!--
+      
       <LoginMenuFloating :visible="!loggedIn"></LoginMenuFloating>
       -->
     </div>
@@ -100,5 +106,17 @@ import BaseMenu from '../BaseComponents/BaseMenu.vue';
     @media (orientation: portrait) {
       width: 95%;
     }
+  }
+
+  .HamburgerMenuBlackout {
+    width: 100%;
+    height: 100%;
+
+    position: fixed;
+    bottom: 0px;
+
+    background-color: rgba(0, 0, 0, 0.663);
+
+    z-index: 10;
   }
 </style>

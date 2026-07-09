@@ -10,10 +10,6 @@
     const goToIndex = () => {
         location.href = "/";
     }
-
-    const newForm = () => {
-        location.href = "/form";
-    }
 // #endregion Methods
 </script>
 
@@ -28,14 +24,9 @@
             <p class="text"> ¡Muchas gracias por tu colaboración! </p>
             <div class="Emoji"> 😁 </div>
 
-            <p class="text"> Poco más hay que puedas hacer por aquí. </p>
-            <p class="text"> Siempre puedes rellenar otra solicitud, o volver a la página de inicio, como prefieras. </p>
-            <div class="buttons"> 
-                <BaseButton variant="primary" @click="newForm">
-                    <p class="text">Rellenar otra solicitud</p>
-                </BaseButton>
+            <div class="buttons">
                 <BaseButton variant="primary" @click="goToIndex">
-                    <p class="text">Volver al inicio</p>
+                    <p class="text">Volver</p>
                 </BaseButton>
             </div>
         </BaseCard>

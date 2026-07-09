@@ -71,7 +71,7 @@ AuthRouter.get("/adminlogout", async(req:Request, res:Response) => {
 });
 
 AuthRouter.get("/timeLeft", async(req:Request, res:Response) => {
-  const token = req.cookies.get("token");
+  const token = req.cookies.token;
 
   if(!token) {
     res.status(404).send({Reason:"No token found"});

@@ -1,19 +1,21 @@
 <script setup lang="ts">
 // #region imports
     import { onMounted, ref } from 'vue';
-    import PetitionMaker from '../Utilities/PetitionMaker'
-    import BaseAlert from './BaseComponents/BaseAlert.vue';
+    import PetitionMaker from '../Utilities/PetitionMaker';
     import BaseInput from './BaseComponents/BaseInput.vue';
     import BaseTextArea from './BaseComponents/BaseTextArea.vue';
     import BaseButton from './BaseComponents/BaseButton.vue';
     import BaseSelect from './BaseComponents/BaseSelect.vue';
-    import BasePage from './BuildingBlocks/BasePage.vue';
     import BaseCard from './BaseComponents/BaseCard.vue';
     import type TypeInfo from './../interfaces/TypesInfo';
     import type FormContent from '../interfaces/FormContent';
 // #endregion imports
 
 //#region variables
+    const props = defineProps< {
+        throwError: (type: 'success' | 'error' | 'info', message:string) => void;
+    }>();
+
     //Object needed to fulfill the petition
     const petitionMaker:PetitionMaker = new PetitionMaker();
 
@@ -23,23 +25,12 @@
     const description = ref('');
     const subject = ref('');
 
-    //Variables for the alert
-    const showAlert = ref(false);
-    const alertMessage = ref('');
-    const alertType = ref<'success' | 'error' | 'info'>('success');
-
     //Variable for storing the different departments
     const departments = ref<Array<{value:string, label:string}>>([]);
     const types = ref<Array<{value:string, label:string}>>([]);
 // #endregion variables
 
 // #region Methods
-    const spawnAlert = (type: 'success' | 'error' | 'info', message: string) => {
-        alertType.value = type;
-        alertMessage.value = message;
-        showAlert.value = true;
-    }
-
     const getDepartments = async () => {
         const response = await petitionMaker.makePetition("/api/general/currentDepartments", "GET");
         if(response.status == 200) {
@@ -50,6 +41,8 @@
                     departments.value.push({value: dept.innerID, label: dept.name});
                 }
             }
+
+            department.value = departments.value[0]?.value || "";
         }
     }
 
@@ -61,26 +54,43 @@
             for(const type of data) {
                 types.value.push({value:String(type.inner_id), label:type.name})
             }
+
+            documentType.value = types.value[0]?.value || "";
         }
     }
 // #endregion Methods
 
 // #region submitFunction
     const handleSubmit = async () => {
-        if(!(!documentType.value || !department.value || !description.value || !subject.value)) { //Prevent empty fields
-            const data:FormContent = {type: documentType.value, department: department.value, subject: subject.value, description: description.value};
+        if(documentType.value) { //Prevent empty fields
+            if(department.value) {
+                if(description.value) {
+                    if(subject.value) {
+                        const data:FormContent = {type: documentType.value, department: department.value, subject: subject.value, description: description.value};
 
-            const response = await petitionMaker.makePetition("/api/form/newForm", "POST", data);
+                        const response = await petitionMaker.makePetition("/api/form/newForm", "POST", data);
 
-            if(response.status == 200) {
-                location.href = "/Form/success"
+                        if(response.status == 200) {
+                            location.href = "/Form/success"
+                        }
+                        else {
+                            props.throwError("error", "Ha habido un problema. Por favor, inténtelo de nuevo más tarde");
+                        }
+                    }
+                    else {
+                        props.throwError("error", "Por favor, añada un asunto");
+                    }
+                }
+                else {
+                    props.throwError("error", "Por favor, añada una descripción");
+                }
             }
             else {
-                spawnAlert("error", "Ha habido un problema. Por favor, inténtelo de nuevo más tarde");
+                props.throwError("error", "Por favor, indique a qué subdelegación desea dirigirse");
             }
         }
         else {
-            spawnAlert("error", "Por favor, complete todos los campos");
+            props.throwError("error", "Por favor, indique de qué tipo de solicitud se trata");
         }
     }
 // #endregion submitFunction
@@ -94,72 +104,64 @@
 </script>
 
 <template>
-    <BasePage show-content>
-        <BaseAlert
-                :show="showAlert"
-                :type="alertType"
-                :message="alertMessage"
-
-                @close="showAlert = false"
-            />
-
-            <BaseCard customClass="FormHeader" top>
-                <div class="FormIcon">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"></path>
-                    </svg>
-                </div>
+    <div class="Form">
+        <BaseCard customClass="FormHeader" top>
+            <div class="FormIcon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"></path>
+                </svg>
+            </div>
                 
-                <h2 class="FormHeaderText"> <b> Crear una solicitud </b></h2>
-            </BaseCard>
+            <h2 class="FormHeaderText"> <b> ¿Tienes algo que decirnos? </b></h2>
+        </BaseCard>
 
-            <BaseCard customClass="FormDiv" bottom>
-                <form class="FormContent"  @submit.prevent="handleSubmit">
-                    <div class="TypeSelection">
-                        <p> <b> Indique el tipo de solicitud </b> </p>
-                        <BaseSelect
-                          v-model="documentType"
-                          label=""
-                          placeholder="Selecciona una opción"
-                          :options="types"
-                        />
-                    </div>
+        <BaseCard customClass="FormDiv" bottom>
+            <form class="FormContent"  @submit.prevent="handleSubmit">
+                <div class="TypeSelection">
+                    <p> <b> Indique el tipo de solicitud </b> </p>
+                    <BaseSelect
+                      v-model="documentType"
+                      label=""
+                      placeholder="Selecciona una opción"
+                      :options="types"
+                    />
+                </div>
 
-                    <div class="Department">
-                        <p> <b> Indique la subdelegación a la que se quiere dirigir </b> </p>
+                <div class="Department">
+                    <p> <b> Indique la subdelegación a la que se quiere dirigir </b> </p>
 
-                        <BaseSelect
-                          v-model="department"
-                          label=""
-                          placeholder="Selecciona una opción"
-                          :options="departments"
-                        />
-                    </div>
+                    <BaseSelect
+                      v-model="department"
+                      label=""
+                      placeholder="Selecciona una opción"
+                      :options="departments"
+                    />
+                </div>
 
-                    <div class="Description">
-                        <p> <b> Describa su solicitud </b> </p>
-                        <BaseInput
-                          v-model="subject"
-                          name="Description"
-                          placeholder="Asunto"
-                          custom-class="Subject"
-                        />
-                        <BaseTextArea
-                          v-model="description"
-                          name="Description"
-                          placeholder="Describa su solicitud..."
-                          customClass="Explanation"
-                        />
-                    </div>
+                <div class="Description">
+                    <p> <b> Describa su solicitud </b> </p>
+                    <BaseInput
+                      v-model="subject"
+                      name="Description"
+                      placeholder="Asunto"
+                      custom-class="Subject"
+                    />
+                    <BaseTextArea
+                      v-model="description"
+                      name="Description"
+                      placeholder="Describa su solicitud..."
+                      customClass="Explanation"
+                    />
+                </div>
 
-                    <div class="SubmitDiv">
-                        <BaseButton type="submit" variant="primary" customClass="SubmitButton">
-                            <b>Enviar solicitud</b>
-                        </BaseButton>
-                    </div>
-                </form>
-            </BaseCard>
-    </BasePage>
+                <div class="SubmitDiv">
+                    <BaseButton type="submit" variant="primary" customClass="SubmitButton">
+                        <b>Enviar solicitud</b>
+                    </BaseButton>
+                </div>
+            </form>
+        </BaseCard>
+    </div>
 </template>
 
 <style scoped>
@@ -207,21 +209,6 @@
 
         /* Borders */
         border-bottom: 2px solid var(--form-border);
-        padding-bottom: 15px;
-    }
-
-    .MultiSelect_Type {
-        /* Overall structure */
-        display:flex;
-        flex-direction: row;
-        align-items: flex-start;
-        justify-content: space-around;
-        
-        /* Width and height */
-        width: 90%;
-
-        /* Margins and padding */
-        margin-bottom: 10px;
         padding-bottom: 15px;
     }
 

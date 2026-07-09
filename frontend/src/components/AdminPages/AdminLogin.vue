@@ -8,12 +8,24 @@ import BaseButton from '../BaseComponents/BaseButton.vue';
 import PetitionMaker from '../../Utilities/PetitionMaker';
 
 import type LoginData from '../../interfaces/LoginData';
+import BaseAlert from '../BaseComponents/BaseAlert.vue';
 
 const petitionMaker:PetitionMaker = new PetitionMaker();
+
+//Variables to configure the alert
+const showAlert = ref<boolean>(false);
+const alertType = "error";
+const alertMessage = ref<string>("");
 
 //Variables for the form fields
 const user = ref('');
 const password = ref('');
+
+const triggerError = (message:string) => {
+    alertMessage.value = message;
+
+    showAlert.value = true;
+} 
 
 const handleSubmit = async () => {
     console.log("User wants to log in: " + user.value + ", password: " + password.value);
@@ -23,10 +35,23 @@ const handleSubmit = async () => {
         password: password.value
     }
 
-    const response = await petitionMaker.makePetition("/api/auth/adminLogin", 'POST', loginData);
+    if(!loginData.user) {
+        triggerError("Por favor, indique el usuario");
+    }
+    else {
+        if(!loginData.password) {
+            triggerError("Por favor, indique la contraseña");
+        }
+        else {
+            const response = await petitionMaker.makePetition("/api/auth/adminLogin", 'POST', loginData);
 
-    if(response.status == 200) {
-        location.href = "/admin/review"
+            if(response.status == 200) {
+                location.href = "/admin/review"
+            }
+            else {
+                triggerError("Las credenciales no son correctas. Por favor, revíselas y vuelva a intentarlo");
+            }
+        }
     }
 }
 
@@ -41,6 +66,14 @@ onMounted(async () => {
 
 <template>
     <BasePage show-content>
+        <BaseAlert 
+            :show="showAlert"
+            :type="alertType"
+            :message="alertMessage"
+
+            v-on:close="showAlert = false"
+        />
+
         <BaseCard top>
             <h1 class="marginless"> Área de administración </h1>
             <p class="marginless"> Introduce tus credenciales para continuar </p>

@@ -165,6 +165,10 @@
     if(showContent.value) {
       await getDepartments();
       await getTypes();
+      
+      department.value = departments.value[0]?.value || "";
+      type.value = types.value[0]?.value || "";
+
       fetchForms(department.value, type.value, showResolved.value);
       
     }
@@ -198,7 +202,7 @@
           />
         </div>
         <div class="Home_Type">
-          <label for="status" >Tipo:</label>
+          <label for="status">Tipo:</label>
           <BaseSelect
             v-model="type"
             label=""
