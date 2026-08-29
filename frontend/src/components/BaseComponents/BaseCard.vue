@@ -14,7 +14,7 @@ const props = defineProps<{
 
 <template>
   <div 
-    :class="['BaseCard', customClass, top ? 'TOP' : '', bottom ? 'BOTTOM' : '', bottom_left ? 'BOTTOM_LEFT' : '', bottom_right ? 'BOTTOM_RIGHT' : '']"
+    :class="['BaseCard', props.customClass, props.top ? 'TOP' : '', props.bottom ? 'BOTTOM' : '', props.bottom_left ? 'BOTTOM_LEFT' : '', props.bottom_right ? 'BOTTOM_RIGHT' : '']"
     :style="{
       '--base-card-bg': backgroundColor,
       '--base-card-border': borderColor

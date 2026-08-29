@@ -17,7 +17,7 @@ const props = defineProps<{
 </script>
 
 <template>
-  <BaseRoundedButton v-if="visible" class="ToggleButton" @click="open = !open">☰</BaseRoundedButton>
+  <BaseRoundedButton v-if="props.visible" class="ToggleButton" @click="open = !open">☰</BaseRoundedButton>
   
   <div class="TranslucentPanel" v-if="open" @click="open = false">
 

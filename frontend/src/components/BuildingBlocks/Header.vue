@@ -18,10 +18,6 @@ const goHome = () => {
     redirect("/")
 }
 
-const showHideHamburguerMenu = () => {
-    props.enableHamburguerMenu();
-}
-
 const handleResize = () => {
   extendMenu.value = window.innerWidth > 950;
 };
@@ -44,7 +40,7 @@ onUnmounted(() => {
             <h1 class="pageText"> MejoraDA </h1>
         </div>
 
-        <div class="AdminOptions" v-if="isAdmin">
+        <div class="AdminOptions" v-if="props.isAdmin">
             <div class="extendedMenu" v-if="extendMenu">
                 <div>
                     <p class="pageText" v-on:click="redirect('/admin/review')"> Revisión de formularios </p>

@@ -4,10 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon --legacy-watch src/server.ts",
+    "dev": "nodemon src/server.ts",
     "create-db": "npm run migrate && npm run seed",
     "migrate": "knex migrate:latest --knexfile ./src/knexfile.ts",
-    "seed": "knex seed:run --knexfile ./src/knexfile.ts"
+    "seed": "knex seed:run --knexfile ./src/knexfile.ts",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "Marcos Rica Sánchez",
@@ -27,7 +28,7 @@
     "@types/express": "^5.0.5",
     "@types/knex": "^0.15.2",
     "@types/node": "^24.10.1",
-    "nodemon": "^3.1.11",
+    "nodemon": "^3.1.14",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   }

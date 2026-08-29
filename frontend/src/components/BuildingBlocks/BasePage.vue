@@ -39,7 +39,7 @@
 
       <!-- Content area -->
       <div class="Home_content">
-        <slot v-if="showContent" />
+        <slot v-if="props.showContent" />
         <BaseNotAuth v-else />
       </div>
 

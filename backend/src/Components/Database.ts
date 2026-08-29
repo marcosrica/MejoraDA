@@ -20,12 +20,11 @@ const pool = mysql.createPool({
 }).promise();
 
 
+
 class Database {
 // #region departments
 
     AddDepartment = async (name:String) => {
-        console.log("Trying to add department with name: " + name)
-
         const [response] = await pool.query(`
             INSERT INTO departments (department_name, show_department)
             VALUES (?, true);

@@ -71,7 +71,7 @@ class PetitionMaker {
         return result;
     }
 
-    makeRootPetition = async (url: string, method: string, body?: any): Promise<PetitionResult> => {
+    makeRootPetition = async (url: string, method: string): Promise<PetitionResult> => {
         let result: PetitionResult = new PetitionResult();
         console.log(url);
 

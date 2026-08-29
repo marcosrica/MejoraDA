@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import BaseCard from './BaseCard.vue';
-import PetitionMaker from '../../Utilities/PetitionMaker';
 import { onMounted, ref } from 'vue';
 
-const petititonMaker = new PetitionMaker();
 let reject = ref<String>("");
 
 onMounted(async () => {
