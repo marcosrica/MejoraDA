@@ -32,6 +32,8 @@
 
 /frontend/.eslintcache
 
+/frontend/dist
+
 # Cypress
 /frontend/cypress/videos/
 /frontend/cypress/screenshots/
@@ -51,3 +53,5 @@
 /backend/*.sln
 /backend/*.sw?
 /backend/node_modules
+
+/backend/dist
