@@ -1,0 +1,14 @@
+services:
+  app:
+    build: .
+    ports:
+      - "5173:80"   # Host:5173 -> Container:80 (Nginx)
+    networks:
+      - app-network
+    restart: unless-stopped
+    # Use the HEALTHCHECK already defined in your Dockerfile (which uses wget on port 80).
+    # Overriding it here is not needed, so I removed the healthcheck block entirely.
+
+networks:
+  app-network:
+    driver: bridge
