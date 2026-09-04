@@ -1,0 +1,56 @@
+services:
+    frontend:
+        build: frontend/.
+        ports:
+            - "5173:80"   # Host:5173 -> Container:80 (Nginx)
+        networks:
+            - mejorada-network
+        restart: unless-stopped
+
+    backend:
+        build: backend/.
+        volumes:
+            - ./backend:/app          # mounts your current folder to /app
+        working_dir: /app
+        ports:
+            - "3000:3000"
+        environment:
+            - NODE_ENV=production
+            - PORT=5173
+        networks:
+            - mejorada-network
+        restart: unless-stopped
+
+    mariadb:
+        image: mariadb:10.11  
+        container_name: mejorada-db 
+        environment:
+            # - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
+            - MARIADB_DATABASE=${DB_NAME}   
+            - MARIADB_USER=${DB_USER}        
+            - MARIADB_PASSWORD=${DB_PASSWORD}        
+        volumes:
+            - mariadb_data:/var/lib/mysql  # Persist data so it survives container restarts
+        networks:
+            mejorada-network:
+                ipv4_address: 172.20.0.10
+        ports:
+            - "10000:3306"
+        restart: unless-stopped
+        # healthcheck:
+        #     test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+        #     timeout: 20s
+        #     retries: 10
+
+
+networks:
+    mejorada-network:
+        driver: bridge
+        ipam:
+            config:
+                - subnet: 172.20.0.0/16  
+
+
+volumes:
+    mariadb_data:
+        driver: local
