@@ -11,6 +11,7 @@ const dbKeys = new DatabaseKeys();
 const pool = mysql.createPool({
     host: dbKeys.host,
     user: dbKeys.user,
+    port: 3306,
     password: dbKeys.password,
     database: dbKeys.database,
     
@@ -23,7 +24,6 @@ const pool = mysql.createPool({
 
 class Database {
 // #region departments
-
     AddDepartment = async (name:String) => {
         const [response] = await pool.query(`
             INSERT INTO departments (department_name, show_department)
