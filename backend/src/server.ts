@@ -114,6 +114,6 @@ app.post("/api/petitions/markAsResolved", async (req:Request, res:Response) => {
 });
 */
 
-app.listen(3000, () => {
+app.listen(3000, '0.0.0.0', () => {
   console.log("Backend running at http://localhost:3000");
 });
