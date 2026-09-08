@@ -14,6 +14,6 @@ export async function seed(knex: Knex): Promise<void> {
     // Inserts seed entries
     await knex("users").insert([
         { username: "Unsigned", password: "" },
-        { username: AdminData.AdminUsername, password: hashedPassword },
+        { username: AdminData.AdminUsername, password: hashedPassword, admin: true },
     ]);
 };
