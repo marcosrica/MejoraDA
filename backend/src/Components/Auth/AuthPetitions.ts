@@ -13,9 +13,28 @@ AuthRouter.get("/amIPrivileged", async (req: Request, res: Response) => {
   console.log("Received new request for info on wether the user is privileged");
   
   const authed = auth(req);
+  if (authed > 1) {
+    console.log("sending OK");
+    res.status(200).json({ result: "OK" });
+  }
+  else {
+    res.status(401).json({ result: "PROHIBITED" });
+  }
+});
+
+AuthRouter.get('/amIAdmin', async (req: Request, res: Response) => {
+  console.log("Received new request for info on wether the user is admin");
+
+  const authed = auth(req);
   if(authed > 1) {
-    console.log("sending OK")
-    res.status(200).json({ result: "OK"});
+    const result = await db.CheckAdmin(authed);
+
+    if (result) {
+      res.status(200).json({ result: "OK"});
+    }
+    else {
+      res.status(401).json({ result: "PROHIBITED"});
+    }
   }
   else {
     res.status(401).json({ result: "PROHIBITED"});
