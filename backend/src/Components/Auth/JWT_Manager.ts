@@ -9,15 +9,15 @@ const createToken = (id:number) => {
 }
 
 const readToken = (token:any): any => {
-    if(!token) { return null; }
+  if(!token) { return null; }
 
-    try {
-        const decoded = jwt.verify(token, secrets.JWT_Secret);
-        return decoded;
-    }
-    catch(err) {
-        return null;
-    }
+  try {
+    const decoded = jwt.verify(token, secrets.JWT_Secret);
+    return decoded;
+  }
+  catch(err) {
+    return null;
+  }
 }
 
 export default {createToken, readToken};
