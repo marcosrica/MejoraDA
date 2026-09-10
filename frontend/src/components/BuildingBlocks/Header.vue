@@ -4,6 +4,7 @@ import BaseCard from './../BaseComponents/BaseCard.vue';
 
 const props = defineProps<{
     isAdmin: boolean,
+    isAuth: boolean,
     showHamburgerMenu: boolean;
     enableHamburguerMenu: () => void,
 }>()
@@ -40,12 +41,12 @@ onUnmounted(() => {
             <h1 class="pageText"> MejoraDA </h1>
         </div>
 
-        <div class="AdminOptions" v-if="props.isAdmin">
+        <div class="AdminOptions" v-if="props.isAuth">
             <div class="extendedMenu" v-if="extendMenu">
                 <div>
                     <p class="pageText" v-on:click="redirect('/admin/review')"> Revisión de formularios </p>
                 </div>
-                <div>
+                <div v-if="isAdmin">
                     <p class="pageText" v-on:click="redirect('/admin/departments')"> Administración de subdelegaciones </p>
                 </div>
                 <div>
@@ -60,7 +61,7 @@ onUnmounted(() => {
                     <Transition name="slide-top">
                         <BaseCard custom-class="hamburguerMenu_Content" top bottom v-if="showHamburgerMenu">
                             <p class="hamburgerMenu_Option" v-on:click="redirect('/admin/review')"> Revisión de formularios </p>
-                            <p class="hamburgerMenu_Option" v-on:click="redirect('/admin/departments')"> Administración de subdelegaciones </p>
+                            <p class="hamburgerMenu_Option" v-on:click="redirect('/admin/departments')" v-if="isAdmin"> Administración de subdelegaciones </p>
                             <p class="hamburgerMenu_Option logoutText" v-on:click="redirect('/admin/logout')"> Cerrar sesión </p>
                         </BaseCard>
                     </Transition>

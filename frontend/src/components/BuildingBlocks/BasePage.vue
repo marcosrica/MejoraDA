@@ -12,6 +12,7 @@
 
     //Tracks wether the user is privileged, to know if it should show the menu
     const allowedUser = ref(false); 
+    const adminUser = ref(false);
     const showHamburgerMenu = ref(false);
 
     const showHideHamburgerMenu = ():void => {
@@ -24,7 +25,7 @@
 
         if (allowedUser.value) {
             const adminResponse = await petitionMaker.makeGetPetition("/api/auth/amIAdmin");
-            console.log(adminResponse);
+            adminUser.value = adminResponse.status == 200;
         }
     };
 
@@ -36,7 +37,7 @@
 
 <template>
     <div class="Home_background">
-        <Header :isAdmin="allowedUser" :showHamburgerMenu="showHamburgerMenu" :enableHamburguerMenu="showHideHamburgerMenu"/>
+        <Header :isAuth="allowedUser" :isAdmin="adminUser" :showHamburgerMenu="showHamburgerMenu" :enableHamburguerMenu="showHideHamburgerMenu"/>
 
         <div class="Home_content_wrapper">
             <div class="HamburgerMenuBlackout" v-if="showHamburgerMenu" v-on:click="showHideHamburgerMenu" />
