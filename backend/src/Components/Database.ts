@@ -9,194 +9,198 @@ import TypeInfo from 'src/Interfaces/TypeInfo';
 
 const dbKeys = new DatabaseKeys();
 const pool = mysql.createPool({
-    host: dbKeys.host,
-    user: dbKeys.user,
-    port: 3306,
-    password: dbKeys.password,
-    database: dbKeys.database,
+  host: dbKeys.host,
+  user: dbKeys.user,
+  port: 3306,
+  password: dbKeys.password,
+  database: dbKeys.database,
     
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
 }).promise();
-
 
 
 class Database {
 // #region departments
-    AddDepartment = async (name:String) => {
-        const [response] = await pool.query(`
-            INSERT INTO departments (department_name, show_department)
-            VALUES (?, true);
-            `, [name]);
+  AddDepartment = async (name:String) => {
+    const [response] = await pool.query(`
+      INSERT INTO departments (department_name, show_department)
+      VALUES (?, true);
+      `, [name]);   
+  }
 
-        
+  GetDepartments = async (): Promise<SubdelegationsInfo[]> => {
+    const [response] = await pool.query<RowDataPacket[]>(`
+      SELECT * FROM departments;
+      `, []);
+
+    const result:SubdelegationsInfo[] = [];
+    for(const department of response) {
+      result.push({name: department.department_name, show: department.show_department, innerID:department.id_department});
     }
 
-    GetDepartments = async (): Promise<SubdelegationsInfo[]> => {
-        const [response] = await pool.query<RowDataPacket[]>(`
-                SELECT * FROM departments;
-            `, []);
+    return result;
+  }
 
-        const result:SubdelegationsInfo[] = [];
-        for(const department of response) {
-            result.push({name: department.department_name, show: department.show_department, innerID:department.id_department});
-        }
+  ChangeVisibility = async (id:number) => {
+    const [response] = await pool.query(`
+      UPDATE departments
+      SET show_department = NOT show_department
+      WHERE id_department = ?
+      `, [id]);
+  }
 
-        return result;
-    }
+  DeleteDepartment = async (id:number) => {
+    const [response] = await pool.query(`
+      DELETE FROM departments
+      WHERE id_department = ?
+      `, [id]);
+  }
 
-    ChangeVisibility = async (id:number) => {
-        const [response] = await pool.query(`
-            UPDATE departments
-            SET show_department = NOT show_department
-            WHERE id_department = ?
-            `, [id]);
-    }
-
-    DeleteDepartment = async (id:number) => {
-        const [response] = await pool.query(`
-            DELETE FROM departments
-            WHERE id_department = ?
-            `, [id]);
-    }
-
-    EditDepartment = async (name:String, id:number) => {
-        const [response] = await pool.query(`
-            UPDATE departments
-            SET department_name = ?
-            WHERE id_department = ?
-            `, [name, id]);
-    }
-
+  EditDepartment = async (name:String, id:number) => {
+    const [response] = await pool.query(`
+      UPDATE departments
+      SET department_name = ?
+      WHERE id_department = ?
+      `, [name, id]);
+  }
 // #endregion
 
 
 // #region Forms
-    InsertNewForm = async (type:number, department:number, subject:string, description:string) => {
-        const [response] = await pool.query(`
-            INSERT INTO forms (id_type, id_department, subject, description, resolved)
-            VALUES (?, ?, ?, ?, false)
-            `, [type, department, subject, description]);
-    } 
+  InsertNewForm = async (type:number, department:number, subject:string, description:string) => {
+    const [response] = await pool.query(`
+      INSERT INTO forms (id_type, id_department, subject, description, resolved)
+      VALUES (?, ?, ?, ?, false)
+      `, [type, department, subject, description]);
+  } 
 
-    RetrievePetitions = async (type:number, department:number, showResolved:boolean): Promise<Petition[]>  => {
-        const [response] = await pool.query<RowDataPacket[]> (`
-            SELECT * FROM forms     
-            WHERE (resolved = 0 OR ? = 1) 
-            AND (? = 0 OR id_department = ?)
-            AND (? = 0 OR id_type = ?)     
-            `, [showResolved, department, department, type, type]);
+  RetrievePetitions = async (type:number, department:number, showResolved:boolean): Promise<Petition[]>  => {
+    const [response] = await pool.query<RowDataPacket[]> (`
+      SELECT * FROM forms     
+      WHERE (resolved = 0 OR ? = 1) 
+      AND (? = 0 OR id_department = ?)
+      AND (? = 0 OR id_type = ?)     
+      `, [showResolved, department, department, type, type]);
         
-        console.log(response);
+    console.log(response);
 
-        const departments:SubdelegationsInfo[] = await this.GetDepartments();
-        const types:TypeInfo[] = await this.GetTypes();
+    const departments:SubdelegationsInfo[] = await this.GetDepartments();
+    const types:TypeInfo[] = await this.GetTypes();
 
-        const result:Petition[] = [];
-        
-        for(const form of response) {
-            result.push({request_id:form.id_form, type:this.mapToType(form.id_type, types), department:this.mapToDepartment(form.id_department, departments), subject:form.subject, description:form.description, solved:form.resolved});
-        }
-
-        return result;
+    const result:Petition[] = [];
+    for(const form of response) {
+      result.push({request_id:form.id_form, type:this.mapToType(form.id_type, types), department:this.mapToDepartment(form.id_department, departments), subject:form.subject, description:form.description, solved:form.resolved});
     }
 
-    MarkPetitionAsResolved = async (id:number) => {
-        const response = await pool.query(`
-          UPDATE forms
-          SET resolved = true
-          WHERE id_form = ?
-        `, [id]);
-    }
+    return result;
+  }
 
-    DeletePetition = async (id:number) => {
-        const [response] = await pool.query(`
-            DELETE FROM forms
-            WHERE id_form = ?
-            `, [id]);
-    }
+  MarkPetitionAsResolved = async (id:number) => {
+    const response = await pool.query(`
+      UPDATE forms
+      SET resolved = true
+      WHERE id_form = ?
+      `, [id]);
+  }
+
+  DeletePetition = async (id:number) => {
+    const [response] = await pool.query(`
+      DELETE FROM forms
+      WHERE id_form = ?
+      `, [id]);
+  }
 // #endregion
 
 // #region Types
+  GetTypes = async ():Promise<TypeInfo[]> => {
+    const [response] = await pool.query<RowDataPacket[]>(`
+      SELECT id_type, name
+      FROM types
+      `, []);
 
-    GetTypes = async ():Promise<TypeInfo[]> => {
-        const [response] = await pool.query<RowDataPacket[]>(`
-            SELECT id_type, name
-            FROM types
-            `, []);
-
-        const result:TypeInfo[] = [];
-        for(const type of response) {
-            result.push({inner_id:type.id_type, name:type.name});
-        }
+    const result:TypeInfo[] = [];
+    for(const type of response) {
+      result.push({inner_id:type.id_type, name:type.name});
+    }
         
-        return result;
-    }
-
+    return result;
+  }
 // #endregion
-    GetUserInfo = async (user:string):Promise<UserInfo | null> => {
-        const result:UserInfo = {userId:0, hashedPassword:""};
 
-        const [response]:any = await pool.query(`
-            SELECT id, password FROM users
-            WHERE username = ?
-            `, [user]);
+ // #region Users  
+  GetUserInfo = async (user: string): Promise<UserInfo | null> => {
+    const result:UserInfo = {userId:0, hashedPassword:""};
 
-        if(response.length > 0) {
-            result.userId = response[0].id;
-            result.hashedPassword = response[0].password;
+    const [response]:any = await pool.query(`
+      SELECT id, password FROM users
+      WHERE username = ?
+      `, [user]);
 
-            return result;
-        }
-        else {
-            return null;
-        }
-    } 
+    if(response.length > 0) {
+      result.userId = response[0].id;
+      result.hashedPassword = response[0].password;
 
-    AddAdmin = async (hashedPassword:string, username:string) => {
-        const [response]:any = await pool.query(`
-            INSERT INTO users(username, password)
-            VALUES(?, ?)
-            `, [hashedPassword, username]);
+      return result;
     }
-// #region Users
+    else {
+      return null;
+    }
+  } 
+
+  AddAdmin = async (hashedPassword:string, username:string) => {
+    const [response]:any = await pool.query(`
+      INSERT INTO users(username, password)
+      VALUES(?, ?)
+      `, [hashedPassword, username]);
+  }
+
+  CheckAdmin = async (userId: number) => {
+    const [response]: any = await pool.query(`
+      SELECT admin FROM users
+      WHERE id = ?
+      `, [userId]);
+
+    console.log(response);
+    
+    return response.length > 0;
+  }
+// #endregion
 
 // #region logs
-    AddLog = async (user:number, ip:string, description:string) => {
-        const [response] = await pool.query(`
-            INSERT INTO logs(user_id, ip, description)
-            VALUES (?, ?, ?)            
-            `, [user, ip, description]);
-    }
+  AddLog = async (user:number, ip:string, description:string) => {
+    const [response] = await pool.query(`
+      INSERT INTO logs(user_id, ip, description)
+      VALUES (?, ?, ?)            
+      `, [user, ip, description]);
+  }
 // #endregion
 
 // #endregion
+  mapToDepartment(id:number, departments:SubdelegationsInfo[]):string {
+    let result:string = "ERROR";
 
-    mapToDepartment(id:number, departments:SubdelegationsInfo[]):string {
-        let result:string = "ERROR";
+    departments.forEach((department) => {
+      if(department.innerID == id) {
+        result = department.name;
+      }
+    });
 
-        departments.forEach((department) => {
-            if(department.innerID == id) {
-                result = department.name;
-            }
-        });
+    return result;
+  }
 
-        return result;
-    }
+  mapToType(id:number, types:TypeInfo[]):string {
+    let result:string = "ERROR";
 
-    mapToType(id:number, types:TypeInfo[]):string {
-        let result:string = "ERROR";
+    types.forEach((type) => {
+      if(type.inner_id == id) {
+        result = type.name;
+      }
+    });
 
-        types.forEach((type) => {
-            if(type.inner_id == id) {
-                result = type.name;
-            }
-        });
-
-        return result;
-    }
-
+    return result;
+  }
 }
 
 
