@@ -1,5 +1,4 @@
 export default interface UserData {
-  name: string
-  surname: string
-  permission: string
+  name: string,
+  permission: boolean
 }

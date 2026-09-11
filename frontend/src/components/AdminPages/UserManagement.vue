@@ -27,20 +27,16 @@
 
     //Data for the user list
     const users = ref<Array<UserData>>([]);
-
 //#endregion variables
 
 // #region Methods
     //Translates the permission data from the database structure to a spanish human readable format
-    const getPermissionTranslation = (permission:String) => {
-        if(permission == "overseer") {
-            return "gestor"
-        }   
-        else if(permission == "admin") {
+    const getPermissionTranslation = (permission:boolean) => {
+        if (permission) {  
             return "administrador"
-        }
+        }   
         else {
-            return "";
+            return "gestor";
         }
     }
 
@@ -59,7 +55,7 @@
 onMounted(async () => {
     const response = await petitionMaker.makePetition('/api/auth/amIAdmin', 'GET');
 
-    showContent.value = response.status == 200;
+    showContent.value = (response.status == 200);
     if(showContent.value) {
         await getUsers();
     }
@@ -90,12 +86,12 @@ onMounted(async () => {
             custom-class="Card"
             v-for="(card) in users">
                 <div class="UserCard">
-                    <h2 class="marginlessText">{{ card.name }} {{ card.surname }}</h2>
+                    <h2 class="marginlessText"> {{ card.name }} </h2>
                     <p class="marginlessText">Permiso: {{ getPermissionTranslation(card.permission) }}</p>
                 </div>
                 <div class="CardButtons">
                     <BaseButton
-                        v-if="card.permission != 'admin'"
+                        v-if="card.permission"
                         custom-class="DeleteButton"
                         variant="primary"
                         @click=""
@@ -103,7 +99,7 @@ onMounted(async () => {
                         Fijar como administrador
                     </BaseButton>
                     <BaseButton
-                        v-if="card.permission != 'admin'"
+                        v-if="card.permission"
                         custom-class="DeleteButton"
                         variant="danger"
                         @click=""

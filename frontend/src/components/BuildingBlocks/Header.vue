@@ -20,7 +20,7 @@ const goHome = () => {
 }
 
 const handleResize = () => {
-  extendMenu.value = window.innerWidth > 950;
+  extendMenu.value = window.innerWidth > 1125;
 };
 
 onMounted(() => {
@@ -49,6 +49,9 @@ onUnmounted(() => {
                 <div v-if="isAdmin">
                     <p class="pageText" v-on:click="redirect('/admin/departments')"> Administración de subdelegaciones </p>
                 </div>
+                <div v-if="isAdmin">
+                    <p class="pageText" v-on:click="redirect('/admin/users')"> Administración de usuarios </p>
+                </div>
                 <div>
                     <p class="pageText" v-on:click="redirect('/admin/logout')"> Cerrar sesión </p>
                 </div>
@@ -62,6 +65,7 @@ onUnmounted(() => {
                         <BaseCard custom-class="hamburguerMenu_Content" top bottom v-if="showHamburgerMenu">
                             <p class="hamburgerMenu_Option" v-on:click="redirect('/admin/review')"> Revisión de formularios </p>
                             <p class="hamburgerMenu_Option" v-on:click="redirect('/admin/departments')" v-if="isAdmin"> Administración de subdelegaciones </p>
+                            <p class="hamburgerMenu_Option" v-on:click="redirect('/admin/users')" v-if="isAdmin"> Administración de usuarios </p>
                             <p class="hamburgerMenu_Option logoutText" v-on:click="redirect('/admin/logout')"> Cerrar sesión </p>
                         </BaseCard>
                     </Transition>

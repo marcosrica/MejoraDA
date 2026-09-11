@@ -12,14 +12,14 @@ UsersRouter.get("/info", async (req: Request, res: Response) => {
   //TODO: Handle the retrieval of privileged user info
 
   const users:AllowedUserData[] = [
-    {"name": "Juan", "surname": "Pérez", "permission": "admin"},
-    {"name": "María", "surname": "García", "permission": "overseer"},
-    {"name": "Luis", "surname": "López", "permission": "overseer"},
-    {"name": "Ana", "surname": "Martínez", "permission": "admin"},
-    {"name": "Carlos", "surname": "Rodríguez", "permission": "overseer"},
-    {"name": "Elena", "surname": "Sánchez", "permission": "overseer"},
-    {"name": "Miguel", "surname": "Fernández", "permission": "overseer"},
-    {"name": "Laura", "surname": "Gómez", "permission": "admin"}
+    { "name": "Juan",   "permission": true  },
+    { "name": "María",  "permission": false },
+    { "name": "Luis",   "permission": true  },
+    { "name": "Ana",    "permission": false },
+    { "name": "Carlos", "permission": false },
+    { "name": "Elena",  "permission": true  },
+    { "name": "Miguel", "permission": false },
+    { "name": "Laura",  "permission": true  }
   ]; 
   res.status(200).json(users);
 });
