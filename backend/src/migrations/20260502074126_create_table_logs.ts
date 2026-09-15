@@ -4,7 +4,7 @@ import type { Knex } from "knex";
 export async function up(knex: Knex): Promise<void> {
     return knex.schema.createTable('logs', (table) => {
         table.increments('id');
-        table.integer('user_id').unsigned().notNullable().references('id').inTable('users');
+        table.integer('user_id').unsigned().notNullable().references('id').inTable('users').onDelete("cascade");
         
         table.string('ip').notNullable();
         table.text('description').notNullable();

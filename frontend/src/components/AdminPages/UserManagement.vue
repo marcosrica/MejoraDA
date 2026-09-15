@@ -24,6 +24,7 @@
 
     //Variables for the add user form
     const username = ref('');
+    const password = ref('');
 
     //Data for the user list
     const users = ref<Array<UserData>>([]);
@@ -45,6 +46,34 @@
         const response = await petitionMaker.makePetition('/api/users/info', 'GET');
         if(response.status == 200) {
             users.value = response.data;
+        }
+    }
+
+    const deleteUser = async (id:number) => {
+        const data = { id: id };  
+        const response = await petitionMaker.makePetition("/api/users/removeUser", 'POST', data);
+        
+        if (response.status == 200) {          
+            //User added correctly
+            await getUsers();
+        }
+    }
+
+    const addUsers = async (e: Event) => {
+        e.preventDefault();
+
+        if (username.value == "" || password.value == "") { return; }
+      
+        const data = { username: username.value, password: password.value };
+
+        const response = await petitionMaker.makePetition("/api/users/addUser", 'POST', data);
+
+        if (response.status == 200) {
+            username.value = "";
+            password.value = "";
+          
+            //User added correctly
+            await getUsers();
         }
     }
 // #endregion Methods
@@ -90,19 +119,21 @@ onMounted(async () => {
                     <p class="marginlessText">Permiso: {{ getPermissionTranslation(card.permission) }}</p>
                 </div>
                 <div class="CardButtons">
+                    <!--
                     <BaseButton
-                        v-if="card.permission"
+                        v-if="!card.permission"
                         custom-class="DeleteButton"
                         variant="primary"
                         @click=""
                     >
                         Fijar como administrador
                     </BaseButton>
+                    -->
                     <BaseButton
-                        v-if="card.permission"
+                        v-if="!card.permission"
                         custom-class="DeleteButton"
                         variant="danger"
-                        @click=""
+                        @click="deleteUser(card.id)"
                     >
                         Eliminar usuario
                     </BaseButton>
@@ -112,11 +143,6 @@ onMounted(async () => {
         <!-- End of section with the current user status -->
         <BaseCard custom-class="CurrentUser" bottom>
             <h1 class="HeaderText">Usuario existente</h1>
-            <BaseButton
-            variant="danger"
-            v-on:click="">
-            Dejar de ser administrador
-        </BaseButton>
         </BaseCard>
 
 
@@ -127,13 +153,23 @@ onMounted(async () => {
         </BaseCard>
         <!-- Add user form -->
         <BaseCard custom-class="AddUserFormWrapper" bottom>
-            <form class="AddUserForm">
-                <div class="UsernameToAdd">
+            <form class="AddUserForm" v-on:submit="addUsers">
+                <div class="UsernameToAdd" style="border: 0px;">
                     <p class="formMarginless"> Introduzca el nombre del usuario que desee añadir </p>
                     <BaseInput
                           v-model="username"
                           name="Description"
                           placeholder="Nombre de usuario"
+                          custom-class="Subject"
+                        />
+                </div>
+
+                <div class="UsernameToAdd">
+                    <p class="formMarginless"> Introduzca la contraseña del usuario que desee añadir </p>
+                    <BaseInput
+                          v-model="password"
+                          name="Description"
+                          placeholder="Contraseña"
                           custom-class="Subject"
                         />
                 </div>

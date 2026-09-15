@@ -22,7 +22,8 @@
 
   //Auth controller
   const showContent = ref(false);
-
+  const isAdmin = ref(false);
+  
   //Variables for the alert
   const displayAlert = ref(false);
   const alertMessage = ref('');
@@ -162,7 +163,10 @@
     const isAuth = await petitionMaker.makePetition('/api/auth/amIPrivileged', 'GET');
     showContent.value = isAuth.status == 200;
 
-    if(showContent.value) {
+    if (showContent.value) {
+      const admin = await petitionMaker.makePetition('/api/auth/amIAdmin', 'GET');
+      isAdmin.value = (admin.status == 200);
+      
       await getDepartments();
       await getTypes();
       
@@ -271,7 +275,7 @@
           </transition>
           <div class="ResolvePetitionDiv" v-if="!petition.solved">
             <BaseButton variant="primary" v-on:click="markAsResolved(petition.type, parseInt(petition.request_id))"> Marcar como resuelta </BaseButton>
-            <BaseButton variant="danger" v-on:click="deletePetition(petition.type, parseInt(petition.request_id))"> Eliminar solicitud </BaseButton>
+            <BaseButton v-if="isAdmin" variant="danger" v-on:click="deletePetition(petition.type, parseInt(petition.request_id))"> Eliminar solicitud </BaseButton>
           </div>
         </BaseCard>
       </div>

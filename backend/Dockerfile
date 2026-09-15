@@ -11,9 +11,6 @@ COPY . .
 # Build TypeScript 
 RUN npm run build
 
-RUN echo "=== All files in /app ===" && ls -la /app
-RUN echo "=== Searching for server.js ===" && find /app -name "server.js"
-
 # ---- Production stage ----
 FROM node:lts-trixie-slim AS production
 

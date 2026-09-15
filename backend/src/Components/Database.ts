@@ -111,7 +111,7 @@ class Database {
       WHERE id_form = ?
       `, [id]);
   }
-// #endregion
+// #endregion 
 
 // #region Types
   GetTypes = async ():Promise<TypeInfo[]> => {
@@ -151,9 +151,22 @@ class Database {
 
   AddAdmin = async (hashedPassword:string, username:string) => {
     const [response]:any = await pool.query(`
-      INSERT INTO users(username, password)
-      VALUES(?, ?)
+      INSERT INTO users(username, password, admin)
+      VALUES(?, ?, true)
       `, [hashedPassword, username]);
+  }
+
+  AddUser = async (hashedPassword:string, username:string) => {
+    const [response]:any = await pool.query(`
+      INSERT INTO users(username, password, admin)
+      VALUES(?, ?, false)
+      `, [hashedPassword, username]);
+  }
+
+  RemoveUser = async (id: string) => {
+    const [response]:any = await pool.query(`
+      DELETE FROM users WHERE id = ?
+      `, [id]);
   }
 
   CheckAdmin = async (userId: number) => {
@@ -164,7 +177,21 @@ class Database {
 
     console.log(response);
     
-    return response.length > 0;
+    if (response.length > 0) {
+      return response[0].admin;
+    }
+    else {
+      return false;
+    }
+  }
+
+  GetUsers = async () => {
+    const [response]: any = await pool.query(`
+      SELECT id, username, admin
+      FROM users;
+      `); 
+
+    return response;
   }
 // #endregion
 

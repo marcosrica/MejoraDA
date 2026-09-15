@@ -2,26 +2,42 @@ import { Router, Request, Response } from "express";
 import Database from "../Database";
 import AllowedUserData from "src/Interfaces/AllowedUserData";
 import { auth } from "../Auth/InnerAuthValidator";
+import bcrypt from 'bcrypt';
+import { Secrets } from "./../../../keys";
 
 let db: Database = new Database();
 const UsersRouter = Router();
+const secrets:Secrets = new Secrets();
 
 
 UsersRouter.get("/info", async (req: Request, res: Response) => {
   console.log("Received new request for user info of the privileged ones", req.body);
   //TODO: Handle the retrieval of privileged user info
+  const users: AllowedUserData[] = [];
+  
+  const response = await db.GetUsers();
+  for (let i = 0; i < response.length; i++) {
+    console.log(response[i]);
 
-  const users:AllowedUserData[] = [
-    { "name": "Juan",   "permission": true  },
-    { "name": "María",  "permission": false },
-    { "name": "Luis",   "permission": true  },
-    { "name": "Ana",    "permission": false },
-    { "name": "Carlos", "permission": false },
-    { "name": "Elena",  "permission": true  },
-    { "name": "Miguel", "permission": false },
-    { "name": "Laura",  "permission": true  }
-  ]; 
+    if (response[i].username != "Unsigned") {
+      users.push({ id: response[i].id, name: response[i].username, permission: response[i].admin });
+    }
+  }
+  
   res.status(200).json(users);
+});
+
+UsersRouter.post("/addUser", async (req: Request, res: Response) => {
+  console.log(req.body);
+  const password = await bcrypt.hash(req.body.password, secrets.SaltRounds);
+  const response = await db.AddUser(req.body.username, password);
+  return res.status(200).json({ result: "OK" });
+});
+
+UsersRouter.post("/removeUser", async (req: Request, res: Response) => {
+  console.log("Trying to remove the user with ID: ", req.body);
+  const response = await db.RemoveUser(req.body.id);
+  return res.status(200).json({ result: "OK" });
 });
 
 UsersRouter.post("/setAdmin", async (req: Request, res: Response) => {

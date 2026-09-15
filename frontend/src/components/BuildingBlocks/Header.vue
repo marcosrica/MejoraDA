@@ -1,6 +1,9 @@
 <script lang="ts" setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 import BaseCard from './../BaseComponents/BaseCard.vue';
+import PetitionMaker from '../../Utilities/PetitionMaker';
+
+const petitionMaker: PetitionMaker = new PetitionMaker();
 
 const props = defineProps<{
     isAdmin: boolean,
@@ -9,6 +12,7 @@ const props = defineProps<{
     enableHamburguerMenu: () => void,
 }>()
 
+const isAdmin = ref(false);
 const extendMenu = ref<boolean>(true);
 
 const redirect = (url: string) => {
@@ -16,21 +20,29 @@ const redirect = (url: string) => {
 }
 
 const goHome = () => {
-    redirect("/")
+    redirect("/");
 }
 
 const handleResize = () => {
-  extendMenu.value = window.innerWidth > 1125;
+    if (isAdmin.value) {
+        extendMenu.value = window.innerWidth > 1125;
+    }
+    else {
+        extendMenu.value = window.innerWidth > 630;
+    }
 };
 
-onMounted(() => {
+onMounted(async () => {
     handleResize();
+
+    const admin = await petitionMaker.makePetition('/api/auth/amIAdmin', 'GET');
+    isAdmin.value = (admin.status == 200);
     
     window.addEventListener('resize', handleResize);
 });
 
 onUnmounted(() => {
-  window.removeEventListener('resize', handleResize);
+    window.removeEventListener('resize', handleResize);
 });
 </script>
 
