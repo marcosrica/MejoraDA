@@ -7,7 +7,8 @@ const props = defineProps<{
   name?: string
   id?: string
   disabled?: boolean
-  customClass?: string // NEW: class added for this instance
+  customClass?: string 
+  type?: string
 }>()
 
 const emit = defineEmits<{
@@ -32,6 +33,7 @@ const onInput = (event: Event) => {
     :disabled="props.disabled"
     :class="['BaseTextInput__field', props.customClass]"
     :value="modelValue"
+    :type="type || 'text'"
     @input="onInput"
   />
 </template>

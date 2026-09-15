@@ -171,6 +171,7 @@ onMounted(async () => {
                           name="Description"
                           placeholder="Contraseña"
                           custom-class="Subject"
+                          type="password"
                         />
                 </div>
 
