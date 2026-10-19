@@ -74,9 +74,9 @@
     .Home_content_wrapper {
         box-sizing: border-box;
         width: 100%;
-        margin-top: 10dvh;
+        padding-top: 10dvh;
         box-sizing: border-box;
-        height: calc(100dvh - 10dvh);
+        height: 100dvh;
         
         display: flex;
         flex-direction: column;
