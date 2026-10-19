@@ -2,8 +2,10 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import BaseCard from './../BaseComponents/BaseCard.vue';
 import PetitionMaker from '../../Utilities/PetitionMaker';
+import ServerRoutes from '../../../keys';
 
 const petitionMaker: PetitionMaker = new PetitionMaker();
+const serverRoutes: ServerRoutes = new ServerRoutes();
 
 const props = defineProps<{
     isAdmin: boolean,
@@ -59,16 +61,16 @@ onUnmounted(() => {
             <div class="AdminOptions">
                 <div class="extendedMenu" v-if="extendMenu">
                     <div>
-                        <p class="pageText" v-on:click="redirect('/admin/review')"> Revisión de formularios </p>
+                        <p class="pageText" v-on:click="redirect(serverRoutes.base_url + '/admin/review')"> Revisión de formularios </p>
                     </div>
                     <div v-if="isAdmin">
-                        <p class="pageText" v-on:click="redirect('/admin/departments')"> Administración de subdelegaciones </p>
+                        <p class="pageText" v-on:click="redirect(serverRoutes.base_url + '/admin/departments')"> Administración de subdelegaciones </p>
                     </div>
                     <div v-if="isAdmin">
-                        <p class="pageText" v-on:click="redirect('/admin/users')"> Administración de usuarios </p>
+                        <p class="pageText" v-on:click="redirect(serverRoutes.base_url + '/admin/users')"> Administración de usuarios </p>
                     </div>
                     <div>
-                        <p class="pageText" v-on:click="redirect('/admin/logout')"> Cerrar sesión </p>
+                        <p class="pageText" v-on:click="redirect(serverRoutes.base_url + '/admin/logout')"> Cerrar sesión </p>
                     </div>
                 </div>
                 
@@ -78,10 +80,10 @@ onUnmounted(() => {
                     <Teleport to="body">
                         <Transition name="slide-top">
                             <BaseCard custom-class="hamburguerMenu_Content" top bottom v-if="showHamburgerMenu">
-                                <p class="hamburgerMenu_Option" v-on:click="redirect('/admin/review')"> Revisión de formularios </p>
-                                <p class="hamburgerMenu_Option" v-on:click="redirect('/admin/departments')" v-if="isAdmin"> Administración de subdelegaciones </p>
-                                <p class="hamburgerMenu_Option" v-on:click="redirect('/admin/users')" v-if="isAdmin"> Administración de usuarios </p>
-                                <p class="hamburgerMenu_Option logoutText" v-on:click="redirect('/admin/logout')"> Cerrar sesión </p>
+                                <p class="hamburgerMenu_Option" v-on:click="redirect(serverRoutes.base_url + '/admin/review')"> Revisión de formularios </p>
+                                <p class="hamburgerMenu_Option" v-on:click="redirect(serverRoutes.base_url + '/admin/departments')" v-if="isAdmin"> Administración de subdelegaciones </p>
+                                <p class="hamburgerMenu_Option" v-on:click="redirect(serverRoutes.base_url + '/admin/users')" v-if="isAdmin"> Administración de usuarios </p>
+                                <p class="hamburgerMenu_Option logoutText" v-on:click="redirect(serverRoutes.base_url + '/admin/logout')"> Cerrar sesión </p>
                             </BaseCard>
                         </Transition>
                     </Teleport>

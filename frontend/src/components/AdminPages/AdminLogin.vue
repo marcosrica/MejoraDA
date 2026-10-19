@@ -9,8 +9,10 @@ import PetitionMaker from '../../Utilities/PetitionMaker';
 
 import type LoginData from '../../interfaces/LoginData';
 import BaseAlert from '../BaseComponents/BaseAlert.vue';
+import ServerRoutes from '../../../keys';
 
 const petitionMaker:PetitionMaker = new PetitionMaker();
+const serverRoutes: ServerRoutes = new ServerRoutes();
 
 //Variables to configure the alert
 const showAlert = ref<boolean>(false);
@@ -46,7 +48,7 @@ const handleSubmit = async () => {
             const response = await petitionMaker.makePetition("/api/auth/adminLogin", 'POST', loginData);
 
             if(response.status == 200) {
-                location.href = "/admin/review"
+                location.href = serverRoutes.base_url + "/admin/review"
             }
             else {
                 triggerError("Las credenciales no son correctas. Por favor, revíselas y vuelva a intentarlo");
@@ -59,7 +61,7 @@ onMounted(async () => {
     const response = await petitionMaker.makeGetPetition("/api/auth/amIPrivileged");
 
     if(response.status == 200) {
-        location.href = "/admin/review";
+        location.href = serverRoutes.base_url + "/admin/review";
     }
 })
 </script>
