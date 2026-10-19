@@ -25,7 +25,7 @@ const goHome = () => {
 
 const handleResize = () => {
     if (isAdmin.value) {
-        extendMenu.value = window.innerWidth > 1125;
+        extendMenu.value = window.innerWidth > 1265;
     }
     else {
         extendMenu.value = window.innerWidth > 630;
@@ -47,14 +47,16 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <div :class="['TopBarParent', isAdmin ? '' : 'centeredTopBar']">
+    <div :class="['TopBarParent', isAuth ? '' : 'centeredTopBar']">
         <div class="TopBarDiv">
             <div class="PageLogoDiv" v-on:click="goHome">
                 <img src="./../../assets/Logo.svg" alt="MejoraDA Logo" class="ServiceLogo"/>
                 <h1 class="pageText"> MejoraDA </h1>
             </div>
-            
-            <div class="AdminOptions" v-if="props.isAuth">
+        </div>
+
+        <div class="TopBarDiv" v-if="props.isAuth" style="padding-left: 20px;">
+            <div class="AdminOptions">
                 <div class="extendedMenu" v-if="extendMenu">
                     <div>
                         <p class="pageText" v-on:click="redirect('/admin/review')"> Revisión de formularios </p>
@@ -128,7 +130,7 @@ onUnmounted(() => {
     padding-left: 10px;
     padding-right: 20px;
 
-    margin-right: 10px;
+    margin-right: 2.5%;
     margin-left: 2.5%;
     
     display:flex;
