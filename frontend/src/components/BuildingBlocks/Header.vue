@@ -58,7 +58,7 @@ onUnmounted(() => {
         </div>
 
         <div class="TopBarDiv" v-if="props.isAuth" style="padding-left: 20px;">
-            <div class="AdminOptions">
+            <div class="AdminOptions" style="margin-right: 0px;">
                 <div class="extendedMenu" v-if="extendMenu">
                     <div>
                         <p class="pageText" v-on:click="redirect(serverRoutes.base_url + '/admin/review')"> Revisión de formularios </p>
@@ -75,7 +75,7 @@ onUnmounted(() => {
                 </div>
                 
                 <div class="hamburgerMenu" v-else>
-                    <p class="hamburgetMenu_Button" v-on:click="enableHamburguerMenu"> ☰ </p>
+                    <p class="hamburgetMenu_Button" style="margin-right: 0px;" v-on:click="enableHamburguerMenu"> ☰ </p>
                     
                     <Teleport to="body">
                         <Transition name="slide-top">
@@ -190,13 +190,14 @@ onUnmounted(() => {
     flex: 1;
 
     flex-direction:row-reverse;
-    margin-right: 25px;
 }
 
 .hamburgetMenu_Button {
     font-size: 35px;
     font-weight: 800;
-
+    color: white;
+    margin-right: 0px;
+    
     cursor: pointer;
 }
 

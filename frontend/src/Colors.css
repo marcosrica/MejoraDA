@@ -17,8 +17,8 @@
     --neutral-medium: #6C757D; /* Secondary texts, captions */
     --neutral-light: #F8F9FA; /* Backgrounds, containers */
 
-    --card-background: #D6E8FF; /* Background color of the divs */
-    --page-background: #EAF3FF; /* Background color of the whole page */
+    --card-background: #EDEDED; /* Background color of the divs */
+    --page-background: white; /* Background color of the whole page */
 
     --form-border: #CED4DA; /* Borders of form elements */
 
