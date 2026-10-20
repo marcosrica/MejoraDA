@@ -9,7 +9,7 @@
             <input type="search" class="InputField" placeholder="Search…" />
         </div>
         <div class="Filters CristalDiv">
-            
+            <div class="FilterIcon"/>
         </div>
     </div>
 </template>
@@ -55,6 +55,18 @@
 
     .Filters {
         aspect-ratio: 1;
+
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .FilterIcon {
+        aspect-ratio: 1;
+        height: 80%;
+        background-color: white;
+        mask: url('/Filter.svg') center / contain no-repeat;
     }
 
     .SearchIcon {

@@ -183,7 +183,7 @@
 </script>
 
 <template>
-    <BasePage :show-content="showContent">
+    <BasePage :show-content="true">
         <!-- Alert for user feedback -->
         <BaseAlert
             :show="displayAlert"
