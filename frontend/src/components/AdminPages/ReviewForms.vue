@@ -1,137 +1,140 @@
 <script lang="ts" setup>
-// #region imports
-  import { ref } from 'vue';
-  import { onMounted } from 'vue';
-
-  import BaseAlert from '../BaseComponents/BaseAlert.vue'; 
-  import PetitionMaker from '../../Utilities/PetitionMaker'
-  import BaseButton from '../BaseComponents/BaseButton.vue'; 
-  import BaseSelect from '../BaseComponents/BaseSelect.vue';
-  import BaseCheckbox from '../BaseComponents/BaseCheckbox.vue';
-  import BaseCard from '../BaseComponents/BaseCard.vue';
-  import BasePage from '../BuildingBlocks/BasePage.vue';
-  import type Petition from '../../interfaces/Petition';
-  import type ReviewFilters from '../../interfaces/ReviewFilters';
-  import type PetitionID from '../../interfaces/PetitionID';
-  import type TypeInfo from './../../interfaces/TypesInfo';
-// #endregion imports
-
-// #region variables
-  //Class that holds the method to make petitions to the backend
-  const petitionMaker:PetitionMaker = new PetitionMaker();
-
-  //Auth controller
-  const showContent = ref(false);
-  const isAdmin = ref(false);
+    // #region imports
+    import { ref } from 'vue';
+    import { onMounted } from 'vue';
   
-  //Variables for the alert
-  const displayAlert = ref(false);
-  const alertMessage = ref('');
-  const alertType = ref<'success' | 'error' | 'info'>('success');
+    import BaseAlert from '../BaseComponents/BaseAlert.vue'; 
+    import PetitionMaker from '../../Utilities/PetitionMaker'
+    import BaseButton from '../BaseComponents/BaseButton.vue'; 
+    import BaseSelect from '../BaseComponents/BaseSelect.vue';
+    import BaseCheckbox from '../BaseComponents/BaseCheckbox.vue';
+    import BaseCard from '../BaseComponents/BaseCard.vue';
+    import BasePage from '../BuildingBlocks/BasePage.vue';
+    import type Petition from '../../interfaces/Petition';
+    import type ReviewFilters from '../../interfaces/ReviewFilters';
+    import type PetitionID from '../../interfaces/PetitionID';
+    import type TypeInfo from './../../interfaces/TypesInfo';
+import BaseSearchComponent from '../BaseComponents/BaseSearchComponent.vue';
+    // #endregion imports
 
-  //Fields that are completed in the filters form, and accedes in the handleSubmit function
-  const department = ref('All');
-  const type = ref('All');
-  const showResolved = ref(false);
+    // #region variables
+    //Class that holds the method to make petitions to the backend
+    const petitionMaker:PetitionMaker = new PetitionMaker();
+    
+    //Auth controller
+    const showContent = ref(false);
+    const isAdmin = ref(false);
+    
+    //Variables for the alert
+    const displayAlert = ref(false);
+    const alertMessage = ref('');
+    const alertType = ref<'success' | 'error' | 'info'>('success');
+    
+    //Fields that are completed in the filters form, and accedes in the handleSubmit function
+    const department = ref('All');
+    const type = ref('All');
+    const showResolved = ref(false);
 
-  //Group of last applied filters for whenever reloading is needed
-  let lastDept:string;
-  let lastType:string;
-  let lastRes:boolean;
+    //Group of last applied filters for whenever reloading is needed
+    let lastDept:string;
+    let lastType:string;
+    let lastRes:boolean;
+    
+    //Variable containing the forms retrieved from the backend
+    const petitions = ref<(Petition & { expanded: boolean })[]>([]);
+    
+    //Storing the different possible departments
+    const departments = ref<Array<{value:string, label:string}>>([{value: "0", label: "Todas"}]);
+    //Storing the different possible types
+    const types = ref<Array<{ value: string, label: string }>>([{ value: "0", label: "Todos" }]);
 
-  //Variable containing the forms retrieved from the backend
-  const petitions = ref<(Petition & { expanded: boolean })[]>([]);
-
-  //Storing the different possible departments
-  const departments = ref<Array<{value:string, label:string}>>([{value: "0", label: "Todas"}]);
-  //Storing the different possible types
-  const types = ref<Array<{value:string, label:string}>>([{value:"0", label:"Todos"}]);
-// #endregion variables
-
-// #region functions
-  //Handle the alert showing
-  const showAlert = (type:'success' | 'error' | 'info', message:string) => {
-    alertType.value = type;
-    alertMessage.value = message;
-    displayAlert.value = true;
-  }
-
-  //Request the forms that comply with the new filters
-  const handleSubmit = async () => {
-    const filters = {
-      department: department.value,
-      type: type.value,
-      showResolved: showResolved.value,
-    };
-
-    console.log(filters);
-
-    await fetchForms(department.value, type.value, showResolved.value);
-  }
-
-  //Retrieve the forms answers from the server with the applied filters
-  const fetchForms = async (department:string, type:string, showResolved:boolean) => {
-    const data:ReviewFilters = {
-      department: department,
-      type: type,
-      showResolved: showResolved,
-    };
-
-    const response = await petitionMaker.makePetition('/api/review/filter', 'POST', data);
-    if(!response.error) {
-      petitions.value = []
-      petitions.value = response.data.map((p: Petition) => ({
-        ...p,
-        expanded: false,
-      }));
-
-      lastDept = data.department;
-      lastType = data.type;
-      lastRes = data.showResolved;
+    const isOnMobile = ref<boolean>(false);
+    // #endregion variables
+    
+    // #region functions
+    //Handle the alert showing
+    const showAlert = (type:'success' | 'error' | 'info', message:string) => {
+        alertType.value = type;
+        alertMessage.value = message;
+        displayAlert.value = true;
     }
-    else {
-      showAlert("error", "Ha ocurrido un error al aplicar los filtros");
+
+    //Request the forms that comply with the new filters
+    const handleSubmit = async () => {
+        const filters = {
+            department: department.value,
+            type: type.value,
+            showResolved: showResolved.value,
+        };
+
+        console.log(filters);
+
+        await fetchForms(department.value, type.value, showResolved.value);
     }
-  }
+
+    //Retrieve the forms answers from the server with the applied filters
+    const fetchForms = async (department:string, type:string, showResolved:boolean) => {
+        const data:ReviewFilters = {
+            department: department,
+            type: type,
+            showResolved: showResolved,
+        };
+
+        const response = await petitionMaker.makePetition('/api/review/filter', 'POST', data);
+        if(!response.error) {
+            petitions.value = []
+            petitions.value = response.data.map((p: Petition) => ({
+                ...p,
+                expanded: false,
+            }));
+
+            lastDept = data.department;
+            lastType = data.type;
+            lastRes = data.showResolved;
+        }
+        else {
+            showAlert("error", "Ha ocurrido un error al aplicar los filtros");
+        }
+    }
   
-  //Mark a certain form as resolved after analisis
-  const markAsResolved = async (type:string, petitionId:number) => {
-    const data:PetitionID = {
-      id: petitionId,
-      type: type,
-    };
+    //Mark a certain form as resolved after analisis
+    const markAsResolved = async (type:string, petitionId:number) => {
+        const data:PetitionID = {
+            id: petitionId,
+            type: type,
+        };
 
-    const response = await petitionMaker.makePetition("/api/review/markAsResolved", "POST", data);
-    console.log(response);
+        const response = await petitionMaker.makePetition("/api/review/markAsResolved", "POST", data);
+        console.log(response);
 
-    if(response.status == 200) {
-      showAlert("success", "La solicitud ha sido marcada como resuelta");
-      fetchForms(lastDept, lastType, lastRes);
+        if(response.status == 200) {
+            showAlert("success", "La solicitud ha sido marcada como resuelta");
+            fetchForms(lastDept, lastType, lastRes);
+        }
+        else {
+            showAlert("error", "Ha habido un error al marcar la solicitud como resuelta");
+        }
     }
-    else {
-      showAlert("error", "Ha habido un error al marcar la solicitud como resuelta");
-    }
-  }
 
-  //Delete a certain petition from the database
-  const deletePetition = async (type:string, petitionId:number) => {
-    const data:PetitionID = {
-      id: petitionId,
-      type: type,
-    };
+    //Delete a certain petition from the database
+    const deletePetition = async (type:string, petitionId:number) => {
+        const data:PetitionID = {
+            id: petitionId,
+            type: type,
+        };
 
-    console.log("Petition deleted. Data: " + petitionId);
-    const response = await petitionMaker.makePetition("/api/review/deleteForm", "DELETE", data);
-    console.log(response);
+        console.log("Petition deleted. Data: " + petitionId);
+        const response = await petitionMaker.makePetition("/api/review/deleteForm", "DELETE", data);
+        console.log(response);
 
-    if(response.status == 200) {
-      showAlert("success", "La solicitud ha sido eliminada correctamente");
-      fetchForms(lastDept, lastType, lastRes);
+        if(response.status == 200) {
+            showAlert("success", "La solicitud ha sido eliminada correctamente");
+            fetchForms(lastDept, lastType, lastRes);
+        }
+        else {
+            showAlert("error", "Ha habido un error al eliminar la solicitud");
+        }
     }
-    else {
-      showAlert("error", "Ha habido un error al eliminar la solicitud");
-    }
-  }
 
   //Get all the possible departments
   const getDepartments = async () => {
@@ -192,7 +195,7 @@
     />
 
     <!-- Filters Section -->
-    <BaseCard customClass="Home_Filters" top>
+    <BaseCard customClass="Home_Filters" top v-if="!isOnMobile">
       <p class="Home_Big_Text"> Filtrar solicitudes </p>
       <form class="Filters_Form"  @submit.prevent="handleSubmit">
         <div class="Home_Department">
@@ -280,6 +283,10 @@
         </BaseCard>
       </div>
     </BaseCard>
+
+    <div class="BottomSearch">
+        <BaseSearchComponent></BaseSearchComponent>
+    </div>
   </BasePage>
 </template>
 
@@ -474,4 +481,11 @@
   }
 }
 
+.BottomSearch {
+    position: absolute;
+    bottom: 2dvh;
+    left: 0px;
+    width: 100dvw;
+    height: 6dvh;
+}
 </style>
