@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
 import Database from "./Components/Database";
-import { Secrets } from "./../keys";
+import { FrontendKeys, Secrets } from "./../keys";
 
 import AuthRouter from "./Components/Auth/AuthPetitions";
 import GeneralRouter from "./Components/PetitionResolvers/GeneralPetitions";
@@ -17,8 +17,10 @@ const app = express();
 let db: Database;
 db = new Database();
 
+console.log(new FrontendKeys().frontendURL)
+
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: new FrontendKeys().frontendURL,
   credentials: true,
 }));
 app.use(express.json());

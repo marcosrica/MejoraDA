@@ -1,3 +1,7 @@
+export class FrontendKeys {
+  frontendURL: string = "http://your.frontend/url"
+}
+
 export class DatabaseKeys {
     host: string = 'your_db_domain';
     user: string = 'your_db_user';
