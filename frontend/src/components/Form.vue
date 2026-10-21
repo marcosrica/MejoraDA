@@ -9,6 +9,7 @@
     import BaseCard from './BaseComponents/BaseCard.vue';
     import type TypeInfo from './../interfaces/TypesInfo';
     import type FormContent from '../interfaces/FormContent';
+import ServerRoutes from '../../keys';
 // #endregion imports
 
 //#region variables
@@ -71,7 +72,7 @@
                         const response = await petitionMaker.makePetition("/api/form/newForm", "POST", data);
 
                         if(response.status == 200) {
-                            location.href = "/Form/success"
+                            location.href = new ServerRoutes().base_url + "/Form/success";
                         }
                         else {
                             props.throwError("error", "Ha habido un problema. Por favor, inténtelo de nuevo más tarde");
