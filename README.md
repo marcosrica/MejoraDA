@@ -59,3 +59,7 @@ npm install
 npm run create-db #Creates the database and seeds it with the types of forms, basic departments and an admin user
 npm run dev
 ```
+
+
+## License
+This project is licensed under the MIT license. For more details, read the LICENSE file
