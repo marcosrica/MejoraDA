@@ -183,7 +183,7 @@
 </script>
 
 <template>
-    <BasePage :show-content="true">
+    <BasePage :show-content="showContent">
         <!-- Alert for user feedback -->
         <BaseAlert
             :show="displayAlert"
@@ -193,89 +193,92 @@
             @close="displayAlert = false" 
         />
 
-        <!-- Filters Section -->
-        <BaseCard customClass="Home_Filters" top v-if="!isOnMobile">
-            <p class="Home_Big_Text"> Filtrar solicitudes </p>
-            <form class="Filters_Form"  @submit.prevent="handleSubmit">
-                <div class="Home_Department">
-                    <label for="status">Subdelegación:</label>
-                    <BaseSelect
+        <!-- Outer div to display filters as horizontal on desktop -->
+        <div class="FormWrapper">
+            <!-- Filters Section -->
+            <BaseCard customClass="Home_Filters Home_Filters_Horizontal" top bottom v-if="!isOnMobile">
+                <p class="Home_Big_Text"> Filtrar solicitudes </p>
+                <form class="Filters_Form"  @submit.prevent="handleSubmit">
+                    <div class="Home_Department">
+                        <label for="status">Subdelegación:</label>
+                        <BaseSelect
                         v-model="department"
                         custom-class="Home_StatusSelection"
                         label=""
                         placeholder="Selecciona una opción"
                         :options="departments"
-                    />
-                </div>
-                <div class="Home_Type">
-                    <label for="status">Tipo:</label>
-                    <BaseSelect
+                        />
+                    </div>
+                    <div class="Home_Type">
+                        <label for="status">Tipo:</label>
+                        <BaseSelect
                         v-model="type"
                         label=""
                         placeholder="Selecciona una opción"
                         :options="types"
-                    />
-                </div>  
-                <div class="Home_OnlyPending">
-                    <label for="status">Mostrar también las incidencias resueltas</label>
-                    <BaseCheckbox
+                        />
+                    </div>  
+                    <div class="Home_OnlyPending">
+                        <label for="status">Mostrar también las incidencias resueltas</label>
+                        <BaseCheckbox
                         v-model="showResolved"
                         name="onlyPending"
                         customClass="Home_OnlyPendingCheckbox"
-                    />
-                </div>
-                <div class="Home_Submit">
-                    <BaseButton type="submit" variant="primary"> Aplicar filtros </BaseButton>
-                </div>
-            </form>
-        </BaseCard>
-
-        <!-- Retrieved Forms Section -->
-        <BaseCard custom-class="Home_Forms" bottom>
-            <div class="Home_Forms_ExpandableHeader">
-                <p class="Home_Big_Text"> Se han encontrado {{ petitions.length }} solicitudes </p>
-            </div>
-
-            <div class="Home_PetitionsList">
-                <BaseCard
-                v-for="petition in petitions"
-                :key="petition.id || petition.request_id"
-                border-color="rgb(146, 146, 146)"
-                class="PetitionCard"
-                top
-                bottom
-            >
-                <!-- Header: Subject -->
-                <div class="PetitionHeader" @click="petition.expanded = !petition.expanded">
-                    <h3 class="PetitionSubject">{{ petition.subject }}</h3>
-                    <span class="ToggleIndicator">
-                        {{ petition.expanded ? '▲' : '▼' }}
-                    </span>
-                </div>
-            
-                <!-- Subtitle: type, department, status -->
-                <div class="PetitionSubtitle">
-                    <p class="Cards_SubtitleText"><strong>Tipo:</strong> {{ petition.type }}</p>
-                    <p> <strong>Dirigido a:</strong> {{ petition.department }} </p>
-                    <p> <strong>Estado:</strong> {{ petition.solved ? 'Resuelta' : 'Pendiente' }} </p>
-                </div>
-            
-                <!-- Expandable description -->
-                <transition name="collapse">
-                    <div class="PetitionDescription" v-if="petition.expanded">
-                        <p class="DescriptionHeader"> <strong> Descripción:  </strong> </p>
-                        <p>{{ petition.description }}</p>
+                        />
                     </div>
-                </transition>
-                <div class="ResolvePetitionDiv" v-if="!petition.solved">
-                    <BaseButton variant="primary" v-on:click="markAsResolved(petition.type, parseInt(petition.request_id))"> Marcar como resuelta </BaseButton>
-                    <BaseButton v-if="isAdmin" variant="danger" v-on:click="deletePetition(petition.type, parseInt(petition.request_id))"> Eliminar solicitud </BaseButton>
+                    <div class="Home_Submit">
+                        <BaseButton type="submit" variant="primary"> Aplicar filtros </BaseButton>
+                    </div>
+                </form>
+            </BaseCard>
+            
+            <!-- Retrieved Forms Section -->
+            <BaseCard custom-class="Home_Forms" top bottom>
+                <div class="Home_Forms_ExpandableHeader">
+                    <p class="Home_Big_Text"> Se han encontrado {{ petitions.length }} solicitudes </p>
+                </div>
+                
+                <div class="Home_PetitionsList">
+                    <BaseCard
+                    v-for="petition in petitions"
+                    :key="petition.id || petition.request_id"
+                    border-color="rgb(146, 146, 146)"
+                    class="PetitionCard"
+                    top
+                    bottom
+                    >
+                        <!-- Header: Subject -->
+                        <div class="PetitionHeader" @click="petition.expanded = !petition.expanded">
+                            <h3 class="PetitionSubject">{{ petition.subject }}</h3>
+                            <span class="ToggleIndicator">
+                                {{ petition.expanded ? '▲' : '▼' }}
+                            </span>
+                        </div>
+                        
+                        <!-- Subtitle: type, department, status -->
+                        <div class="PetitionSubtitle">
+                            <p class="Cards_SubtitleText"><strong>Tipo:</strong> {{ petition.type }}</p>
+                            <p> <strong>Dirigido a:</strong> {{ petition.department }} </p>
+                            <p> <strong>Estado:</strong> {{ petition.solved ? 'Resuelta' : 'Pendiente' }} </p>
+                        </div>
+                        
+                        <!-- Expandable description -->
+                        <transition name="collapse">
+                            <div class="PetitionDescription" v-if="petition.expanded">
+                                <p class="DescriptionHeader"> <strong> Descripción:  </strong> </p>
+                                <p>{{ petition.description }}</p>
+                            </div>
+                        </transition>
+                        <div class="ResolvePetitionDiv" v-if="!petition.solved">
+                            <BaseButton variant="primary" v-on:click="markAsResolved(petition.type, parseInt(petition.request_id))"> Marcar como resuelta </BaseButton>
+                            <BaseButton v-if="isAdmin" variant="danger" v-on:click="deletePetition(petition.type, parseInt(petition.request_id))"> Eliminar solicitud </BaseButton>
+                        </div>
+                    </BaseCard>
                 </div>
             </BaseCard>
-            </div>
-        </BaseCard>
+        </div>
 
-        <div class="BottomSearch">
+        <div class="BottomSearch" v-if="isOnMobile">
             <BaseSearchComponent></BaseSearchComponent>
         </div>
     </BasePage>
@@ -299,7 +302,10 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-start;
+
+        height: 310px;
+        min-width: 400px;
         
     }
 
@@ -373,6 +379,12 @@
         justify-content: center;
         
         margin-bottom: 20px;
+        flex: 1;
+    }
+
+    .Home_Filters_Horizontal {
+        position: sticky;
+        top: 20px;
     }
     
     .Home_PetitionsList {
@@ -442,6 +454,14 @@
         margin-bottom: 2px;
     }
 
+    .FormWrapper {
+        width: 100%;
+        height: 100%;
+        display:flex;
+        flex-direction: row;
+        gap: 20px;
+    }
+    
     /* Description transition */
     .collapse-enter-from,
     .collapse-leave-to {
