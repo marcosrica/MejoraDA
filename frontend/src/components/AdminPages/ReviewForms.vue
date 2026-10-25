@@ -256,7 +256,18 @@
                         style="width: 100%;"
                         :bottom="index == (petitions.length - 1)"
                     >
-                    
+
+                    <!-- Header: Subject -->
+                    <div class="PetitionHeader" @click="petition.expanded = !petition.expanded">
+                        <div class="FormTitleWrapper"> 
+                            <h3 class="PetitionSubject">{{ petition.subject }}</h3>
+                            <p class="PetitionDepartment"> {{petition.department}} </p>
+                        </div>
+                        <span class="ToggleIndicator">
+                            {{ petition.expanded ? '▲' : '▼' }}
+                        </span>
+                    </div>
+                        
                 </BaseCard>
                 
                 <div class="Home_PetitionsList">
@@ -327,6 +338,7 @@
 
         height: 310px;
         min-width: 400px;
+        width: auto;
         
     }
 
@@ -528,5 +540,11 @@
         left: 0px;
         width: 100dvw;
         height: 6dvh;
+    }
+
+    .PetitionDepartment {
+        margin: 0px;
+        font-style: italic;
+        font-size: 12px;
     }
 </style>
