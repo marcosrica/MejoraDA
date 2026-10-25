@@ -267,46 +267,18 @@
                             {{ petition.expanded ? '▲' : '▼' }}
                         </span>
                     </div>
-                        
+
+                    <transition name="collapse">
+                        <div class="PetitionDescription" v-if="petition.expanded">
+                            <p style="margin: 0px; margin-top: 10px;">{{ petition.description }}</p>
+                        </div>
+                    </transition>
+
+                    <div class="ResolvePetitionDiv">
+                        <BaseButton v-if="isAdmin" variant="danger" v-on:click="deletePetition(petition.type, parseInt(petition.request_id))"> Eliminar solicitud </BaseButton>
+                        <BaseButton v-if="!petition.solved" variant="primary" v-on:click="markAsResolved(petition.type, parseInt(petition.request_id))"> Marcar como resuelta </BaseButton>
+                    </div>
                 </BaseCard>
-                
-                <div class="Home_PetitionsList">
-                        <BaseCard
-                        v-for="petition in petitions"
-                        :key="petition.id || petition.request_id"
-                        border-color="rgb(146, 146, 146)"
-                        class="PetitionCard"
-                        top
-                        bottom
-                    >
-                        <!-- Header: Subject -->
-                        <div class="PetitionHeader" @click="petition.expanded = !petition.expanded">
-                            <h3 class="PetitionSubject">{{ petition.subject }}</h3>
-                            <span class="ToggleIndicator">
-                                {{ petition.expanded ? '▲' : '▼' }}
-                            </span>
-                        </div>
-                        
-                        <!-- Subtitle: type, department, status -->
-                        <div class="PetitionSubtitle">
-                            <p class="Cards_SubtitleText"><strong>Tipo:</strong> {{ petition.type }}</p>
-                            <p> <strong>Dirigido a:</strong> {{ petition.department }} </p>
-                            <p> <strong>Estado:</strong> {{ petition.solved ? 'Resuelta' : 'Pendiente' }} </p>
-                        </div>
-                        
-                        <!-- Expandable description -->
-                        <transition name="collapse">
-                            <div class="PetitionDescription" v-if="petition.expanded">
-                                <p class="DescriptionHeader"> <strong> Descripción:  </strong> </p>
-                                <p>{{ petition.description }}</p>
-                            </div>
-                        </transition>
-                        <div class="ResolvePetitionDiv" v-if="!petition.solved">
-                            <BaseButton variant="primary" v-on:click="markAsResolved(petition.type, parseInt(petition.request_id))"> Marcar como resuelta </BaseButton>
-                            <BaseButton v-if="isAdmin" variant="danger" v-on:click="deletePetition(petition.type, parseInt(petition.request_id))"> Eliminar solicitud </BaseButton>
-                        </div>
-                    </BaseCard>
-                </div>
             </div>
         </div>
 
@@ -479,6 +451,8 @@
         margin-top: 0px;
         font-size: 0.95em;
         color: var(--text-primary);
+
+        border-top: 2px solid grey;
     }
     
     .DescriptionHeader {
@@ -525,11 +499,11 @@
 
     .ResolvePetitionDiv {
         display: flex;
-        flex-direction: row;
+        flex-direction: row-reverse;
         justify-content: space-between;
         
         @media (orientation: portrait) and (max-width: 500px) {
-            flex-direction: column;
+            flex-direction: column-reverse;
             gap: 10px;
         }
     }
