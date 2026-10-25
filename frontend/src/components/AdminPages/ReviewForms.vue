@@ -1,6 +1,6 @@
 <script lang="ts" setup>
     // #region imports
-    import { ref } from 'vue';
+    import { onUnmounted, ref } from 'vue';
     import { onMounted } from 'vue';
   
     import BaseAlert from '../BaseComponents/BaseAlert.vue'; 
@@ -47,7 +47,7 @@
     const departments = ref<Array<{value:string, label:string}>>([{value: "0", label: "Todas"}]);
     //Storing the different possible types
     const types = ref<Array<{ value: string, label: string }>>([{ value: "0", label: "Todos" }]);
-
+    
     const isOnMobile = ref<boolean>(false);
     // #endregion variables
     
@@ -158,11 +158,16 @@
             }
         }
     }
+
+    const handleMobile = () => {
+        isOnMobile.value = (window.innerWidth < 1130) && (window.innerWidth <= window.innerHeight);
+    };
     // #endregion functions
 
     // #region onMounted
     //Fetch all the forms that aren't resolved
     onMounted(async () => {
+        handleMobile();
         const isAuth = await petitionMaker.makePetition('/api/auth/amIPrivileged', 'GET');
         showContent.value = isAuth.status == 200;
         
@@ -178,12 +183,18 @@
           
             fetchForms(department.value, type.value, showResolved.value);  
         }
+
+        window.addEventListener('resize', handleMobile);
     });
     // #endregion onMounted
+    
+    onUnmounted(() => {
+        window.removeEventListener('resize', handleMobile);
+    });
 </script>
 
 <template>
-    <BasePage :show-content="showContent">
+    <BasePage :show-content="showContent" customWidthMax="95%" customWidthMed="95%" customWidthMin="95%">
         <!-- Alert for user feedback -->
         <BaseAlert
             :show="displayAlert"
@@ -233,19 +244,29 @@
             </BaseCard>
             
             <!-- Retrieved Forms Section -->
-            <BaseCard custom-class="Home_Forms" top bottom>
-                <div class="Home_Forms_ExpandableHeader">
-                    <p class="Home_Big_Text"> Se han encontrado {{ petitions.length }} solicitudes </p>
-                </div>
+            <div class="Home_Forms" top bottom>
+                <BaseCard customClass="Home_Forms_ExpandableHeader" top>
+                    <p class="Home_Big_Text" style="margin:0px"> Se han encontrado {{ petitions.length }} solicitudes </p>
+                </BaseCard>
+
+                <BaseCard
+                        v-for="petition, index in petitions"
+                        :key="petition.id || petition.request_id"
+                        class="PetitionCard"
+                        style="width: 100%;"
+                        :bottom="index == (petitions.length - 1)"
+                    >
+                    
+                </BaseCard>
                 
                 <div class="Home_PetitionsList">
-                    <BaseCard
-                    v-for="petition in petitions"
-                    :key="petition.id || petition.request_id"
-                    border-color="rgb(146, 146, 146)"
-                    class="PetitionCard"
-                    top
-                    bottom
+                        <BaseCard
+                        v-for="petition in petitions"
+                        :key="petition.id || petition.request_id"
+                        border-color="rgb(146, 146, 146)"
+                        class="PetitionCard"
+                        top
+                        bottom
                     >
                         <!-- Header: Subject -->
                         <div class="PetitionHeader" @click="petition.expanded = !petition.expanded">
@@ -275,7 +296,7 @@
                         </div>
                     </BaseCard>
                 </div>
-            </BaseCard>
+            </div>
         </div>
 
         <div class="BottomSearch" v-if="isOnMobile">
@@ -367,6 +388,7 @@
         justify-content: center;
         align-items: center;
         margin-bottom: 10px;
+        box-sizing: border-box;
         
         cursor: pointer;
     }
@@ -380,6 +402,8 @@
         
         margin-bottom: 20px;
         flex: 1;
+        max-width: 100%;
+        box-sizing: border-box;
     }
 
     .Home_Filters_Horizontal {
@@ -455,11 +479,17 @@
     }
 
     .FormWrapper {
-        width: 100%;
+        width: 90%;
         height: 100%;
         display:flex;
         flex-direction: row;
         gap: 20px;
+
+        box-sizing: border-box;
+
+        @media(orientation: portrait) {
+            width: 95%;
+        }
     }
     
     /* Description transition */

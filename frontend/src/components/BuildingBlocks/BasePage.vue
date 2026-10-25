@@ -5,7 +5,10 @@
     import BaseNotAuth from '../BaseComponents/BaseNotAuth.vue';
 
     const props = defineProps<{
-        showContent: boolean
+        showContent: boolean,
+        customWidthMax?: string,
+        customWidthMed?: string,
+        customWidthMin?: string,
     }>()
 
     const petitionMaker:PetitionMaker = new PetitionMaker();
@@ -39,7 +42,13 @@
     <div class="Home_background">
         <Header :isAuth="allowedUser" :isAdmin="adminUser" :showHamburgerMenu="showHamburgerMenu" :enableHamburguerMenu="showHideHamburgerMenu"/>
 
-        <div class="Home_content_wrapper">
+        <div class="Home_content_wrapper" 
+            :style="{
+                '--custom-width-max': (customWidthMax != '' ? customWidthMax : '60%'),
+                '--custom-width-med': (customWidthMed != '' ? customWidthMed : '80%'), // 80%
+                '--custom-width-min': (customWidthMin != '' ? customWidthMin : '90%'), // 90%
+            }"
+        >
             <div class="HamburgerMenuBlackout" v-if="showHamburgerMenu" v-on:click="showHideHamburgerMenu" />
 
             <!-- Content area -->
@@ -96,20 +105,27 @@
         padding-left: 5px;
         padding-right: 5px;
         padding-bottom: 80px;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
         
         @media (orientation: landscape) {
             @media (max-width: 1000px) {
-                width: 90%;
+                width: var(--custom-width-min);
             }
             @media (max-width: 1450px) {
-                width: 80%;
+                width: var(--custom-width-med);
             }
             @media (min-width: 1451px) {
-                width: 60%;
+                width: var(--custom-width-max);
             }
         }
         @media (orientation: portrait) {
-            width: 95%;
+            width: 100%;
+            padding-left: 0px;
+            padding-right: 0px;
         }
     }
 
