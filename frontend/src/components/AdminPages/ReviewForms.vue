@@ -270,7 +270,7 @@
 
                     <transition name="collapse">
                         <div class="PetitionDescription" v-if="petition.expanded">
-                            <p style="margin: 0px; margin-top: 10px;">{{ petition.description }}</p>
+                            <p style="margin: 0px; margin-top: 10px; overflow-wrap: break-word; word-break: break-word; hyphens: auto;">{{ petition.description }}</p>
                         </div>
                     </transition>
 
@@ -324,7 +324,7 @@
     }
     
     .Home_Department {
-        width: 80%;
+        width: 100%;
         
         display: flex;
         flex-direction: row;
@@ -336,7 +336,7 @@
     }
 
     .Home_Type {
-        width: 80%;
+        width: 100%;
         
         display: flex;
         flex-direction: row;
@@ -354,12 +354,13 @@
     }
     
     .Home_OnlyPending {
-        width: 80%;
+        width: 100%;
         
         display: flex;
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
+        gap: 10px;
         
         margin-bottom: 10px;
     }
@@ -429,11 +430,19 @@
         align-items: center;
         cursor: pointer;
     }
+
+    .FormTitleWrapper {
+        width: 90%;
+    }
     
     .PetitionSubject {
         font-size: 1.2em;
         font-weight: bold;
         margin: 0px;
+
+        white-space: nowrap; 
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .ToggleIndicator {
