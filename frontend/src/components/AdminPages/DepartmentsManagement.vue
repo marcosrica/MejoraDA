@@ -48,6 +48,11 @@
         showPrompt.value = true;
     }
 
+    function hidePrompt() {
+        showDeletionPrompt.value = false;
+        showPrompt.value = false;
+    }
+
     const enableAlert = (message:string, type:'success' | 'error' | 'info') => {
         alertMessage.value = message;
         alertType.value = type;
@@ -160,7 +165,7 @@ onMounted( async () => {
 </script>
 
 <template>
-    <BasePage :show-content="showContent">
+    <BasePage :show-content="showContent" customWidthMax="95%" customWidthMed="95%" customWidthMin="95%">
         <BaseAlert
             :show="showAlert"
             :type="alertType"
@@ -243,7 +248,7 @@ onMounted( async () => {
 
         <!-- Prompt for editing -->
         <BasePrompt :show="showPrompt"
-        title="Editar subdelegación">
+        title="Editar subdelegación" @close="hidePrompt">
             <form  @submit.prevent="departmentEditAccepted">
                 <div class="EditFormDiv notFinalEditFormDiv">
                     <p class="editFormText"> <b> Nombre de la subdelegación: </b> </p>
@@ -267,7 +272,7 @@ onMounted( async () => {
         </BasePrompt>
 
         <BasePrompt :show="showDeletionPrompt"
-        title="Eliminar subdelegación">
+            title="Eliminar subdelegación" @close="hidePrompt">
             <h1 class="HeaderText"> ¿Seguro que deseas eliminar la subdelegación? </h1>
             <p class="marginlessText"> Si eliminas la subdelegación, todas las peticiones registradas se eliminarán con ella para siempre </p>
             <p class="marginlessText"> Si crees que le podría interesar a un equipo posterior, es mejor que ocultes la subdelegación </p>

@@ -1,22 +1,22 @@
 <script setup>
-import BaseCard from './BaseCard.vue';
+    import BaseCard from './BaseCard.vue';
 
-defineProps({
-  show: {
-    type: Boolean,
-    required: true
-  },
-  title: {
-    type: String,
-    default: ''
-  }
-})
+    defineProps({
+        show: {
+            type: Boolean,
+            required: true
+        },
+        title: {
+            type: String,
+            default: ''
+        },
+    })
 
-const emit = defineEmits(['close'])
+    const emit = defineEmits(['close'])
 
-function emitClose() {
-  emit('close')
-}
+    function emitClose() {
+        emit('close')
+    }
 </script>
 
 <template>
