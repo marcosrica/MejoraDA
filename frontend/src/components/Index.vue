@@ -17,7 +17,7 @@
 </script>
 
 <template>
-  <BasePage show-content>
+  <BasePage show-content customWidthMax="95%" customWidthMed="95%" customWidthMin="95%">
     <BaseAlert
         :show="showAlert"
         :type="alertType"

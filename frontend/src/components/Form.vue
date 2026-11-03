@@ -9,7 +9,7 @@
     import BaseCard from './BaseComponents/BaseCard.vue';
     import type TypeInfo from './../interfaces/TypesInfo';
     import type FormContent from '../interfaces/FormContent';
-import ServerRoutes from '../../keys';
+    import ServerRoutes from '../../keys';
 // #endregion imports
 
 //#region variables
