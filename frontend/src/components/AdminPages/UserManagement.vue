@@ -94,7 +94,7 @@ onMounted(async () => {
 </script>
 
 <template>
-    <BasePage :show-content="showContent">
+    <BasePage :show-content="showContent" customWidthMax="95%" customWidthMed="95%" customWidthMin="95%">
         <BaseAlert
             :show="showAlert"
             :type="alertType"
@@ -103,85 +103,78 @@ onMounted(async () => {
             @close="showAlert = false"
         />
 
-
-        <!-- Manage current users -->
-        <!-- Header of section -->
-        <BaseCard custom-class="Header" top>
-            <h1 class="HeaderText">Administración de usuarios existentes</h1>
-        </BaseCard>
-        <!-- Panel with allowed users -->
-        <div class="Grid">
-            <BaseCard
-            custom-class="Card"
-            v-for="(card) in users">
-                <div class="UserCard">
-                    <h2 class="marginlessText"> {{ card.name }} </h2>
-                    <p class="marginlessText">Permiso: {{ getPermissionTranslation(card.permission) }}</p>
-                </div>
-                <div class="CardButtons">
-                    <!--
-                    <BaseButton
-                        v-if="!card.permission"
-                        custom-class="DeleteButton"
-                        variant="primary"
-                        @click=""
-                    >
-                        Fijar como administrador
-                    </BaseButton>
-                    -->
-                    <BaseButton
+        <div class="UIWrapper">
+            <!-- Manage current users -->
+            <div class="UsersWrapper">
+            <!-- Header of section -->
+            <BaseCard custom-class="Header" top>
+                <h1 class="HeaderText">Administración de usuarios existentes</h1>
+            </BaseCard>
+            <!-- Panel with allowed users -->
+            <div class="Grid">
+                <BaseCard
+                    custom-class="Card"
+                    v-for="(card) in users"
+                >
+                    <div class="UserCard">
+                        <h2 class="marginlessText"> {{ card.name }} </h2>
+                        <p class="marginlessText">Permiso: {{ getPermissionTranslation(card.permission) }}</p>
+                    </div>
+                    <div class="CardButtons">
+                        <BaseButton
                         v-if="!card.permission"
                         custom-class="DeleteButton"
                         variant="danger"
                         @click="deleteUser(card.id)"
-                    >
-                        Eliminar usuario
-                    </BaseButton>
-                </div>
-            </BaseCard>
+                        >
+                            Eliminar usuario
+                        </BaseButton>
+                    </div>
+                </BaseCard>
+            </div>
+            <!-- End of section with the current user status -->
+            <BaseCard custom-class="CurrentUser" bottom />
+            </div>
+
+            <!-- Add new user to the group -->
+            <div class="FormWrapper">
+                <!-- Header of section -->
+                <BaseCard custom-class="Header" top>
+                    <h1 class="HeaderText"> Añadir un nuevo usuario </h1>
+                </BaseCard>
+                <!-- Add user form -->
+                <BaseCard custom-class="AddUserFormWrapper" bottom>
+                    <form class="AddUserForm" v-on:submit="addUsers">
+                        <div class="UsernameToAdd" style="border: 0px;">
+                            <p class="formMarginless"> Introduzca el nombre del usuario que desee añadir: </p>
+                            <BaseInput
+                            v-model="username"
+                            name="Description"
+                            placeholder="Nombre de usuario"
+                            custom-class="Subject"
+                            />
+                        </div>
+                        
+                        <div class="UsernameToAdd">
+                            <p class="formMarginless"> Introduzca la contraseña del usuario que desee añadir: </p>
+                            <BaseInput
+                            v-model="password"
+                            name="Description"
+                            placeholder="Contraseña"
+                            custom-class="Subject"
+                            type="password"
+                            />
+                        </div>
+                        
+                        <BaseButton 
+                        type="submit" 
+                        variant="primary">
+                            Añadir usuario
+                        </BaseButton>
+                    </form>
+                </BaseCard>
+            </div>
         </div>
-        <!-- End of section with the current user status -->
-        <BaseCard custom-class="CurrentUser" bottom>
-            <h1 class="HeaderText">Usuario existente</h1>
-        </BaseCard>
-
-
-        <!-- Add new user to the group -->
-        <!-- Header of section -->
-        <BaseCard custom-class="Header" top>
-            <h1 class="HeaderText"> Añadir un nuevo usuario </h1>
-        </BaseCard>
-        <!-- Add user form -->
-        <BaseCard custom-class="AddUserFormWrapper" bottom>
-            <form class="AddUserForm" v-on:submit="addUsers">
-                <div class="UsernameToAdd" style="border: 0px;">
-                    <p class="formMarginless"> Introduzca el nombre del usuario que desee añadir </p>
-                    <BaseInput
-                          v-model="username"
-                          name="Description"
-                          placeholder="Nombre de usuario"
-                          custom-class="Subject"
-                        />
-                </div>
-
-                <div class="UsernameToAdd">
-                    <p class="formMarginless"> Introduzca la contraseña del usuario que desee añadir </p>
-                    <BaseInput
-                          v-model="password"
-                          name="Description"
-                          placeholder="Contraseña"
-                          custom-class="Subject"
-                          type="password"
-                        />
-                </div>
-
-                <BaseButton 
-                    type="submit" 
-                    variant="primary">
-                    Añadir usuario
-                </BaseButton>
-            </form>
-        </BaseCard>
     </BasePage>
 
     <div v-if="!showContent">
@@ -194,6 +187,18 @@ onMounted(async () => {
         margin: 0;
     }
 
+    .UIWrapper {
+        display: flex;
+        flex-direction: row-reverse;
+        width: 100%;
+        gap: 20px;
+
+        @media(orientation: portrait) {
+            flex-direction: column;
+            width: 95%;
+        }
+    }
+    
     /* #region Header */
 
     .Header {
@@ -212,6 +217,13 @@ onMounted(async () => {
     /* #endregion */
 
     /* #region Grid */
+    .UsersWrapper {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        flex: 2;
+    }
+    
     .Grid {
         width: 100%;
 
@@ -259,6 +271,13 @@ onMounted(async () => {
     /* #endregion */
 
     /* #region Add new users */
+    .FormWrapper {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+    
     .AddUserFormWrapper {
         display: flex;
         flex-direction: column;
@@ -277,9 +296,10 @@ onMounted(async () => {
 
     .UsernameToAdd {
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         align-items: center;
         gap: 10px;
+        text-align: center;
 
         border-bottom:  1px solid grey;
 
