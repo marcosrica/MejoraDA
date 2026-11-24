@@ -17,60 +17,79 @@
 </script>
 
 <template>
-  <BasePage show-content customWidthMax="95%" customWidthMed="95%" customWidthMin="95%">
-    <BaseAlert
-        :show="showAlert"
-        :type="alertType"
-        :message="alertMessage"
+    <BasePage show-content customWidthMax="95%" customWidthMed="95%" customWidthMin="95%">
+        <div class="OverallWrapper">
+            <BaseAlert
+                :show="showAlert"
+                :type="alertType"
+                :message="alertMessage"
+                
+                @close="showAlert = false"
+            />
 
-        @close="showAlert = false"
-    />
+            <div style="display: flex; flex-direction: column; flex: 1; justify-content: flex-start; align-items: center;">
+                <!-- Intro -->
+                <BaseCard top>
+                    <h1 class="Marginless"> MejoraDA, un medio para la superación de todos </h1>
+                </BaseCard>
+                
+                <BaseCard custom-class="BaseContainer" bottom>
+                    <p class="DescriptionText"> 
+                        Desde la Delegación de Alumnos, siempre estamos atentos a todo lo que ocurra en nuestra escuela, y no paramos de buscar formas de mejorar la experiencia para todos.
+                        <br>
+                        <br>
+                        Por ello, hemos habilitado MejoraDA, una plataforma completamente anónima en la que nos podéis contar vuestra visión de la escuela, todo lo que querríais que ocurriese y lo que os gustaría que cambiase.
+                    </p>
+                </BaseCard>
+            </div>
 
-    <!-- Intro -->
-    <BaseCard top>
-      <h1 class="Marginless"> MejoraDA, un medio para la superación de todos </h1>
-    </BaseCard>    
-    <BaseCard custom-class="BaseContainer" bottom>
-      <p class="DescriptionText"> 
-        Desde la Delegación de Alumnos, siempre estamos atentos a todo lo que ocurra en nuestra escuela, y no paramos de buscar formas de mejorar la experiencia para todos.
-        <br>
-        Por ello, hemos habilitado MejoraDA, una plataforma completamente anónima en la que nos podéis contar vuestra visión de la escuela, todo lo que querríais que ocurriese y lo que os gustaría que cambiase.
-      </p>
-    </BaseCard>
-
-    <Form class="FormWrapper" :throwError="triggerAlert"></Form>
-  </BasePage>
+            <Form style="flex: 2; margin: 0px;" class="FormWrapper" :throwError="triggerAlert"></Form>
+        </div>
+    </BasePage>
 </template>
 
 <style scoped>
-  .BaseContainer {
-    display:flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    .BaseContainer {
+        display:flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        
+        margin-bottom: 10px;
+        box-sizing: border-box;
+        width: 100%;
+    }
 
-    margin-bottom: 10px;
-    box-sizing: border-box;
-    width: 100%;
-  }
+    .FormWrapper {
+        margin-top: 50px;
+    }
 
-  .FormWrapper {
-    margin-top: 50px;
-  }
+    .Marginless {
+        margin: 0px;
+        text-align: center;
+    }
 
-  .Marginless {
-    margin: 0px;
-    text-align: center;
-  }
+    .DescriptionText {
+        font-family: 'Montserrat', sans-serif;
+        font-size: large;
+        font-weight: 500;
+        text-align: justify;
+        max-width: 90%;
+        
+        margin-top: 5px;
+        margin-bottom: 7px;
+    }
 
-  .DescriptionText {
-    font-family: 'Montserrat', sans-serif;
-    font-size: large;
-    font-weight: 500;
-    text-align: justify;
-    max-width: 90%;
+    .OverallWrapper {
+        width: 100%;
+        height: 100%;
 
-    margin-top: 5px;
-    margin-bottom: 7px;
-  }
+        display: flex;
+        flex-direction: row;
+        gap: 20px;
+
+        @media (max-width: 1220px) {
+            flex-direction: column;
+        }
+    }
 </style>
