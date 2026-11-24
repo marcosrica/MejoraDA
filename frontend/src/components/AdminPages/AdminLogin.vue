@@ -79,7 +79,8 @@ onMounted(async () => {
         <BaseCard top>
             <h1 class="marginless"> Área de administración </h1>
             <p class="marginless"> Introduce tus credenciales para continuar </p>
-            <p class="marginless disclaimer"> Esto es un panel exclusivo para miembros de la delegación, y aquí sí que se guardan registros. Si no eres parte del equipo, vuelve a la página de inicio </p>
+            <p class="marginless disclaimer"> Esto es un panel exclusivo para miembros de la delegación, y a partir de aquí sí que se guardan registros. <br>  </p>
+            <p class="marginless disclaimer" style="font-weight: 900; font-size: 20px;"><b>Si no eres parte del equipo, vuelve a la página de inicio</b></p>
         </BaseCard>
 
         <BaseCard bottom>
